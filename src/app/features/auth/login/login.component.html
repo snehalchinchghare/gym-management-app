@@ -1,0 +1,63 @@
+<div class="container d-flex justify-content-center align-items-center vh-100 bg-light">
+  <div class="card shadow-lg p-4" style="max-width: 400px; width: 100%;">
+    <h3 class="text-center text-primary mb-4">Admin Login</h3>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+      <!-- Email -->
+      <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input
+          type="email"
+          class="form-control"
+          formControlName="email"
+          placeholder="admin&#64;gmail.com"
+        />
+        <div class="text-danger small mt-1" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
+          Please enter a valid email.
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input
+          type="password"
+          class="form-control"
+          formControlName="password"
+          placeholder="******"
+        />
+        <div class="text-danger small mt-1" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
+          Password is required.
+        </div>
+      </div>
+
+      <button class="btn btn-primary w-100" [disabled]="loginForm.invalid">Login</button>
+    </form>
+
+    <div class="text-center mt-3">
+      <a routerLink="/auth/register" class="text-decoration-none">New Admin? Register here</a>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ Toast Notification -->
+<div
+  id="loginToast"
+  class="toast align-items-center text-white border-0 position-fixed bottom-0 end-0 m-4 bg-danger"
+  role="alert"
+  aria-live="assertive"
+  aria-atomic="true"
+  style="z-index: 9999;"
+>
+  <div class="d-flex">
+    <div class="toast-body">
+      <!-- Toast message will be injected dynamically -->
+    </div>
+    <button
+      type="button"
+      class="btn-close btn-close-white me-2 m-auto"
+      data-bs-dismiss="toast"
+      aria-label="Close"
+    ></button>
+  </div>
+</div>
