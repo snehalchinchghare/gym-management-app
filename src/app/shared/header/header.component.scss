@@ -1,0 +1,10 @@
+.navbar .navbar-collapse {
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .navbar .navbar-collapse .d-flex {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+}
