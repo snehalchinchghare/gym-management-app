@@ -1,0 +1,41 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" routerLink="/dashboard">
+      Gym Manager
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <!-- Left nav links -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/dashboard/create-candidate" routerLinkActive="active">Create Candidate</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/dashboard/delete-candidate" routerLinkActive="active">Delete Candidate</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/dashboard/update-package" routerLinkActive="active">Update Package Details</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/dashboard/send-offer" routerLinkActive="active">Send Offer Message</a>
+        </li>
+      </ul>
+
+      <!-- Right side: welcome message and logout -->
+      <div class="d-flex align-items-center gap-3">
+        <span *ngIf="isDashboardRoute" class="text-white fw-semibold d-none d-lg-block">
+          👋 Welcome, {{ adminName }}!
+        </span>
+        <button class="btn btn-sm btn-light fw-semibold" (click)="logout()">Logout</button>
+      </div>
+    </div>
+  </div>
+</nav>

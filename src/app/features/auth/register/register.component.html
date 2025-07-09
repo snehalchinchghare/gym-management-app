@@ -1,0 +1,256 @@
+<div *ngIf="errorMessage" class="alert alert-warning">
+  {{ errorMessage }}
+</div>
+
+<div
+  class="container d-flex justify-content-center align-items-start py-5 bg-light"
+  style="min-height: 100vh"
+>
+  <div class="card shadow-lg p-4" style="max-width: 400px; width: 100%">
+    <h3 class="text-center text-success mb-4">Admin Registration</h3>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+      <!-- Name -->
+      <div class="mb-3">
+        <label class="form-label">Full Name</label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="fullName"
+          placeholder="Full Name"
+        />
+        <div
+          class="text-danger small mt-1"
+          *ngIf="
+            registerForm.get('name')?.touched &&
+            registerForm.get('name')?.invalid
+          "
+        >
+          Name is required.
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input
+          type="email"
+          class="form-control"
+          formControlName="email"
+          placeholder="admin@gmail.com"
+        />
+        <div
+          class="text-danger small mt-1"
+          *ngIf="
+            registerForm.get('email')?.touched &&
+            registerForm.get('email')?.invalid
+          "
+        >
+          Valid email is required.
+        </div>
+      </div>
+
+      <!-- Gym Name -->
+      <div class="mb-3">
+        <label class="form-label">Gym Name</label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="gymName"
+          placeholder=""
+        />
+        <div
+          class="text-danger small mt-1"
+          *ngIf="
+            registerForm.get('gymName')?.touched &&
+            registerForm.get('gymName')?.invalid
+          "
+        >
+          Gym Name is required.
+        </div>
+      </div>
+
+      <!-- Accordion Section: Packages -->
+      <div class="accordion mb-3" id="packageAccordion">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="packageHeading">
+            <button
+              class="accordion-button collapsed fw-semibold"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#packageCollapse"
+              aria-expanded="false"
+              aria-controls="packageCollapse"
+            >
+              Packages
+            </button>
+          </h2>
+          <div
+            id="packageCollapse"
+            class="accordion-collapse collapse"
+            aria-labelledby="packageHeading"
+            data-bs-parent="#packageAccordion"
+          >
+            <div class="accordion-body p-2">
+              <table
+                class="table table-bordered text-center align-middle small"
+              >
+                <thead class="table-primary">
+                  <tr>
+                    <th>Duration</th>
+                    <th>Gym</th>
+                    <th>Gym + Cardio</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Monthly</td>
+                    <td>
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="gym_monthly"
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="gymCardio_monthly"
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Quarterly</td>
+                    <td>
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="gym_quarterly"
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="gymCardio_quarterly"
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Half Yearly</td>
+                    <td>
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="gym_halfYearly"
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="gymCardio_halfYearly"
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Yearly</td>
+                    <td>
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="gym_yearly"
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="gymCardio_yearly"
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input
+          type="password"
+          class="form-control"
+          formControlName="password"
+          placeholder="******"
+        />
+        <div
+          class="text-danger small mt-1"
+          *ngIf="
+            registerForm.get('password')?.touched &&
+            registerForm.get('password')?.invalid
+          "
+        >
+          Password is required.
+        </div>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="mb-3">
+        <label class="form-label">Confirm Password</label>
+        <input
+          type="password"
+          class="form-control"
+          formControlName="confirmPassword"
+        />
+        <div
+          class="text-danger small"
+          *ngIf="
+            registerForm.get('confirmPassword')?.touched &&
+            registerForm.get('confirmPassword')?.invalid
+          "
+        >
+          Please confirm your password.
+        </div>
+      </div>
+
+      <button
+        class="btn btn-success w-100 mt-2"
+        [disabled]="registerForm.invalid"
+      >
+        Register
+      </button>
+    </form>
+
+    <div class="text-center mt-3">
+      <a routerLink="/login" class="text-decoration-none"
+        >Already Registered? Login</a
+      >
+    </div>
+  </div>
+</div>
+
+<!-- ✅ Toast Notification -->
+<div
+  id="registerToast"
+  class="toast align-items-center text-white border-0 position-fixed bottom-0 end-0 m-4 bg-danger"
+  role="alert"
+  aria-live="assertive"
+  aria-atomic="true"
+  style="z-index: 9999"
+>
+  <div class="d-flex">
+    <div class="toast-body">
+      <!-- Toast message will be injected dynamically -->
+    </div>
+    <button
+      type="button"
+      class="btn-close btn-close-white me-2 m-auto"
+      data-bs-dismiss="toast"
+      aria-label="Close"
+    ></button>
+  </div>
+</div>
