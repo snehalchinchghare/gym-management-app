@@ -1,3 +1,7 @@
+<div *ngIf="errorMessage" class="alert alert-warning">
+  {{ errorMessage }}
+</div>
+
 <div
   class="container d-flex justify-content-center align-items-start py-5 bg-light"
   style="min-height: 100vh"
@@ -12,8 +16,8 @@
         <input
           type="text"
           class="form-control"
-          formControlName="name"
-          placeholder="Your Name"
+          formControlName="fullName"
+          placeholder="Full Name"
         />
         <div
           class="text-danger small mt-1"
@@ -222,7 +226,7 @@
     </form>
 
     <div class="text-center mt-3">
-      <a routerLink="/auth/login" class="text-decoration-none"
+      <a routerLink="/login" class="text-decoration-none"
         >Already Registered? Login</a
       >
     </div>
