@@ -4,11 +4,11 @@ import { CandidateRegisterComponent } from './candidate-register/candidate-regis
 import { DashboardComponent } from './dashboard/dashboard.component';
 
 export const dashboardRoutes: Routes = [
-  {
-    path: '',
-    component: DashboardComponent,
-    children: [
-      { path: '', redirectTo: 'candidate/login', pathMatch: 'full' },
-    ]
-  }
+  // {
+  //   path: '',
+  //   component: DashboardComponent,
+  //   children: [
+  //     { path: '', redirectTo: 'candidate/login', pathMatch: 'full' },
+  //   ]
+  // }
 ];
