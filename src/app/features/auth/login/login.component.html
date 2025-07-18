@@ -1,3 +1,7 @@
+<div *ngIf="errorMessage" class="alert alert-warning">
+  {{ errorMessage }}
+</div>
+
 <div class="container d-flex justify-content-center align-items-center vh-100 bg-light">
   <div class="card shadow-lg p-4" style="max-width: 400px; width: 100%;">
     <h3 class="text-center text-primary mb-4">Admin Login</h3>
@@ -35,7 +39,7 @@
     </form>
 
     <div class="text-center mt-3">
-      <a routerLink="/auth/register" class="text-decoration-none">New Admin? Register here</a>
+      <a routerLink="/register" class="text-decoration-none">New Admin? Register here</a>
     </div>
   </div>
 </div>

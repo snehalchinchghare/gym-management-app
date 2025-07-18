@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import Toast from 'bootstrap/js/dist/toast';
 
 @Component({
@@ -12,7 +12,16 @@ import Toast from 'bootstrap/js/dist/toast';
   styleUrl: './register.component.scss',
 })
 export class RegisterComponent {
-  constructor(private fb: FormBuilder, private router: Router) {}
+  errorMessage:string | null = null;
+  constructor(private fb: FormBuilder, private router: Router,private route: ActivatedRoute) {}
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      if (params['reason'] === 'unauthorized') {
+        this.errorMessage = 'Please login to access the requested page.';
+      }
+    });
+  }
 
   registerForm = this.fb.group({
     fullName: ['', [Validators.required, Validators.minLength(3)]],
@@ -85,7 +94,7 @@ export class RegisterComponent {
 
     // Navigate to login after delay
     setTimeout(() => {
-      this.router.navigate(['/auth/login']);
+      this.router.navigate(['/login']);
     }, 2500);
   }
 }
