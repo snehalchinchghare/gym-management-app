@@ -38,6 +38,6 @@ export class CandidateListComponent implements OnInit {
     // Store candidate to be edited in localStorage
     localStorage.setItem('editCandidate', JSON.stringify(candidate));
     // Navigate to registration component where you can pre-fill and update
-    this.router.navigate(['/register']);
+    // this.router.navigate(['/register']);
   }
 }
