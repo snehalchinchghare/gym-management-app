@@ -6,9 +6,9 @@ import { CandidateRegisterComponent } from './candidate-register/candidate-regis
 
 
 @NgModule({
-  declarations: [],
+  declarations: [SendOfferMessageComponent],
   imports: [
-    CommonModule,SendOfferMessageComponent,CandidateRegisterComponent
+    CommonModule,
   ]
 })
 export class DashboardModule { }
