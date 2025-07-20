@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import Toast from 'bootstrap/js/dist/toast';
+import { SupabaseService } from '../../supabase/common.supabase.service';
 
 @Component({
   selector: 'app-register',
@@ -13,7 +14,11 @@ import Toast from 'bootstrap/js/dist/toast';
 })
 export class RegisterComponent {
   errorMessage:string | null = null;
-  constructor(private fb: FormBuilder, private router: Router,private route: ActivatedRoute) {}
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private route: ActivatedRoute,
+    private supabaseService: SupabaseService) {}
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
@@ -81,9 +86,10 @@ export class RegisterComponent {
       gymCardio_yearly,
       password,
     };
-
-    // Save admin to localStorage
-    localStorage.setItem('adminUser', JSON.stringify(admin));
+    
+    const payload = this.mapAdminToInsertPayload(admin);
+    console.log(payload);
+    this.supabaseService.insertAdminUser(payload);
 
     // Show toast
     const toastEl = document.getElementById('registerSuccessToast');
@@ -96,5 +102,67 @@ export class RegisterComponent {
     setTimeout(() => {
       this.router.navigate(['/login']);
     }, 2500);
+  }
+
+  mapAdminToInsertPayload(admin: any) {
+    const packages = this.supabaseService.getPackageTypes();  
+    const services = this.supabaseService.getServiceTypes();
+    const packageList = [];
+  
+    for (const p of packages) {
+      for (const s of services) {
+        const key = this.getKeyName(p.packagename, s.servicename);
+        const price = admin[key];
+    
+        if (price !== undefined && price !== null && price !== '') {
+          packageList.push({
+            PackageTypeId: p.packagetypeid,
+            ServiceTypeId: s.servicetypeid,
+            Price: Number(price)
+          });
+        }
+      }
+    }
+  
+    return {
+      p_fullname: admin.fullName,
+      p_email: admin.email,
+      p_gymname: admin.gymName,
+      p_password: admin.password,
+      p_created_by: 1,
+      p_packages: packageList
+    };
+  }
+
+  getKeyName(packageName: any, serviceName: any) {
+    let serviceKeyPrefix = '';
+
+    switch(serviceName){
+      case 'Gym':
+        serviceKeyPrefix = 'gym';
+        break;
+      case 'Gym + Cardio':
+        serviceKeyPrefix = 'gymCardio';
+        break;
+    }
+
+    let packageTypeKey = '';
+
+    switch(packageName){
+      case 'Monthly':
+        packageTypeKey = 'monthly';
+        break;
+      case 'Quarterly':
+        packageTypeKey = 'quarterly';
+        break;
+      case 'Half Yearly':
+        packageTypeKey = 'halfYearly';
+        break;
+      case 'Yearly':
+        packageTypeKey = 'yearly';
+        break;
+    }
+
+    return `${serviceKeyPrefix}_${packageTypeKey}`;
   }
 }
