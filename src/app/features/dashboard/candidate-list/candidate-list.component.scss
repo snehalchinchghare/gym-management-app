@@ -1,0 +1,23 @@
+@media screen and (max-width: 768px) {
+  .table {
+    display: none;
+  }
+  .card {
+    margin-bottom: 1rem;
+  }
+}
+.candidate-card {
+  background: #f8f9fa; /* light gray */
+  border-left: 4px solid #0d6efd; /* blue highlight */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.candidate-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.candidate-card .card-body {
+  padding: 1.25rem;
+  border-radius: 8px;
+}

@@ -1,0 +1,54 @@
+<!-- TABLE VIEW for large screens -->
+<div class="table-responsive d-none d-md-block">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Full Name</th>
+        <th>Email</th>
+        <th>Mobile</th>
+        <th>Gender</th>
+        <th>Package</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let candidate of registeredCandidates">
+        <td>{{ candidate.fullName }}</td>
+        <td>{{ candidate.email }}</td>
+        <td>{{ candidate.mobile }}</td>
+        <td>{{ candidate.gender }}</td>
+        <td>{{ candidate.package }}</td>
+        <td>
+          <button class="btn btn-primary btn-sm me-2" (click)="editCandidate(candidate)">Edit</button>
+          <button class="btn btn-danger btn-sm" (click)="deleteCandidate(candidate)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- CARD VIEW for small screens -->
+<div class="d-block d-md-none">
+  <div *ngFor="let candidate of registeredCandidates" class="candidate-card card shadow-sm border-0 mb-4">
+    <div class="card-body position-relative">
+      <h5 class="card-title text-primary fw-bold">{{ candidate.fullName }}</h5>
+      <hr>
+      <ul class="list-unstyled mb-3">
+        <li><strong>Email:</strong> {{ candidate.email }}</li>
+        <li><strong>Mobile:</strong> {{ candidate.mobile }}</li>
+        <li><strong>Gender:</strong> {{ candidate.gender }}</li>
+        <li><strong>Package:</strong> {{ candidate.package }}</li>
+      </ul>
+      <div class="d-flex justify-content-end gap-2">
+        <button class="btn btn-outline-primary btn-sm" (click)="editCandidate(candidate)">
+          <i class="bi bi-pencil"></i> Edit
+        </button>
+        <button class="btn btn-outline-danger btn-sm" (click)="deleteCandidate(candidate)">
+          <i class="bi bi-trash"></i> Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+</div>

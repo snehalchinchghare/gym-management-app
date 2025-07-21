@@ -4,12 +4,18 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { SendOfferMessageComponent } from './send-offer-message/send-offer-message.component';
 import { UpdatePackageComponent } from './update-package/update-package.component';
 import { DeleteCandidateComponent } from './delete-candidate/delete-candidate.component';
+import { CandidateListComponent } from './candidate-list/candidate-list.component';
 
 export const dashboardRoutes: Routes = [
   {
     path: '',
     component: DashboardComponent,
     children: [
+      {
+        path: '',
+        redirectTo: 'candidate-list',
+        pathMatch: 'full',
+      },
       {
         path: 'create-candidate',
         component: CandidateRegisterComponent,
@@ -26,11 +32,15 @@ export const dashboardRoutes: Routes = [
         path: 'send-offer',
         component: SendOfferMessageComponent,
       },
-      //   {
-      //     path: '',
-      //     redirectTo: 'create-candidate',
-      //     pathMatch: 'full'
-      //   }
+      {
+        path: 'candidate-list',
+        component: CandidateListComponent,
+      },
+        // {
+        //   path: '',
+        //   redirectTo: 'candidate-list',
+        //   pathMatch: 'full'
+        // }
     ],
   },
 ];
