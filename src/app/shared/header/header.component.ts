@@ -6,7 +6,7 @@ import { CandidateRegisterComponent } from '../../features/dashboard/candidate-r
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterModule, CommonModule,CandidateRegisterComponent],
+  imports: [RouterModule, CommonModule, CandidateRegisterComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
@@ -30,6 +30,7 @@ export class HeaderComponent implements OnInit {
 
   logout() {
     localStorage.removeItem('adminUser');
+    localStorage.removeItem('adminToken');
     this.router.navigate(['/login']);
   }
 }
