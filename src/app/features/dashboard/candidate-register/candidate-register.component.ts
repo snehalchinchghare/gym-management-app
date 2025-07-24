@@ -33,6 +33,7 @@ export class CandidateRegisterComponent implements OnInit {
       fullName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       mobile: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+      dob: ['', Validators.required],
       packageType: [{ value: '', disabled: true }, Validators.required],
       serviceType: ['', Validators.required],
       personalTraining: [0.00, [Validators.required, Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$')]],
@@ -89,6 +90,7 @@ export class CandidateRegisterComponent implements OnInit {
         fullName: formData.fullName,
         email: formData.email,
         mobile: formData.mobile,
+        dob: formData.dob,
         userId: this.userDetails.userId,
         createdBy: this.userDetails.userId,
         packageTypeId: Number(formData.packageType),
@@ -99,7 +101,7 @@ export class CandidateRegisterComponent implements OnInit {
         balanceAmt: Number(formData.balanceAmt),
         admissionDate: formData.admissionDate,
         startDate: formData.startDate,
-        endDate: formData.startDate
+        endDate: formData.endDate
     }
     var result = await this.supabaseService.registerCandidate(candidateData);
     if (result.success) {

@@ -81,7 +81,8 @@ export class SupabaseService {
         p_balance_amount: candidate.balanceAmt,
         p_admission_date: candidate.admissionDate,
         p_start_date: candidate.startDate,
-        p_end_date: candidate.endDate
+        p_end_date: candidate.endDate,
+        p_dob: candidate.dob
       });
 
       if (error) {
@@ -94,5 +95,17 @@ export class SupabaseService {
       console.error('Unexpected Error:', err);
       return { success: false, message: 'Unexpected error occurred' };
     }
+  }
+
+  async fetchCandidatesByUserId(userId: number) {
+    const { data, error } = await this.supabase
+      .rpc('get_candidates_by_userid', { p_userid: userId });
+  
+    if (error) {
+      console.error('Error fetching candidates:', error);
+      throw error;
+    }
+  
+    return data;
   }
 }
