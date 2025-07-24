@@ -4,8 +4,7 @@ import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthService } from '../../../core/auth.service';
 import { CommonModule } from '@angular/common';
 import { SupabaseService } from '../../supabase/common.supabase.service';
-// import { AuthService } from 'src/app/core/services/auth.service';
-// import { ToastService } from 'src/app/shared/services/toast.service'; // optional for showing messages
+import { Toast } from 'bootstrap';
 
 @Component({
   selector: 'app-login',
@@ -35,11 +34,12 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
-      if (params['reason'] === 'c') {
-        this.errorMessage = 'Please login to access the requested page.';
+      if (params['reason'] === 'unauthorized') {
+        this.showToast('Please login to access the requested page.');
       }
     });
   }
+
 
   async onLogin() {
     if (this.loginForm.invalid) return;
@@ -64,4 +64,15 @@ export class LoginComponent implements OnInit {
       this.errorMessage = 'Invalid email or password!';
     }
   }
+
+  showToast(message: string) {
+    const toastEl = document.getElementById('loginToast');
+    const toastBody = toastEl?.querySelector('.toast-body');
+    
+    if (toastBody) toastBody.textContent = message;
+
+    const toast = new Toast(toastEl!);
+    toast.show();
+  }
+
 }
