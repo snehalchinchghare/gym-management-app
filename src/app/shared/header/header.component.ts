@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
+import { CandidateRegisterComponent } from '../../features/dashboard/candidate-register/candidate-register.component';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterModule, CommonModule],
+  imports: [RouterModule, CommonModule, CandidateRegisterComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
@@ -29,6 +30,7 @@ export class HeaderComponent implements OnInit {
 
   logout() {
     localStorage.removeItem('adminUser');
-    this.router.navigate(['/auth/login']);
+    localStorage.removeItem('adminToken');
+    this.router.navigate(['/login']);
   }
 }

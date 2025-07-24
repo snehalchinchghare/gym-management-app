@@ -1,0 +1,19 @@
+.container {
+  padding-bottom: 100px; // ensures no overlap with footer
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+.form-label {
+  font-weight: 600;
+  color: #333;
+}
+
+.form-check-label {
+  margin-left: 0.25rem;
+  color: #555;
+}
