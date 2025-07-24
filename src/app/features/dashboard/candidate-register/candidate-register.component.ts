@@ -33,11 +33,12 @@ export class CandidateRegisterComponent implements OnInit {
       fullName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       mobile: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-      package: [{ value: '', disabled: true }, Validators.required],
+      packageType: [{ value: '', disabled: true }, Validators.required],
       serviceType: ['', Validators.required],
-      totalAmt: ['', [Validators.required, Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$')]],
-      paidAmt: ['', [Validators.required, Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$')]],
-      balanceAmt: [{ value: '', disabled: true }, [Validators.required, Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$')]],
+      personalTraining: [0.00, [Validators.required, Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$')]],
+      totalAmt: [0.00, [Validators.required, Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$')]],
+      paidAmt: [0.00, [Validators.required, Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$')]],
+      balanceAmt: [{ value: 0.00, disabled: true }, [Validators.required, Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$')]],
       admissionDate: [today, Validators.required],
       startDate: [today, Validators.required],
       endDate: [{ value: '', disabled: true }, Validators.required]
@@ -48,15 +49,15 @@ export class CandidateRegisterComponent implements OnInit {
 
     this.registerForm.get('serviceType')?.valueChanges.subscribe(serviceTypeId => {
       if (serviceTypeId) {
-        this.registerForm.get('package')?.enable();
+        this.registerForm.get('packageType')?.enable();
       } else {
-        this.registerForm.get('package')?.disable();
+        this.registerForm.get('packageType')?.disable();
         this.registerForm.patchValue({ totalAmt: '' });
         this.registerForm.patchValue({ package: '' });
       }
     });
 
-    this.registerForm.get('package')?.valueChanges.subscribe(val => {
+    this.registerForm.get('packageType')?.valueChanges.subscribe(val => {
       this.calculateEndDate();
       this.setTotalAmount();
     });
@@ -80,22 +81,44 @@ export class CandidateRegisterComponent implements OnInit {
     });
   }
 
-  onRegister(): void {
+  async onRegister() {
     if (this.registerForm.invalid) return;
 
-    const formData = this.registerForm.value;
-
-    let candidates = JSON.parse(localStorage.getItem('candidates') || '[]');
-    const existingIndex = candidates.findIndex((c: any) => c.email === formData.email);
-
-    if (existingIndex !== -1) {
-      candidates[existingIndex] = formData;
+    const formData = this.registerForm.getRawValue();
+    const candidateData = {
+        fullName: formData.fullName,
+        email: formData.email,
+        mobile: formData.mobile,
+        userId: this.userDetails.userId,
+        createdBy: this.userDetails.userId,
+        packageTypeId: Number(formData.packageType),
+        serviceTypeId: Number(formData.serviceType),
+        personalTraining: formData.personalTraining,
+        totalAmt: formData.totalAmt,
+        paidAmt: formData.paidAmt,
+        balanceAmt: Number(formData.balanceAmt),
+        admissionDate: formData.admissionDate,
+        startDate: formData.startDate,
+        endDate: formData.startDate
+    }
+    var result = await this.supabaseService.registerCandidate(candidateData);
+    if (result.success) {
+      this.router.navigate(['/dashboard']);
     } else {
-      candidates.push(formData);
+      alert(result.message);
     }
 
-    localStorage.setItem('candidates', JSON.stringify(candidates));
-    this.router.navigate(['/dashboard']);
+    // let candidates = JSON.parse(localStorage.getItem('candidates') || '[]');
+    // const existingIndex = candidates.findIndex((c: any) => c.email === formData.email);
+
+    // if (existingIndex !== -1) {
+    //   candidates[existingIndex] = formData;
+    // } else {
+    //   candidates.push(formData);
+    // }
+
+    // localStorage.setItem('candidates', JSON.stringify(candidates));
+    // this.router.navigate(['/dashboard']);
   }
 
   updateBalance(): void {
@@ -107,7 +130,7 @@ export class CandidateRegisterComponent implements OnInit {
 
   calculateEndDate(): void {
     const startDateValue = this.registerForm.get('startDate')?.value;
-    const selectedPackageId = this.registerForm.get('package')?.value;
+    const selectedPackageId = this.registerForm.get('packageType')?.value;
   
     if (!startDateValue || !selectedPackageId) return;
   
@@ -129,7 +152,7 @@ export class CandidateRegisterComponent implements OnInit {
   }
 
   setTotalAmount(): void {
-    const selectedPackageId = this.registerForm.get('package')?.value;
+    const selectedPackageId = this.registerForm.get('packageType')?.value;
     const selectedServiceId = this.registerForm.get('serviceType')?.value;
     if (!this.userDetails || !selectedPackageId) return;
     

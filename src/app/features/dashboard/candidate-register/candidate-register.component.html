@@ -30,7 +30,7 @@
 
       <div class="mb-3">
         <label class="form-label">Package</label>
-        <select class="form-select" formControlName="package">
+        <select class="form-select" formControlName="packageType">
           <option value="">-- Select Package --</option>
           <option *ngFor="let pkg of packageList" [value]="pkg.packagetypeid">
             {{ pkg.packagename }}
@@ -39,18 +39,23 @@
       </div>
 
       <div class="mb-3">
+        <label class="form-label">Personal Training Amount</label>
+        <input type="number" class="form-control" formControlName="personalTraining" />
+      </div>
+
+      <div class="mb-3">
         <label class="form-label">Total Amount</label>
-        <input type="text" class="form-control" formControlName="totalAmt" readonly />
+        <input type="number" class="form-control" formControlName="totalAmt" readonly />
       </div>
 
       <div class="mb-3">
         <label class="form-label">Paid Amount</label>
-        <input type="text" class="form-control" formControlName="paidAmt" />
+        <input type="number" class="form-control" formControlName="paidAmt" />
       </div>
 
       <div class="mb-3">
         <label class="form-label">Balance Amount</label>
-        <input type="text" class="form-control" formControlName="balanceAmt" readonly />
+        <input type="number" class="form-control" formControlName="balanceAmt" readonly />
       </div>
 
       <div class="mb-3">

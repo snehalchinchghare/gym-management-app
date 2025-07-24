@@ -64,4 +64,35 @@ export class SupabaseService {
       return data;
     }
   }
+
+  async registerCandidate(candidate: any): Promise<{ success: boolean; message: string }> {
+    try {
+      const { data, error } = await this.supabase.rpc('register_candidate', {
+        p_full_name: candidate.fullName,
+        p_email: candidate.email,
+        p_mobile: candidate.mobile,
+        p_userid: candidate.userId,
+        p_createdby: candidate.createdBy,
+        p_packagetypeid: candidate.packageTypeId,
+        p_servicetypeid: candidate.serviceTypeId,
+        p_personaltraining: candidate.personalTraining,
+        p_total_amount: candidate.totalAmt,
+        p_paid_amount: candidate.paidAmt,
+        p_balance_amount: candidate.balanceAmt,
+        p_admission_date: candidate.admissionDate,
+        p_start_date: candidate.startDate,
+        p_end_date: candidate.endDate
+      });
+
+      if (error) {
+        console.error('RPC Error:', error);
+        return { success: false, message: error.message };
+      }
+
+      return { success: true, message: 'Registration successful!' };
+    } catch (err) {
+      console.error('Unexpected Error:', err);
+      return { success: false, message: 'Unexpected error occurred' };
+    }
+  }
 }
