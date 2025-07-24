@@ -45,9 +45,7 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.invalid) return;
 
     const { email, password } = this.loginForm.value;
-
     let data = await this.supabaseService.verifyAdminLogin(email, password);
-    
     if (data) {
       const admin = {
         fullname: data.fullname,
@@ -55,6 +53,7 @@ export class LoginComponent implements OnInit {
         gymName: data.gymname,
         packages: data.packages,
       };
+
       localStorage.setItem(this.ADMIN_KEY, JSON.stringify(admin));
       const token = btoa(`${email}:${new Date().getTime()}`);
       localStorage.setItem(this.TOKEN_KEY, token);

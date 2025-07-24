@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { SupabaseService } from '../../supabase/common.supabase.service';
+import dayjs from 'dayjs';
 
 @Component({
   selector: 'app-candidate-register',
@@ -12,28 +14,70 @@ import { Router } from '@angular/router';
 })
 export class CandidateRegisterComponent implements OnInit {
   registerForm!: FormGroup;
+  packageList: any[] = [];
+  serviceList: any[] = [];
+  userDetails: any;
+  private readonly ADMIN_KEY = 'adminUser';
 
-  constructor(private fb: FormBuilder, private router: Router) {}
+  constructor(
+    private fb: FormBuilder, 
+    private router: Router,
+    private supabaseService: SupabaseService) {}
 
   ngOnInit(): void {
+    const today = dayjs().format('YYYY-MM-DD');
+    const stored = localStorage.getItem(this.ADMIN_KEY);
+    this.userDetails = stored ? JSON.parse(stored) : null;
+
     this.registerForm = this.fb.group({
       fullName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      gymName: ['', Validators.required],
-      mobile: ['', Validators.required]
+      mobile: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+      package: [{ value: '', disabled: true }, Validators.required],
+      serviceType: ['', Validators.required],
+      totalAmt: ['', [Validators.required, Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$')]],
+      paidAmt: ['', [Validators.required, Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$')]],
+      balanceAmt: [{ value: '', disabled: true }, [Validators.required, Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$')]],
+      admissionDate: [today, Validators.required],
+      startDate: [today, Validators.required],
+      endDate: [{ value: '', disabled: true }, Validators.required]
     });
 
-    const editData = localStorage.getItem('editCandidate');
-    if (editData) {
-      const candidate = JSON.parse(editData);
-      this.registerForm.patchValue({
-        fullName: candidate.fullName,
-        email: candidate.email,
-        gymName: candidate.gymName,
-        mobile: candidate.mobile
-      });
-      localStorage.removeItem('editCandidate');
-    }
+    this.registerForm.get('totalAmt')?.valueChanges.subscribe(() => this.updateBalance());
+    this.registerForm.get('paidAmt')?.valueChanges.subscribe(() => this.updateBalance());
+
+    this.registerForm.get('serviceType')?.valueChanges.subscribe(serviceTypeId => {
+      if (serviceTypeId) {
+        this.registerForm.get('package')?.enable();
+      } else {
+        this.registerForm.get('package')?.disable();
+        this.registerForm.patchValue({ totalAmt: '' });
+        this.registerForm.patchValue({ package: '' });
+      }
+    });
+
+    this.registerForm.get('package')?.valueChanges.subscribe(val => {
+      this.calculateEndDate();
+      this.setTotalAmount();
+    });
+    this.registerForm.get('startDate')?.valueChanges.subscribe(() => this.calculateEndDate());
+    
+    // const editData = localStorage.getItem('editCandidate');
+    // if (editData) {
+    //   const candidate = JSON.parse(editData);
+    //   this.registerForm.patchValue({
+    //     fullName: candidate.fullName,
+    //     email: candidate.email,
+    //     gymName: candidate.gymName,
+    //     mobile: candidate.mobile
+    //   });
+    //   localStorage.removeItem('editCandidate');
+    // }
+
+    this.supabaseService.loadMasters().then(() => {
+      this.packageList = this.supabaseService.getPackageTypes();
+      this.serviceList = this.supabaseService.getServiceTypes();
+    });
   }
 
   onRegister(): void {
@@ -53,4 +97,51 @@ export class CandidateRegisterComponent implements OnInit {
     localStorage.setItem('candidates', JSON.stringify(candidates));
     this.router.navigate(['/dashboard']);
   }
+
+  updateBalance(): void {
+    const total = parseFloat(this.registerForm.get('totalAmt')?.value) || 0;
+    const paid = parseFloat(this.registerForm.get('paidAmt')?.value) || 0;
+    const balance = total - paid;
+    this.registerForm.patchValue({ balanceAmt: balance.toFixed(2) });
+  }
+
+  calculateEndDate(): void {
+    const startDateValue = this.registerForm.get('startDate')?.value;
+    const selectedPackageId = this.registerForm.get('package')?.value;
+  
+    if (!startDateValue || !selectedPackageId) return;
+  
+    const selectedPackage = this.packageList.find(p => p.packagetypeid === +selectedPackageId);
+    if (!selectedPackage) return;
+  
+    const packageMonthsMap: { [key: string]: number } = {
+      'monthly': 1,
+      'quarterly': 3,
+      'half yearly': 6,
+      'yearly': 12
+    };
+  
+    const monthsToAdd = packageMonthsMap[selectedPackage.packagename.toLowerCase()];
+    if (!monthsToAdd) return;
+  
+    const newEndDate = dayjs(startDateValue).add(monthsToAdd, 'month').format('YYYY-MM-DD');
+    this.registerForm.patchValue({ endDate: newEndDate });
+  }
+
+  setTotalAmount(): void {
+    const selectedPackageId = this.registerForm.get('package')?.value;
+    const selectedServiceId = this.registerForm.get('serviceType')?.value;
+    if (!this.userDetails || !selectedPackageId) return;
+    
+    const packageInfo = this.userDetails.packages.find(
+      (p: any) => p.packagetypeid === +selectedPackageId && p.servicetypeid === +selectedServiceId
+    );
+  
+    if (packageInfo) {
+      this.registerForm.patchValue({ totalAmt: packageInfo.price });
+    } else {
+      this.registerForm.patchValue({ totalAmt: '' });
+    }
+  }
 }
+

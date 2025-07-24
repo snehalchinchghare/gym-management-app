@@ -14,13 +14,58 @@
       </div>
 
       <div class="mb-3">
-        <label class="form-label">Gym Name</label>
-        <input type="text" class="form-control" formControlName="gymName" />
-      </div>
-
-      <div class="mb-4">
         <label class="form-label">Mobile</label>
         <input type="text" class="form-control" formControlName="mobile" />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Service Type</label>
+        <select class="form-select" formControlName="serviceType">
+          <option value="">-- Select Service --</option>
+          <option *ngFor="let service of serviceList" [value]="service.servicetypeid">
+            {{ service.servicename }}
+          </option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Package</label>
+        <select class="form-select" formControlName="package">
+          <option value="">-- Select Package --</option>
+          <option *ngFor="let pkg of packageList" [value]="pkg.packagetypeid">
+            {{ pkg.packagename }}
+          </option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Total Amount</label>
+        <input type="text" class="form-control" formControlName="totalAmt" readonly />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Paid Amount</label>
+        <input type="text" class="form-control" formControlName="paidAmt" />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Balance Amount</label>
+        <input type="text" class="form-control" formControlName="balanceAmt" readonly />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Admission Date</label>
+        <input type="date" class="form-control" formControlName="admissionDate" />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Start Date</label>
+        <input type="date" class="form-control" formControlName="startDate" />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">End Date</label>
+        <input type="date" class="form-control" formControlName="endDate" readonly />
       </div>
 
       <div class="d-grid">

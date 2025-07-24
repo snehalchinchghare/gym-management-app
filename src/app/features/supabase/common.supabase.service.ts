@@ -58,7 +58,7 @@ export class SupabaseService {
       console.error('Login failed:', error);
     } else if (data?.error) {
       console.error('Invalid credentials');
-      return {};
+      return undefined;
     } else {
       console.log('Logged-in user:', data);
       return data;
