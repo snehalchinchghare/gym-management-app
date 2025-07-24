@@ -4,22 +4,36 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class AuthService {
+  private readonly TOKEN_KEY = 'adminToken';
+  private readonly ADMIN_KEY = 'adminUser';
 
-  constructor() { }
+  registerAdmin(adminData: { email: string; password: string }): boolean {
+    const existingAdmin = localStorage.getItem(this.ADMIN_KEY);
+    if (!existingAdmin) {
+      localStorage.setItem(this.ADMIN_KEY, JSON.stringify(adminData));
+      return true;
+    }
+    return false; // already registered
+  }
 
   login(email: string, password: string): boolean {
-    if (email === 'admin@gmail.com' && password === 'admin123') {
-      localStorage.setItem('adminLoggedIn', 'true');
+    const admin = localStorage.getItem(this.ADMIN_KEY);
+    if (!admin) return false;
+
+    const storedAdmin = JSON.parse(admin);
+    if (storedAdmin.email === email && storedAdmin.password === password) {
+      const token = btoa(`${email}:${new Date().getTime()}`);
+      localStorage.setItem(this.TOKEN_KEY, token);
       return true;
     }
     return false;
   }
 
-  isLoggedIn(): boolean {
-    return localStorage.getItem('adminLoggedIn') === 'true';
+  logout(): void {
+    localStorage.removeItem(this.TOKEN_KEY);
   }
 
-  logout(): void {
-    localStorage.removeItem('adminLoggedIn');
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem(this.TOKEN_KEY);
   }
 }

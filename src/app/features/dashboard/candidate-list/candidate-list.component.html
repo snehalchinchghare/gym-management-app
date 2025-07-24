@@ -1,0 +1,54 @@
+<!-- TABLE VIEW for large screens -->
+<div class="table-responsive d-none d-md-block">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Service</th>
+        <th>Package</th>
+        <th>Balance Amount</th>
+        <th>End Date</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let candidate of registeredCandidates">
+        <td [ngStyle]="getCellStyle(candidate.end_date)">{{ candidate.full_name }}</td>
+        <td [ngStyle]="getCellStyle(candidate.end_date)">{{ candidate.servicetype_name }}</td>
+        <td [ngStyle]="getCellStyle(candidate.end_date)">{{ candidate.packagetype_name }}</td>
+        <td [ngStyle]="getCellStyle(candidate.end_date)">{{ candidate.balance_amount }}</td>
+        <td [ngStyle]="getCellStyle(candidate.end_date)">{{ candidate.end_date }}</td>
+        <td [ngStyle]="getCellStyle(candidate.end_date)">
+          <button class="btn btn-primary btn-sm me-2" (click)="editCandidate(candidate)">Edit</button>
+          <!-- <button class="btn btn-danger btn-sm" (click)="deleteCandidate(candidate)">Delete</button> -->
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- CARD VIEW for small screens -->
+<div class="d-block d-md-none">
+  <div *ngFor="let candidate of registeredCandidates" class="candidate-card card shadow-sm border-0 mb-4">
+    <div class="card-body position-relative" [ngStyle]="getCellStyle(candidate.end_date)">
+      <h5 class="card-title fw-bold">{{ candidate.full_name }}</h5>
+      <hr>
+      <ul class="list-unstyled mb-3">
+        <li><strong>Service : </strong> {{ candidate.servicetype_name }}</li>
+        <li><strong>Package : </strong> {{ candidate.packagetype_name }}</li>
+        <li><strong>Balance Amount : </strong> {{ candidate.balance_amount }}</li>
+        <li><strong>End Date : </strong> {{ candidate.end_date }}</li>
+      </ul>
+      <div class="d-flex justify-content-end gap-2">
+        <button class="btn btn-outline-primary btn-sm" (click)="editCandidate(candidate)">
+          <i class="bi bi-pencil"></i> Edit
+        </button>
+        <!-- <button class="btn btn-outline-danger btn-sm" (click)="deleteCandidate(candidate)">
+          <i class="bi bi-trash"></i> Delete
+        </button> -->
+      </div>
+    </div>
+  </div>
+
+
+</div>
