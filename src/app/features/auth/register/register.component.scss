@@ -1,3 +1,6 @@
-.card {
-  border-radius: 12px;
+.container {
+  max-width: 800px;
+}
+input.ng-invalid.ng-touched {
+  border-color: #dc3545;
 }
