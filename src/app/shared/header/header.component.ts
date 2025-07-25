@@ -1,36 +1,41 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { CandidateRegisterComponent } from '../../features/dashboard/candidate-register/candidate-register.component';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterModule, CommonModule, CandidateRegisterComponent],
+  imports: [RouterModule, CommonModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
 export class HeaderComponent implements OnInit {
   adminName: string = '';
+  gymName: string = '';
+  gymLogo: string = '';
   isDashboardRoute: boolean = false;
+  private readonly ADMIN_KEY = 'adminUser';
+  private readonly TOKEN_KEY = 'adminToken';
 
   constructor(public router: Router) {}
 
   ngOnInit(): void {
-    const admin = localStorage.getItem('adminUser');
+    const admin = localStorage.getItem(this.ADMIN_KEY);
     if (admin) {
       const parsed = JSON.parse(admin);
-      this.adminName = parsed.fullName?.split('')[0] || '';
+      this.adminName = parsed.fullname;
+      this.gymName = parsed.gymName;
+      this.gymLogo = parsed.gymLogo;
     }
 
-    this.router.events.subscribe(() => {
-      this.isDashboardRoute = this.router.url.includes('/dashboard');
-    });
+    // this.router.events.subscribe(() => {
+    //   this.isDashboardRoute = this.router.url.includes('/dashboard');
+    // });
   }
 
   logout() {
-    localStorage.removeItem('adminUser');
-    localStorage.removeItem('adminToken');
+    localStorage.removeItem(this.ADMIN_KEY);
+    localStorage.removeItem(this.TOKEN_KEY);
     this.router.navigate(['/login']);
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthService } from '../../../core/auth.service';
@@ -52,6 +52,7 @@ export class LoginComponent implements OnInit {
         fullname: data.fullname,
         email: data.email,
         gymName: data.gymname,
+        gymLogo: data.gymlogo,
         packages: data.packages,
       };
 
@@ -74,5 +75,4 @@ export class LoginComponent implements OnInit {
     const toast = new Toast(toastEl!);
     toast.show();
   }
-
 }

@@ -70,6 +70,29 @@
         </div>
       </div>
 
+      <!-- Gym Logo -->
+      <div class="mb-3">
+        <label class="form-label">Gym Logo</label>
+        <input
+          type="file"
+          class="form-control"
+          accept="image/*"
+          (change)="onFileSelected($event)"
+          formControlName="gymLogo"
+          placeholder=""
+        />
+        <div
+          class="text-danger small mt-1"
+          *ngIf="
+            registerForm.get('gymLogo')?.touched &&
+            registerForm.get('gymLogo')?.invalid && 
+            fileError
+          "
+        >
+          Gym Logo is required (image formats only)
+        </div>
+      </div>
+
       <!-- Accordion Section: Packages -->
       <div class="accordion mb-3" id="packageAccordion">
         <div class="accordion-item">

@@ -62,13 +62,43 @@ export class CandidateListComponent implements OnInit {
     }
   }
 
+  getStatus(endDate: string): 'due_passed' | 'due_soon' | 'active' {
+    if (this.isExpired(endDate)) {
+      return 'due_passed';
+    } else if (this.isEndingSoon(endDate)) {
+      return 'due_soon';
+    } else {
+      return 'active';
+    }
+  }
+
   isEndingSoon(endDate: string): boolean {
     const today = dayjs();
     const targetDate = dayjs(endDate);
-    return targetDate.diff(today, 'day') <= 2;
+    return targetDate.diff(today, 'day') <= 5;
   }
 
   isExpired(endDate: string): boolean {
     return dayjs(endDate).isBefore(dayjs(), 'day');
+  }
+
+  async remindViaWhatsapp(candidate: any) {
+    let messageTemplates = await this.supabaseService.getAllTemplates();
+    let templateKey = this.getStatus(candidate.end_date);
+    const template = messageTemplates.find(t => t.template_key === templateKey).message;
+    const phoneNumber = Number(candidate.mobile);
+    const formattedDate = new Date(candidate.end_date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+    const message = template
+      .replace(/{{name}}/g, candidate.full_name)
+      .replace(/\\n/g, '\n')
+      .replace(/{{end_date}}/g, formattedDate)
+      .replace(/{{gym_name}}/g, this.userDetails.gymName);
+
+    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
   }
 }
