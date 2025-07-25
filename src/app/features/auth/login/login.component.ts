@@ -46,12 +46,14 @@ export class LoginComponent implements OnInit {
 
     const { email, password } = this.loginForm.value;
     let data = await this.supabaseService.verifyAdminLogin(email, password);
+    console.log('data', data)
     if (data) {
       const admin = {
         userId: data.userid,
         fullname: data.fullname,
         email: data.email,
         gymName: data.gymname,
+        gymLogo: data.gymlogo,
         packages: data.packages,
       };
 

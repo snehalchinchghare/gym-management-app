@@ -14,6 +14,9 @@ import { SupabaseService } from '../../supabase/common.supabase.service';
 })
 export class RegisterComponent {
   errorMessage:string | null = null;
+  fileError: boolean = false;
+  gymLogoBase64: string | null = null;
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -42,6 +45,7 @@ export class RegisterComponent {
     gymCardio_yearly: ['', Validators.required],
     password: ['', [Validators.required, Validators.minLength(6)]],
     confirmPassword: ['', Validators.required],
+    gymLogo: ['', Validators.required],
   });
 
   onRegister() {
@@ -70,7 +74,7 @@ export class RegisterComponent {
       alert('Passwords do not match!');
       return;
     }
-
+    
     const admin = {
       fullName,
       email,
@@ -84,20 +88,19 @@ export class RegisterComponent {
       gym_yearly,
       gymCardio_yearly,
       password,
+      gymLogo: this.gymLogoBase64,
     };
     
     const payload = this.mapAdminToInsertPayload(admin);
     console.log(payload);
     this.supabaseService.insertAdminUser(payload);
 
-    // Show toast
     const toastEl = document.getElementById('registerSuccessToast');
     if (toastEl) {
       const toast = new Toast(toastEl);
       toast.show();
     }
 
-    // Navigate to login after delay
     setTimeout(() => {
       this.router.navigate(['/login']);
     }, 2500);
@@ -129,6 +132,7 @@ export class RegisterComponent {
       p_gymname: admin.gymName,
       p_password: admin.password,
       p_created_by: 1,
+      p_gym_logo: admin.gymLogo,
       p_packages: packageList
     };
   }
@@ -163,5 +167,24 @@ export class RegisterComponent {
     }
 
     return `${serviceKeyPrefix}_${packageTypeKey}`;
+  }
+
+  onFileSelected(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      this.fileError = true;
+      this.registerForm.patchValue({ gymLogo: null });
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64String = reader.result as string;
+      this.gymLogoBase64 = base64String;
+    };
+  
+    reader.readAsDataURL(file); // 🔁 Reads file as Base64s
   }
 }
