@@ -22,7 +22,6 @@ export class HeaderComponent implements OnInit {
   ngOnInit(): void {
     const admin = localStorage.getItem(this.ADMIN_KEY);
     if (admin) {
-      console.log(admin);
       const parsed = JSON.parse(admin);
       this.adminName = parsed.fullname;
       this.gymName = parsed.gymName;

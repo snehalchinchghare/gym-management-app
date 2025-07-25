@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthService } from '../../../core/auth.service';
@@ -46,7 +46,6 @@ export class LoginComponent implements OnInit {
 
     const { email, password } = this.loginForm.value;
     let data = await this.supabaseService.verifyAdminLogin(email, password);
-    console.log('data', data)
     if (data) {
       const admin = {
         userId: data.userid,
@@ -76,5 +75,4 @@ export class LoginComponent implements OnInit {
     const toast = new Toast(toastEl!);
     toast.show();
   }
-
 }

@@ -93,12 +93,11 @@ export class CandidateListComponent implements OnInit {
       day: 'numeric',
     });
     const message = template
-      .replace('{{name}}', candidate.full_name)
+      .replace(/{{name}}/g, candidate.full_name)
       .replace(/\\n/g, '\n')
-      .replace('{{end_date}}', formattedDate)
-      .replace('{{gym_name}}', this.userDetails.gymName);
+      .replace(/{{end_date}}/g, formattedDate)
+      .replace(/{{gym_name}}/g, this.userDetails.gymName);
 
-      console.log(message);
     const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
   }

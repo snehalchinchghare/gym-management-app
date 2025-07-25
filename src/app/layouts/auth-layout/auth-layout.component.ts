@@ -10,7 +10,6 @@ import { RouterModule, RouterOutlet } from '@angular/router';
 })
 export class AuthLayoutComponent {
   constructor(){
-    console.log('I am in Auth Layout');
   }
 
 }

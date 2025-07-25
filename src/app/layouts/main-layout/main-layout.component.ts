@@ -12,8 +12,6 @@ import { FooterComponent } from '../../shared/footer/footer.component';
 })
 export class MainLayoutComponent {
   constructor(){
-    console.log('I am in Main Layout');
-    
   }
 
 }

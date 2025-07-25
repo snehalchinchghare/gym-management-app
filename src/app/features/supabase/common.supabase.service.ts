@@ -60,7 +60,6 @@ export class SupabaseService {
       console.error('Invalid credentials');
       return undefined;
     } else {
-      console.log('Logged-in user:', data);
       return data;
     }
   }

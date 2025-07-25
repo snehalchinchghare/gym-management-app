@@ -92,7 +92,6 @@ export class RegisterComponent {
     };
     
     const payload = this.mapAdminToInsertPayload(admin);
-    console.log(payload);
     this.supabaseService.insertAdminUser(payload);
 
     const toastEl = document.getElementById('registerSuccessToast');

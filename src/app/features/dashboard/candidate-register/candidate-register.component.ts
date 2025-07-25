@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router } from '@angular/router';
 import { SupabaseService } from '../../supabase/common.supabase.service';
 import dayjs from 'dayjs';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 @Component({
   selector: 'app-candidate-register',
@@ -167,6 +169,22 @@ export class CandidateRegisterComponent implements OnInit {
     } else {
       this.registerForm.patchValue({ totalAmt: '' });
     }
+  }
+
+  generatePDF() {
+    const element = document.getElementById('print-section');
+    if (!element) return;
+  
+    html2canvas(element).then(canvas => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+  
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save('receipt.pdf');
+    });
   }
 }
 
