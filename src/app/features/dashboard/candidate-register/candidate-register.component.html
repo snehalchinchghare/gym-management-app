@@ -34,9 +34,9 @@
       </div>
 
       <div class="mb-3">
-        <label class="form-label">Package</label>
+        <label class="form-label">Membership</label>
         <select class="form-select" formControlName="packageType">
-          <option value="">-- Select Package --</option>
+          <option value="">-- Select Membership --</option>
           <option *ngFor="let pkg of packageList" [value]="pkg.packagetypeid">
             {{ pkg.packagename }}
           </option>
@@ -44,8 +44,8 @@
       </div>
 
       <div class="mb-3">
-        <label class="form-label">Personal Training Amount</label>
-        <input type="number" class="form-control" formControlName="personalTraining" />
+        <label class="form-label">Admission Fee</label>
+        <input type="number" class="form-control" formControlName="admissionFee" />
       </div>
 
       <div class="mb-3">

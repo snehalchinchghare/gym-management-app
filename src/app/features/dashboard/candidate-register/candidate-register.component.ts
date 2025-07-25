@@ -38,7 +38,7 @@ export class CandidateRegisterComponent implements OnInit {
       dob: ['', Validators.required],
       packageType: [{ value: '', disabled: true }, Validators.required],
       serviceType: ['', Validators.required],
-      personalTraining: [0.00, [Validators.required, Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$')]],
+      admissionFee: [0.00, [Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$')]],
       totalAmt: [0.00, [Validators.required, Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$')]],
       paidAmt: [0.00, [Validators.required, Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$')]],
       balanceAmt: [{ value: 0.00, disabled: true }, [Validators.required, Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$')]],
@@ -65,6 +65,7 @@ export class CandidateRegisterComponent implements OnInit {
       this.setTotalAmount();
     });
     this.registerForm.get('startDate')?.valueChanges.subscribe(() => this.calculateEndDate());
+    this.registerForm.get('admissionFee')?.valueChanges.subscribe(() => this.setTotalAmount());
     
     // const editData = localStorage.getItem('editCandidate');
     // if (editData) {
@@ -97,7 +98,7 @@ export class CandidateRegisterComponent implements OnInit {
         createdBy: this.userDetails.userId,
         packageTypeId: Number(formData.packageType),
         serviceTypeId: Number(formData.serviceType),
-        personalTraining: formData.personalTraining,
+        admissionFee: formData.admissionFee,
         totalAmt: formData.totalAmt,
         paidAmt: formData.paidAmt,
         balanceAmt: Number(formData.balanceAmt),
@@ -158,6 +159,7 @@ export class CandidateRegisterComponent implements OnInit {
   setTotalAmount(): void {
     const selectedPackageId = this.registerForm.get('packageType')?.value;
     const selectedServiceId = this.registerForm.get('serviceType')?.value;
+    const admissionFee = this.registerForm.get('admissionFee')?.value;
     if (!this.userDetails || !selectedPackageId) return;
     
     const packageInfo = this.userDetails.packages.find(
@@ -165,7 +167,7 @@ export class CandidateRegisterComponent implements OnInit {
     );
   
     if (packageInfo) {
-      this.registerForm.patchValue({ totalAmt: packageInfo.price });
+      this.registerForm.patchValue({ totalAmt: packageInfo.price + admissionFee });
     } else {
       this.registerForm.patchValue({ totalAmt: '' });
     }

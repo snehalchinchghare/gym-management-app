@@ -37,12 +37,20 @@ export class RegisterComponent {
     gymName: ['', Validators.required],
     gym_monthly: ['', Validators.required],
     gymCardio_monthly: ['', Validators.required],
+    cardio_monthly: ['', Validators.required],
     gym_quarterly: ['', Validators.required],
     gymCardio_quarterly: ['', Validators.required],
+    cardio_quarterly: ['', Validators.required],
     gym_halfYearly: ['', Validators.required],
     gymCardio_halfYearly: ['', Validators.required],
+    cardio_halfYearly: ['', Validators.required],
     gym_yearly: ['', Validators.required],
     gymCardio_yearly: ['', Validators.required],
+    cardio_yearly: ['', Validators.required],
+    pt_monthly: ['', Validators.required],
+    pt_quarterly: ['', Validators.required],
+    pt_halfYearly: ['', Validators.required],
+    pt_yearly: ['', Validators.required],
     password: ['', [Validators.required, Validators.minLength(6)]],
     confirmPassword: ['', Validators.required],
     gymLogo: ['', Validators.required],
@@ -60,12 +68,20 @@ export class RegisterComponent {
       gymName,
       gym_monthly,
       gymCardio_monthly,
+      cardio_monthly,
       gym_quarterly,
       gymCardio_quarterly,
+      cardio_quarterly,
       gym_halfYearly,
       gymCardio_halfYearly,
+      cardio_halfYearly,
       gym_yearly,
       gymCardio_yearly,
+      cardio_yearly,
+      pt_monthly,
+      pt_quarterly,
+      pt_halfYearly,
+      pt_yearly,
       password,
       confirmPassword,
     } = this.registerForm.value;
@@ -81,17 +97,26 @@ export class RegisterComponent {
       gymName,
       gym_monthly,
       gymCardio_monthly,
+      cardio_monthly,
       gym_quarterly,
       gymCardio_quarterly,
+      cardio_quarterly,
       gym_halfYearly,
       gymCardio_halfYearly,
+      cardio_halfYearly,
       gym_yearly,
       gymCardio_yearly,
+      cardio_yearly,
+      pt_monthly,
+      pt_quarterly,
+      pt_halfYearly,
+      pt_yearly,
       password,
       gymLogo: this.gymLogoBase64,
     };
     
     const payload = this.mapAdminToInsertPayload(admin);
+    console.log(payload);
     this.supabaseService.insertAdminUser(payload);
 
     const toastEl = document.getElementById('registerSuccessToast');
@@ -145,6 +170,12 @@ export class RegisterComponent {
         break;
       case 'Gym + Cardio':
         serviceKeyPrefix = 'gymCardio';
+        break;
+      case 'Cardio':
+        serviceKeyPrefix = 'cardio';
+        break;
+      case 'Personal Trainer':
+        serviceKeyPrefix = 'pt';
         break;
     }
 
