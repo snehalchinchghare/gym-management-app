@@ -52,7 +52,6 @@ export class LoginComponent implements OnInit {
         fullname: data.fullname,
         email: data.email,
         gymName: data.gymname,
-        gymLogo: data.gymlogo,
         packages: data.packages,
       };
 

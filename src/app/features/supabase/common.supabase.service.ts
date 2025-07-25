@@ -121,4 +121,19 @@ export class SupabaseService {
 
     return data || [];
   }
+
+  async getGymLogoByUserId(userId: string) {
+    const { data, error } = await this.supabase
+      .from('users')
+      .select('gymlogo')
+      .eq('userid', userId)
+      .single();
+  
+    if (error) {
+      console.error('Error fetching gymLogo:', error.message);
+      return null;
+    }
+  
+    return data?.gymlogo;
+  }
 }
