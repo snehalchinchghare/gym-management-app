@@ -108,4 +108,18 @@ export class SupabaseService {
   
     return data;
   }
+
+  async getAllTemplates(): Promise<any[]> {
+    const { data, error } = await this.supabase
+      .from('messagetemplates')
+      .select('*')
+      .order('createdon', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching templates:', error);
+      return [];
+    }
+
+    return data || [];
+  }
 }
