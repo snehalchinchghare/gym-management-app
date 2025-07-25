@@ -74,7 +74,7 @@ export class SupabaseService {
         p_createdby: candidate.createdBy,
         p_packagetypeid: candidate.packageTypeId,
         p_servicetypeid: candidate.serviceTypeId,
-        p_personaltraining: candidate.personalTraining,
+        p_personaltraining: candidate.admissionFee,
         p_total_amount: candidate.totalAmt,
         p_paid_amount: candidate.paidAmt,
         p_balance_amount: candidate.balanceAmt,
