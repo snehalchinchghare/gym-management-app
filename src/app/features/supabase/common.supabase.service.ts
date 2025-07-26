@@ -64,7 +64,7 @@ export class SupabaseService {
     }
   }
 
-  async registerCandidate(candidate: any): Promise<{ success: boolean; message: string }> {
+  async registerCandidate(candidate: any): Promise<{ candidateid: number; success: boolean; message: string }> {
     try {
       const { data, error } = await this.supabase.rpc('register_candidate', {
         p_full_name: candidate.fullName,
@@ -86,13 +86,13 @@ export class SupabaseService {
 
       if (error) {
         console.error('RPC Error:', error);
-        return { success: false, message: error.message };
+        return { candidateid: 0, success: false, message: error.message };
       }
 
-      return { success: true, message: 'Registration successful!' };
+      return { candidateid: data, success: true, message: 'Registration successful!' };
     } catch (err) {
       console.error('Unexpected Error:', err);
-      return { success: false, message: 'Unexpected error occurred' };
+      return { candidateid: 0, success: false, message: 'Unexpected error occurred' };
     }
   }
 
@@ -135,5 +135,20 @@ export class SupabaseService {
     }
   
     return data?.gymlogo;
+  }
+
+  async getCandidateDetailsById(candidateid: any, startdate: any = null, enddate: any = null){
+    const { data, error } = await this.supabase.rpc('get_candidate_details_by_id', {
+      p_candidateid: candidateid,
+      p_start_date: startdate,
+      p_end_date: enddate
+    });
+
+    if (error) {
+      console.error('Error fetching gymLogo:', error.message);
+      return null;
+    }
+  
+    return data;
   }
 }

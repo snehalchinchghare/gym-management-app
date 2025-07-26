@@ -19,7 +19,8 @@
         <td [ngStyle]="getCellStyle(candidate.end_date)">{{ candidate.balance_amount }}</td>
         <td [ngStyle]="getCellStyle(candidate.end_date)">{{ candidate.end_date }}</td>
         <td [ngStyle]="getCellStyle(candidate.end_date)">
-          <button class="btn btn-primary btn-sm me-2" (click)="editCandidate(candidate)">Edit</button>
+          <button class="btn btn-primary btn-sm me-2" (click)="editCandidate(candidate)">View</button>
+          <button class="btn btn-primary btn-sm me-2" (click)="sendLatestReceipt(candidate)">Receipt</button>
           <button class="btn btn-primary btn-sm me-2"
             *ngIf="getStatus(candidate.end_date) != 'active'" (click)="remindViaWhatsapp(candidate)">Remind</button>
           <!-- <button class="btn btn-danger btn-sm" (click)="deleteCandidate(candidate)">Delete</button> -->

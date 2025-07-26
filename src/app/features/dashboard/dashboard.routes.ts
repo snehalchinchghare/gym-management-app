@@ -5,6 +5,7 @@ import { SendOfferMessageComponent } from './send-offer-message/send-offer-messa
 import { UpdatePackageComponent } from './update-package/update-package.component';
 import { DeleteCandidateComponent } from './delete-candidate/delete-candidate.component';
 import { CandidateListComponent } from './candidate-list/candidate-list.component';
+import { ReceiptComponent } from './receipt/receipt.component';
 
 export const dashboardRoutes: Routes = [
   {
@@ -35,7 +36,12 @@ export const dashboardRoutes: Routes = [
       {
         path: 'candidate-list',
         component: CandidateListComponent,
-      },
+      }
+      // ,
+      // {
+      //   path: 'receipt',
+      //   component: ReceiptComponent,
+      // },
         // {
         //   path: '',
         //   redirectTo: 'candidate-list',

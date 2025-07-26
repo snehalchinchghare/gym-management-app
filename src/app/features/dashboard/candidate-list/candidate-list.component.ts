@@ -101,4 +101,19 @@ export class CandidateListComponent implements OnInit {
     const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
   }
+
+  async sendLatestReceipt(candidate: any){
+    const phoneNumber = Number(candidate.mobile);
+    console.log('candidate',candidate);
+    const data = {
+      candidateId: candidate.candidateid,
+      receiptType: 'New',
+    };
+    const encodedData = btoa(JSON.stringify(data));
+    
+    const message = `http://localhost:4200/receipt/${encodedData}`;
+
+    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
+  }
 }

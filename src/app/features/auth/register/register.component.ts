@@ -35,6 +35,7 @@ export class RegisterComponent {
     fullName: ['', [Validators.required, Validators.minLength(3)]],
     email: ['', [Validators.required, Validators.email]],
     gymName: ['', Validators.required],
+    gymAddress: ['', Validators.required],
     gym_monthly: ['', Validators.required],
     gymCardio_monthly: ['', Validators.required],
     cardio_monthly: ['', Validators.required],
@@ -66,6 +67,7 @@ export class RegisterComponent {
       fullName,
       email,
       gymName,
+      gymAddress,
       gym_monthly,
       gymCardio_monthly,
       cardio_monthly,
@@ -95,6 +97,7 @@ export class RegisterComponent {
       fullName,
       email,
       gymName,
+      gymAddress,
       gym_monthly,
       gymCardio_monthly,
       cardio_monthly,
@@ -116,7 +119,7 @@ export class RegisterComponent {
     };
     
     const payload = this.mapAdminToInsertPayload(admin);
-    console.log(payload);
+    
     this.supabaseService.insertAdminUser(payload);
 
     const toastEl = document.getElementById('registerSuccessToast');
@@ -154,6 +157,7 @@ export class RegisterComponent {
       p_fullname: admin.fullName,
       p_email: admin.email,
       p_gymname: admin.gymName,
+      p_gymaddress: admin.gymAddress,
       p_password: admin.password,
       p_created_by: 1,
       p_gym_logo: admin.gymLogo,

@@ -6,6 +6,7 @@ import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component
 import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
 import { authGuard } from './core/auth.guard';
 import { PageNotFoundComponent } from './shared/page-not-found/page-not-found.component';
+import { ReceiptComponent } from './features/dashboard/receipt/receipt.component';
 
 export const routes: Routes = [
   {
@@ -31,10 +32,14 @@ export const routes: Routes = [
             (m) => m.dashboardRoutes
           ),
       },
+      {
+        path: 'receipt/:data',
+        component: ReceiptComponent,
+      },
     ],
   },
   {
     path: '**',
     component: PageNotFoundComponent
-  }
+  },
 ];

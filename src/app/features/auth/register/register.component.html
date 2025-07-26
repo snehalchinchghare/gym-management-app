@@ -70,6 +70,26 @@
         </div>
       </div>
 
+      <!-- Gym Address -->
+      <div class="mb-3">
+        <label class="form-label">Gym Address</label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="gymAddress"
+          placeholder=""
+        />
+        <div
+          class="text-danger small mt-1"
+          *ngIf="
+            registerForm.get('gymAddress')?.touched &&
+            registerForm.get('gymAddress')?.invalid
+          "
+        >
+          Gym Address is required.
+        </div>
+      </div>
+
       <!-- Gym Logo -->
       <div class="mb-3">
         <label class="form-label">Gym Logo</label>
