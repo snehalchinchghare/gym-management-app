@@ -1,61 +1,83 @@
-<div *ngIf="errorMessage" class="alert alert-warning">
+<!-- Error Alert -->
+<div *ngIf="errorMessage" class="alert alert-warning text-center">
   {{ errorMessage }}
 </div>
 
+<!-- Login Container -->
 <div class="container d-flex justify-content-center align-items-center vh-100 bg-light">
-  <div class="card shadow-lg p-4" style="max-width: 400px; width: 100%;">
+  <div class="card shadow-lg p-4 w-100" style="max-width: 420px;">
     <h3 class="text-center text-primary mb-4">Admin Login</h3>
 
+    <!-- Login Form -->
     <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
       <!-- Email -->
       <div class="mb-3">
-        <label class="form-label">Email</label>
+        <label for="email" class="form-label">Email</label>
         <input
+          id="email"
           type="email"
           class="form-control"
           formControlName="email"
-          placeholder="admin&#64;gmail.com"
+          placeholder="admin@gmail.com"
         />
-        <div class="text-danger small mt-1" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
+        <div
+          class="text-danger small mt-1"
+          *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid"
+        >
           Please enter a valid email.
         </div>
       </div>
 
       <!-- Password -->
       <div class="mb-3">
-        <label class="form-label">Password</label>
+        <label for="password" class="form-label">Password</label>
         <input
+          id="password"
           type="password"
           class="form-control"
           formControlName="password"
           placeholder="******"
         />
-        <div class="text-danger small mt-1" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
+        <div
+          class="text-danger small mt-1"
+          *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid"
+        >
           Password is required.
         </div>
       </div>
 
-      <button class="btn btn-primary w-100" [disabled]="loginForm.invalid">Login</button>
+      <!-- Submit Button -->
+      <button
+        class="btn btn-primary w-100"
+        type="submit"
+        [disabled]="loginForm.invalid"
+      >
+        Login
+      </button>
     </form>
 
+    <!-- Register Link -->
     <div class="text-center mt-3">
-      <a routerLink="/register" class="text-decoration-none">New Admin? Register here</a>
+      <a routerLink="/register" class="text-decoration-none text-secondary">
+        New Admin? <span class="text-primary">Register here</span>
+      </a>
     </div>
   </div>
 </div>
 
-<!-- ✅ Toast Notification -->
+<!-- Toast Notification -->
 <div
   id="loginToast"
-  class="toast align-items-center text-white border-0 position-fixed bottom-0 end-0 m-4 bg-danger"
+  class="toast align-items-center text-white border-0 bg-danger position-fixed bottom-0 end-0 m-4"
   role="alert"
   aria-live="assertive"
   aria-atomic="true"
-  style="z-index: 9999;"
+  style="z-index: 9999; min-width: 250px;"
 >
   <div class="d-flex">
     <div class="toast-body">
       <!-- Toast message will be injected dynamically -->
+      Invalid login credentials. Please try again.
     </div>
     <button
       type="button"
