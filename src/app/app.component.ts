@@ -1,22 +1,20 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { SupabaseService } from './features/supabase/common.supabase.service';
+import { LoaderService } from './features/services/loader.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, CommonModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
   title = 'gym-management';
 
-  constructor(private supabaseService: SupabaseService) {}
+  constructor(public loaderService: LoaderService) {}
 
   ngOnInit(): void {
-    this.supabaseService.loadMasters().then(() => {
-      console.log('Masters loaded:', this.supabaseService.masters);
-    });
   }
 }

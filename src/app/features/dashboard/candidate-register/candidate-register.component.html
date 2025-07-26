@@ -1,6 +1,6 @@
 <div class="container d-flex justify-content-center align-items-center min-vh-100">
   <div class="card shadow-lg p-4 w-100" style="max-width: 500px;">
-    <h3 class="text-center mb-4">Register New Candidate</h3>
+    <h3 class="text-center mb-4">Add New Membership</h3>
 
     <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
       <div class="mb-3">
@@ -84,54 +84,3 @@
     </form>
   </div>
 </div>
-
-<!-- 
-<div id="print-section" 
-  style="position: absolute; left: -9999px; width: 600px; padding: 20px; border: 1px solid #000;"> -->
-  <!-- <div id="print-section" 
-  style="width: 60%; padding: 20px; border: 1px solid #000;">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-3">
-        <div style="text-align: center;" *ngIf="gymLogo != ''">
-          <img [src]="gymLogo" alt="Preview" height="170" />
-        </div>
-      </div>
-      <div class="col-md-8">
-        <br />
-        <h2 style="text-align:center;"><strong>{{ userDetails.gymName }}</strong></h2>
-        <h2 style="text-align:center; font-size: larger;">{{ userDetails.gymAddress }}</h2>
-        <h2 style="text-align:center; font-size: larger;">{{ userDetails.gymmobile }}</h2>
-      </div>
-    </div>
-  </div>
-
-  <div style="text-align: center;" *ngIf="gymLogo != ''">
-    <img [src]="gymLogo" alt="Preview" height="100" />
-  </div>
-  
-  <p><strong>Sr. No:</strong> 528</p>
-  <p><strong>Date:</strong> 12-02-2025 </p>
-  <p><strong>Received from:</strong> Mr./Mrs./Miss Swapnil Wasnik</p>
-  <p><strong>Amount:</strong> ₹2000</p>
-  <p><strong>Balance:</strong> Paid</p>
-
-  <h4>Membership</h4>
-  <table style="width: 100%; border-collapse: collapse;" border="1">
-    <tr>
-      <th>Program</th>
-      <th>Duration</th>
-      <th>Payment Mode</th>
-    </tr>
-    <tr>
-      <td>Gym</td>
-      <td>Monthly</td>
-      <td>Cash</td>
-    </tr>
-  </table>
-
-  <p style="margin-top: 20px; font-size: 12px;">
-    Admission Fee is one time only. Neither transferable nor refundable.<br />
-    Membership Fee is non-transferable & non-refundable in any case.
-  </p>
-</div> -->

@@ -2,9 +2,9 @@ import { CommonModule } from "@angular/common";
 import { Component, Input } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 import { SupabaseService } from "../../supabase/common.supabase.service";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
+import jsPDF from 'jspdf';
 
 @Component({
     imports: [CommonModule, ReactiveFormsModule, RouterModule],
@@ -40,30 +40,37 @@ import { ActivatedRoute, Router, RouterModule } from "@angular/router";
     if(candidates){
       this.candidateData = candidates[0];
     }
-
-    setTimeout(() => this.generatePDF(), 500);
-    console.log('called');
-    setTimeout(() => {
-      window.close();
-    }, 1500);
   }
 
   generatePDF() {
     const element = document.getElementById('print-section');
-    if (!element) return;
-  
-    html2canvas(element).then(canvas => {
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'pt', 'a4');
-      const imgProps = pdf.getImageProperties(imgData);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-  
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save('receipt.pdf');
-      setTimeout(() => {
-        window.location.href = '/close-page'; // show thank-you or close prompt
-      }, 100);
+    if (element) {
+      element.style.width = '800px';
+      element.style.transform = 'scale(1)';
+      element.style.transformOrigin = 'top left';
+    
+      html2canvas(element, {
+        scale: 2,
+        width: 800
+      }).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'pt', 'a4');
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+    
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save('receipt.pdf');
+      });
+    }
+    
+  }
+
+  formatDate(date: any): String {
+    return new Date(date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
     });
   }
 

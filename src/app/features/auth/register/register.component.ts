@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import Toast from 'bootstrap/js/dist/toast';
 import { SupabaseService } from '../../supabase/common.supabase.service';
+import { LoaderService } from '../../services/loader.service';
 
 @Component({
   selector: 'app-register',
@@ -13,7 +14,7 @@ import { SupabaseService } from '../../supabase/common.supabase.service';
   styleUrl: './register.component.scss',
 })
 export class RegisterComponent {
-  errorMessage:string | null = null;
+  errorMessage: string | null = null;
   fileError: boolean = false;
   gymLogoBase64: string | null = null;
 
@@ -21,9 +22,10 @@ export class RegisterComponent {
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    private supabaseService: SupabaseService) {}
+    private supabaseService: SupabaseService,
+    private loader: LoaderService) { }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.route.queryParams.subscribe(params => {
       if (params['reason'] === 'unauthorized') {
         this.errorMessage = 'Please login to access the requested page.';
@@ -57,92 +59,99 @@ export class RegisterComponent {
     gymLogo: ['', Validators.required],
   });
 
-  onRegister() {
-    if (this.registerForm.invalid) {
-      this.registerForm.markAllAsTouched();
-      return;
+  async onRegister() {
+    try {
+      this.loader.show();
+      if (this.registerForm.invalid) {
+        this.registerForm.markAllAsTouched();
+        return;
+      }
+
+      const {
+        fullName,
+        email,
+        gymName,
+        gymAddress,
+        gym_monthly,
+        gymCardio_monthly,
+        cardio_monthly,
+        gym_quarterly,
+        gymCardio_quarterly,
+        cardio_quarterly,
+        gym_halfYearly,
+        gymCardio_halfYearly,
+        cardio_halfYearly,
+        gym_yearly,
+        gymCardio_yearly,
+        cardio_yearly,
+        pt_monthly,
+        pt_quarterly,
+        pt_halfYearly,
+        pt_yearly,
+        password,
+        confirmPassword,
+      } = this.registerForm.value;
+
+      if (password !== confirmPassword) {
+        alert('Passwords do not match!');
+        return;
+      }
+
+      const admin = {
+        fullName,
+        email,
+        gymName,
+        gymAddress,
+        gym_monthly,
+        gymCardio_monthly,
+        cardio_monthly,
+        gym_quarterly,
+        gymCardio_quarterly,
+        cardio_quarterly,
+        gym_halfYearly,
+        gymCardio_halfYearly,
+        cardio_halfYearly,
+        gym_yearly,
+        gymCardio_yearly,
+        cardio_yearly,
+        pt_monthly,
+        pt_quarterly,
+        pt_halfYearly,
+        pt_yearly,
+        password,
+        gymLogo: this.gymLogoBase64,
+      };
+
+      const payload = await this.mapAdminToInsertPayload(admin);
+
+      this.supabaseService.insertAdminUser(payload);
+
+      const toastEl = document.getElementById('registerSuccessToast');
+      if (toastEl) {
+        const toast = new Toast(toastEl);
+        toast.show();
+      }
+
+      setTimeout(() => {
+        this.router.navigate(['/login']);
+      }, 2500);
+    }
+    finally {
+      this.loader.hide();
     }
 
-    const {
-      fullName,
-      email,
-      gymName,
-      gymAddress,
-      gym_monthly,
-      gymCardio_monthly,
-      cardio_monthly,
-      gym_quarterly,
-      gymCardio_quarterly,
-      cardio_quarterly,
-      gym_halfYearly,
-      gymCardio_halfYearly,
-      cardio_halfYearly,
-      gym_yearly,
-      gymCardio_yearly,
-      cardio_yearly,
-      pt_monthly,
-      pt_quarterly,
-      pt_halfYearly,
-      pt_yearly,
-      password,
-      confirmPassword,
-    } = this.registerForm.value;
-
-    if (password !== confirmPassword) {
-      alert('Passwords do not match!');
-      return;
-    }
-    
-    const admin = {
-      fullName,
-      email,
-      gymName,
-      gymAddress,
-      gym_monthly,
-      gymCardio_monthly,
-      cardio_monthly,
-      gym_quarterly,
-      gymCardio_quarterly,
-      cardio_quarterly,
-      gym_halfYearly,
-      gymCardio_halfYearly,
-      cardio_halfYearly,
-      gym_yearly,
-      gymCardio_yearly,
-      cardio_yearly,
-      pt_monthly,
-      pt_quarterly,
-      pt_halfYearly,
-      pt_yearly,
-      password,
-      gymLogo: this.gymLogoBase64,
-    };
-    
-    const payload = this.mapAdminToInsertPayload(admin);
-    
-    this.supabaseService.insertAdminUser(payload);
-
-    const toastEl = document.getElementById('registerSuccessToast');
-    if (toastEl) {
-      const toast = new Toast(toastEl);
-      toast.show();
-    }
-
-    setTimeout(() => {
-      this.router.navigate(['/login']);
-    }, 2500);
   }
 
-  mapAdminToInsertPayload(admin: any) {
-    const packages = this.supabaseService.getPackageTypes();  
-    const services = this.supabaseService.getServiceTypes();
+  async mapAdminToInsertPayload(admin: any) {
+    const packages = await this.supabaseService.getPackageTypes();
+    const services = await this.supabaseService.getServiceTypes();
     const packageList = [];
-  
+
     for (const p of packages) {
       for (const s of services) {
         const key = this.getKeyName(p.packagename, s.servicename);
         const price = admin[key];
-    
+
         if (price !== undefined && price !== null && price !== '') {
           packageList.push({
             PackageTypeId: p.packagetypeid,
@@ -152,7 +161,7 @@ export class RegisterComponent {
         }
       }
     }
-  
+
     return {
       p_fullname: admin.fullName,
       p_email: admin.email,
@@ -168,7 +177,7 @@ export class RegisterComponent {
   getKeyName(packageName: any, serviceName: any) {
     let serviceKeyPrefix = '';
 
-    switch(serviceName){
+    switch (serviceName) {
       case 'Gym':
         serviceKeyPrefix = 'gym';
         break;
@@ -185,7 +194,7 @@ export class RegisterComponent {
 
     let packageTypeKey = '';
 
-    switch(packageName){
+    switch (packageName) {
       case 'Monthly':
         packageTypeKey = 'monthly';
         break;
@@ -218,7 +227,7 @@ export class RegisterComponent {
       const base64String = reader.result as string;
       this.gymLogoBase64 = base64String;
     };
-  
-    reader.readAsDataURL(file); // 🔁 Reads file as Base64s
+
+    reader.readAsDataURL(file);
   }
 }

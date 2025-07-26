@@ -16,6 +16,7 @@ export class CandidateListComponent implements OnInit {
   registeredCandidates: any[] = [];
   userDetails: any;
   private readonly ADMIN_KEY = 'adminUser';
+  messageTemplates: any[] = [];
 
   constructor(
     private router: Router,
@@ -29,6 +30,7 @@ export class CandidateListComponent implements OnInit {
       dayjs(a.end_date).isAfter(dayjs(b.end_date)) ? 1 : -1
     );
     
+    this.messageTemplates = await this.supabaseService.getAllTemplates();
   }
 
   trackByEmail(index: number, candidate: any): string {
@@ -46,10 +48,7 @@ export class CandidateListComponent implements OnInit {
   }
 
   editCandidate(candidate: any): void {
-    // Store candidate to be edited in localStorage
     localStorage.setItem('editCandidate', JSON.stringify(candidate));
-    // Navigate to registration component where you can pre-fill and update
-    // this.router.navigate(['/register']);
   }
 
   getCellStyle(endDate: string): any {
@@ -83,9 +82,8 @@ export class CandidateListComponent implements OnInit {
   }
 
   async remindViaWhatsapp(candidate: any) {
-    let messageTemplates = await this.supabaseService.getAllTemplates();
     let templateKey = this.getStatus(candidate.end_date);
-    const template = messageTemplates.find(t => t.template_key === templateKey).message;
+    const template = this.messageTemplates.find(t => t.template_key === templateKey).message;
     const phoneNumber = Number(candidate.mobile);
     const formattedDate = new Date(candidate.end_date).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -103,15 +101,33 @@ export class CandidateListComponent implements OnInit {
   }
 
   async sendLatestReceipt(candidate: any){
+    const template = this.messageTemplates.find(t => t.template_key === 'gym_receipt').message;
     const phoneNumber = Number(candidate.mobile);
-    console.log('candidate',candidate);
+    const formattedendDate = new Date(candidate.end_date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+    const formattedstartDate = new Date(candidate.start_date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
     const data = {
       candidateId: candidate.candidateid,
       receiptType: 'New',
     };
     const encodedData = btoa(JSON.stringify(data));
-    
-    const message = `http://localhost:4200/receipt/${encodedData}`;
+    const baseUrl = window.location.origin + '/';
+    let receiptLink = baseUrl + '/receipt/' + encodedData;
+    await this.supabaseService.updateReceiptLink(candidate.registrationid, receiptLink);
+    const message = template
+      .replace(/{{name}}/g, candidate.full_name)
+      .replace(/\\n/g, '\n')
+      .replace(/{{end_date}}/g, formattedendDate)
+      .replace(/{{start_date}}/g, formattedstartDate)
+      .replace(/{{gym_name}}/g, this.userDetails.gymName)
+      .replace(/{{receiptLink}}/g, receiptLink);
 
     const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');

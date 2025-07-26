@@ -27,11 +27,10 @@ export class CandidateRegisterComponent implements OnInit {
     private router: Router,
     private supabaseService: SupabaseService) {}
 
-  ngOnInit(): void {
+  async ngOnInit() {
     const today = dayjs().format('YYYY-MM-DD');
     const stored = localStorage.getItem(this.ADMIN_KEY);
     this.userDetails = stored ? JSON.parse(stored) : null;
-    console.log(this.userDetails);
     this.supabaseService.getGymLogoByUserId(this.userDetails.userId).then(logo => {
       this.gymLogo = logo;
     });
@@ -71,10 +70,8 @@ export class CandidateRegisterComponent implements OnInit {
     });
     this.registerForm.get('startDate')?.valueChanges.subscribe(() => this.calculateEndDate());
     this.registerForm.get('admissionFee')?.valueChanges.subscribe(() => this.setTotalAmount());
-    this.supabaseService.loadMasters().then(() => {
-      this.packageList = this.supabaseService.getPackageTypes();
-      this.serviceList = this.supabaseService.getServiceTypes();
-    });
+    this.packageList = await this.supabaseService.getPackageTypes();
+    this.serviceList = await this.supabaseService.getServiceTypes();
   }
 
   async onRegister() {
@@ -101,7 +98,6 @@ export class CandidateRegisterComponent implements OnInit {
 
     var result = await this.supabaseService.registerCandidate(candidateData);
     if (result.success) {
-      console.log(result.candidateid);
       this.router.navigate(['/dashboard']);
     } else {
       alert(result.message);

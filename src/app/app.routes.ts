@@ -32,10 +32,6 @@ export const routes: Routes = [
             (m) => m.dashboardRoutes
           ),
       },
-      {
-        path: 'receipt/:data',
-        component: ReceiptComponent,
-      },
     ],
   },
   {

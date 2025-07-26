@@ -5,6 +5,7 @@ import { AuthService } from '../../../core/auth.service';
 import { CommonModule } from '@angular/common';
 import { SupabaseService } from '../../supabase/common.supabase.service';
 import { Toast } from 'bootstrap';
+import { LoaderService } from '../../services/loader.service';
 
 @Component({
   selector: 'app-login',
@@ -25,6 +26,7 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private supabaseService: SupabaseService,
+    private loader: LoaderService,
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -42,36 +44,41 @@ export class LoginComponent implements OnInit {
 
 
   async onLogin() {
-    if (this.loginForm.invalid) return;
+    try {
+      this.loader.show();
+      if (this.loginForm.invalid) return;
 
-    const { email, password } = this.loginForm.value;
-    let data = await this.supabaseService.verifyAdminLogin(email, password);
-    if (data) {
-      console.log('data',data);
-      const admin = {
-        userId: data.userid,
-        fullname: data.fullname,
-        email: data.email,
-        gymName: data.gymname,
-        gymAddress: data.gymaddress,
-        gymmobile: data.gymmobile,
-        packages: data.packages,
-      };
+      const { email, password } = this.loginForm.value;
+      let data = await this.supabaseService.verifyAdminLogin(email, password);
+      if (data) {
+        const admin = {
+          userId: data.userid,
+          fullname: data.fullname,
+          email: data.email,
+          gymName: data.gymname,
+          gymAddress: data.gymaddress,
+          gymmobile: data.gymmobile,
+          packages: data.packages,
+        };
 
-      localStorage.setItem(this.ADMIN_KEY, JSON.stringify(admin));
-      const token = btoa(`${email}:${new Date().getTime()}`);
-      localStorage.setItem(this.TOKEN_KEY, token);
+        localStorage.setItem(this.ADMIN_KEY, JSON.stringify(admin));
+        const token = btoa(`${email}:${new Date().getTime()}`);
+        localStorage.setItem(this.TOKEN_KEY, token);
 
-      this.router.navigate(['/dashboard']);
-    } else {
-      this.errorMessage = 'Invalid email or password!';
+        this.router.navigate(['/dashboard']);
+      } else {
+        this.errorMessage = 'Invalid email or password!';
+      }
+    }
+    finally {
+      this.loader.hide();
     }
   }
 
   showToast(message: string) {
     const toastEl = document.getElementById('loginToast');
     const toastBody = toastEl?.querySelector('.toast-body');
-    
+
     if (toastBody) toastBody.textContent = message;
 
     const toast = new Toast(toastEl!);

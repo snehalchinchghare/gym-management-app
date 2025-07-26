@@ -21,27 +21,20 @@ export class SupabaseService {
     this.supabase = createClient(supabaseUrl, supabaseKey);
   }
 
-  async loadMasters(): Promise<void> {
-    const [packageTypesRes, serviceTypesRes] = await Promise.all([
-      this.supabase.from('packagetypes').select('*').order('packagetypeid', { ascending: true }),
-      this.supabase.from('servicetypes').select('*').order('servicetypeid', { ascending: true })
-    ]);
-
-    if (packageTypesRes.error || serviceTypesRes.error) {
-      console.error('Failed to load master tables:', packageTypesRes.error, serviceTypesRes.error);
-      return;
-    }
-
-    this.masters.packageTypes = packageTypesRes.data || [];
-    this.masters.serviceTypes = serviceTypesRes.data || [];
+  async getPackageTypes() {
+    const packageTypesRes = await this.supabase
+      .from('packagetypes')
+      .select('*')
+      .order('packagetypeid', { ascending: true });
+    return packageTypesRes.data || [];
   }
 
-  getPackageTypes() {
-    return this.masters.packageTypes;
-  }
-
-  getServiceTypes() {
-    return this.masters.serviceTypes;
+  async getServiceTypes() {
+    const serviceTypesRes = await this.supabase
+      .from('servicetypes')
+      .select('*')
+      .order('servicetypeid', { ascending: true });
+    return serviceTypesRes.data || [];
   }
 
   async insertAdminUser(user: any) {
@@ -150,5 +143,30 @@ export class SupabaseService {
     }
   
     return data;
+  }
+
+  logError(message: string, stack: string = '', context: any = {}) {
+    return this.supabase
+      .from('errors')
+      .insert([{ message, stack, context }])
+      .then(({ error }) => {
+        if (error) {
+          console.error('Supabase insert error:', error);
+        }
+      });
+  }
+
+  updateReceiptLink(registrationId: any, receiptLink: any) {
+    return this.supabase
+      .from('registrations')
+      .update({ receiptlink: receiptLink })
+      .eq('registrationid', registrationId)
+      .then(({ data, error }) => {
+        if (error) {
+          console.error('Error updating receipt link:', error);
+        } else {
+          console.log('Receipt link updated successfully:', data);
+        }
+      });
   }
 }

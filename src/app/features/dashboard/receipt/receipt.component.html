@@ -1,165 +1,207 @@
+<div style="text-align: center; margin-top: 50px; font-family: Arial, sans-serif;">
+  <h2>Thank you for your registration!</h2>
+  <p style="font-size: 16px; color: #555;">
+    You can download your official receipt below for your records.
+  </p>
+  <button 
+    (click)="generatePDF()" 
+    style="padding: 10px 20px; font-size: 16px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+    Download PDF
+  </button>
+</div>
 
-<button (click)="generatePDF()">Download PDF</button>
-<div *ngIf="candidateData" id="print-section" style="width: 60%; padding: 20px;">
+<div *ngIf="candidateData" id="print-section" style="width: 100%; padding: 20px; position: absolute; left: -9999px; top: -9999px;">
   <!DOCTYPE html>
   <html lang="en">
-  <head>
-   <meta charset="UTF-8">
-   <title>Receipt</title>
-   <style>
-   body {
-   font-family: Arial, sans-serif;
-   margin: 30px;
-   }
-   .receipt {
-   width: 100%;
-   border: 2px dashed #000;
-   padding: 20px;
-   position: relative;
-   }
-   .header {
-   /* display: flex; */
-   width: 100%;
-   /* justify-content: center; */
-   align-items: center;
-   }
-   .logo {
-   font-size: 24px;
-   font-weight: bold;
-   }
-   .logo span {
-   font-size: 28px;
-   }
-   .address {
-   font-size: medium;
-   text-align: center;
-   margin-left: 1rem;
-   }
-   .title {
-   text-align: center;
-   font-size: 18px;
-   font-weight: bold;
-   margin: 20px 0;
-   }
-   .section {
-   margin: 10px 0;
-   }
-   .section label {
-   display: inline-block;
-   width: 150px;
-   font-weight: bold;
-   }
-   .row {
-   display: flex;
-   justify-content: space-between;
-   }
-   .checkboxes {
-   margin-top: 10px;
-   }
-   .checkboxes input {
-   margin-right: 5px;
-   }
-   .footer {
-   font-size: 12px;
-   margin-top: 20px;
-   }
-   </style>
-  </head>
-  <body>
-  
-  <div class="receipt">
-   <div class="header">
-    <table style="width: 100%;">
-      <tr>
-        <th>
-          <div style="text-align: center;" *ngIf="candidateData.gymlogo != ''">
-            <img [src]="candidateData.gymlogo" alt="Preview" height="170" />
-          </div>
-        </th>
-        <th>
-          <div class="address">
-            <div><h4 style="text-align:center;"><strong>{{ candidateData.gymname }}</strong></h4></div>
-            <div>{{ candidateData.gymaddress }}</div>
-            <div>{{ candidateData.gymmobile }}</div>
-            <div>{{ candidateData.gymemail }}</div>
-           </div>
-        </th>
-      </tr>
-    </table>
-   </div>
-  <hr>
-   <div class="title"><h5><strong>- RECEIPT -</strong></h5></div>
-  
-   <div class="section">
-   <div class="row">
-    <div class="col-md-4">
-      <div><input type="checkbox" [checked]="receiptType === 'Renewed'"> Renewed</div>
-      <div><input type="checkbox" [checked]="receiptType === 'New'"> New</div>
-      <div><input type="checkbox" [checked]="receiptType === 'Balance'"> Balance Paid</div>
-    </div>
-    <div class="col-md-8" style="flex: auto; justify-items: right;">
-      <table style="width: 40%;">
-        <tr>
-          <th>Sr. No</th>
-          <td>: {{candidateData.billnumber}}</td>
-        </tr>
-        <tr>
-          <th>Date</th>
-          <td>: {{candidateData.createddate}}</td>
-        </tr>
-      </table>
-    </div>
-   </div>
-   </div>
-  
-   <div class="section">
-   <label>Received from</label>: Mr./Mrs./Miss {{candidateData.full_name}}
-   </div>
-  
-   <div class="section">
-   <label>Amount of Rs</label>: {{candidateData.paid_amount}} /-
-   </div>
-  
-   <div class="section">
-   <label>In Words:</label>: {{ numberToWordsIndian(candidateData.paid_amount) }}
-   </div>
 
-   <div class="section">
-    <label>Membership:</label>: {{ candidateData.servicetypename }} ({{ candidateData.packagetypename }})
-    </div>
-  
-    <div class="section">
-      <label>Total Amount:</label>: {{candidateData.total_amount}} /-
+  <head>
+    <meta charset="UTF-8">
+    <title>Receipt</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 30px;
+      }
+
+      .receipt {
+        width: 100%;
+        border: 2px dashed #000;
+        padding: 20px;
+        position: relative;
+      }
+
+      .header {
+        width: 100%;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 24px;
+        font-weight: bold;
+      }
+
+      .logo span {
+        font-size: 28px;
+      }
+
+      .address {
+        font-size: medium;
+        text-align: center;
+        margin-left: 1rem;
+      }
+
+      .title {
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        margin: 20px 0;
+      }
+
+      .section {
+        margin: 10px 0;
+      }
+
+      .section label {
+        display: inline-block;
+        width: 150px;
+        font-weight: bold;
+      }
+
+      .row {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .checkboxes {
+        margin-top: 10px;
+      }
+
+      .checkboxes input {
+        margin-right: 5px;
+      }
+
+      .footer {
+        font-size: 12px;
+        margin-top: 20px;
+        width: 100%;
+      }
+
+      .force-desktop {
+        width: 1280px;
+        min-height: 800px;
+        transform: scale(0.8);
+        /* Optional visual scaling */
+        transform-origin: top left;
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <div class="receipt">
+      <div class="header">
+        <table style="width: 100%;">
+          <tr>
+            <th>
+              <div style="text-align: center;" *ngIf="candidateData.gymlogo != ''">
+                <img [src]="candidateData.gymlogo" alt="Preview" height="170" />
+              </div>
+            </th>
+            <th>
+              <div class="address">
+                <div>
+                  <h4 style="text-align:center;"><strong>{{ candidateData.gymname }}</strong></h4>
+                </div>
+                <div>{{ candidateData.gymaddress }}</div>
+                <div>{{ candidateData.gymmobile }}</div>
+                <div>{{ candidateData.gymemail }}</div>
+              </div>
+            </th>
+          </tr>
+        </table>
+      </div>
+      <hr>
+      <div class="title">
+        <h5><strong>- RECEIPT -</strong></h5>
+      </div>
+
+      <div class="section">
+        <table style="width: 100%;">
+          <tr>
+            <td>
+              <div><input type="checkbox" [checked]="receiptType === 'Renewed'"> Renewed</div>
+              <div><input type="checkbox" [checked]="receiptType === 'New'"> New</div>
+              <div><input type="checkbox" [checked]="receiptType === 'Balance'"> Balance Paid</div>
+            </td>
+            <td style="padding-left: 30%;">
+              <table style="width: 100%;">
+                <tr>
+                  <th>Sr. No</th>
+                  <td>: {{candidateData.billnumber}}</td>
+                </tr>
+                <tr>
+                  <th>Date</th>
+                  <td>: {{ formatDate(candidateData.createddate) }}</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="section">
+        <label>Received from</label>: Mr./Mrs./Miss {{candidateData.full_name}}
+      </div>
+
+      <div class="section">
+        <label>Amount of Rs</label>: {{candidateData.paid_amount}} /-
+      </div>
+
+      <div class="section">
+        <label>In Words</label>: {{ numberToWordsIndian(candidateData.paid_amount) }}
+      </div>
+
+      <div class="section">
+        <label>Membership</label>: {{ candidateData.servicetypename }} ({{ candidateData.packagetypename }})
+      </div>
+
+      <div class="section">
+        <label>Total Amount</label>: {{candidateData.total_amount}} /-
       </div>
 
       <div class="section" *ngIf="receiptType === 'New'">
-        <label>Admission Fee:</label>: {{candidateData.admissionfee}} /-
-        </div>
+        <label>Admission Fee</label>: {{candidateData.admissionfee}} /-
+      </div>
 
-   <div class="section">
-   <label>Balance Amount:</label>: {{candidateData.balance_amount}} /-
-   </div>
-  
-   <div class="section">
-   <label>Date:</label>: {{candidateData.createddate}}
-   </div>
-  
-   <div class="section">
-   <label>Renewal Date:</label>: {{candidateData.end_date}}
-   </div>
-  
-   <hr>
-   <div class="footer">
-   <strong>Thank you for choosing {{ candidateData.gymname }}!</strong>
-   <div style="margin-top: 20px; justify-self: left;">
-  <div>*Admission Fee is one time only. Neither transferable nor refundable.</div>
-  <div>*Membership Fee is non-transferable & non-refundable in any case.</div>
-  <div>*This is a system-generated receipt and does not require a signature.</div>
-  <br>
-   </div>
-   </div>
-  </div>
-  
+      <div class="section">
+        <label>Balance Amount</label>: {{candidateData.balance_amount}} /-
+      </div>
+
+      <div class="section">
+        <label>Date</label>: {{ formatDate(candidateData.createddate) }}
+      </div>
+
+      <div class="section">
+        <label>Period</label>: {{ formatDate(candidateData.start_date) }} - {{ formatDate(candidateData.end_date) }}
+      </div>
+
+      <div class="section">
+        <label>Renewal Date</label>: {{ formatDate(candidateData.end_date) }}
+      </div>
+
+      <hr>
+      <div class="footer">
+        <strong>Thank you for choosing {{ candidateData.gymname }}!</strong>
+        <div style="margin-top: 20px; justify-self: left;">
+          <div>*Admission Fee is one time only. Neither transferable nor refundable.</div>
+          <div>*Membership Fee is non-transferable & non-refundable in any case.</div>
+          <div>*This is a system-generated receipt and does not require a signature.</div>
+          <br>
+        </div>
+      </div>
+    </div>
+
   </body>
+
   </html>
-  </div>
+</div>
