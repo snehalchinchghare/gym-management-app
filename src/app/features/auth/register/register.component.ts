@@ -13,18 +13,20 @@ import { SupabaseService } from '../../supabase/common.supabase.service';
   styleUrl: './register.component.scss',
 })
 export class RegisterComponent {
-  errorMessage:string | null = null;
+  errorMessage: string | null = null;
   fileError: boolean = false;
   gymLogoBase64: string | null = null;
+  isAccordionOpen = false; // ✅ Toggle control for Packages
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    private supabaseService: SupabaseService) {}
+    private supabaseService: SupabaseService
+  ) {}
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       if (params['reason'] === 'unauthorized') {
         this.errorMessage = 'Please login to access the requested page.';
       }
@@ -56,70 +58,30 @@ export class RegisterComponent {
     gymLogo: ['', Validators.required],
   });
 
+  toggleAccordion() {
+    this.isAccordionOpen = !this.isAccordionOpen;
+  }
+
   onRegister() {
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
       return;
     }
 
-    const {
-      fullName,
-      email,
-      gymName,
-      gym_monthly,
-      gymCardio_monthly,
-      cardio_monthly,
-      gym_quarterly,
-      gymCardio_quarterly,
-      cardio_quarterly,
-      gym_halfYearly,
-      gymCardio_halfYearly,
-      cardio_halfYearly,
-      gym_yearly,
-      gymCardio_yearly,
-      cardio_yearly,
-      pt_monthly,
-      pt_quarterly,
-      pt_halfYearly,
-      pt_yearly,
-      password,
-      confirmPassword,
-    } = this.registerForm.value;
-
-    if (password !== confirmPassword) {
+    const form = this.registerForm.value;
+    if (form.password !== form.confirmPassword) {
       alert('Passwords do not match!');
       return;
     }
-    
-    const admin = {
-      fullName,
-      email,
-      gymName,
-      gym_monthly,
-      gymCardio_monthly,
-      cardio_monthly,
-      gym_quarterly,
-      gymCardio_quarterly,
-      cardio_quarterly,
-      gym_halfYearly,
-      gymCardio_halfYearly,
-      cardio_halfYearly,
-      gym_yearly,
-      gymCardio_yearly,
-      cardio_yearly,
-      pt_monthly,
-      pt_quarterly,
-      pt_halfYearly,
-      pt_yearly,
-      password,
+
+    const payload = this.mapAdminToInsertPayload({
+      ...form,
       gymLogo: this.gymLogoBase64,
-    };
-    
-    const payload = this.mapAdminToInsertPayload(admin);
+    });
     console.log(payload);
     this.supabaseService.insertAdminUser(payload);
 
-    const toastEl = document.getElementById('registerSuccessToast');
+    const toastEl = document.getElementById('registerToast');
     if (toastEl) {
       const toast = new Toast(toastEl);
       toast.show();
@@ -131,25 +93,25 @@ export class RegisterComponent {
   }
 
   mapAdminToInsertPayload(admin: any) {
-    const packages = this.supabaseService.getPackageTypes();  
+    const packages = this.supabaseService.getPackageTypes();
     const services = this.supabaseService.getServiceTypes();
     const packageList = [];
-  
+
     for (const p of packages) {
       for (const s of services) {
         const key = this.getKeyName(p.packagename, s.servicename);
         const price = admin[key];
-    
+
         if (price !== undefined && price !== null && price !== '') {
           packageList.push({
             PackageTypeId: p.packagetypeid,
             ServiceTypeId: s.servicetypeid,
-            Price: Number(price)
+            Price: Number(price),
           });
         }
       }
     }
-  
+
     return {
       p_fullname: admin.fullName,
       p_email: admin.email,
@@ -157,46 +119,26 @@ export class RegisterComponent {
       p_password: admin.password,
       p_created_by: 1,
       p_gym_logo: admin.gymLogo,
-      p_packages: packageList
+      p_packages: packageList,
     };
   }
 
   getKeyName(packageName: any, serviceName: any) {
-    let serviceKeyPrefix = '';
+    const servicePrefixMap: Record<string, string> = {
+      'Gym': 'gym',
+      'Gym + Cardio': 'gymCardio',
+      'Cardio': 'cardio',
+      'Personal Trainer': 'pt',
+    };
 
-    switch(serviceName){
-      case 'Gym':
-        serviceKeyPrefix = 'gym';
-        break;
-      case 'Gym + Cardio':
-        serviceKeyPrefix = 'gymCardio';
-        break;
-      case 'Cardio':
-        serviceKeyPrefix = 'cardio';
-        break;
-      case 'Personal Trainer':
-        serviceKeyPrefix = 'pt';
-        break;
-    }
+    const packageSuffixMap: Record<string, string> = {
+      'Monthly': 'monthly',
+      'Quarterly': 'quarterly',
+      'Half Yearly': 'halfYearly',
+      'Yearly': 'yearly',
+    };
 
-    let packageTypeKey = '';
-
-    switch(packageName){
-      case 'Monthly':
-        packageTypeKey = 'monthly';
-        break;
-      case 'Quarterly':
-        packageTypeKey = 'quarterly';
-        break;
-      case 'Half Yearly':
-        packageTypeKey = 'halfYearly';
-        break;
-      case 'Yearly':
-        packageTypeKey = 'yearly';
-        break;
-    }
-
-    return `${serviceKeyPrefix}_${packageTypeKey}`;
+    return `${servicePrefixMap[serviceName]}_${packageSuffixMap[packageName]}`;
   }
 
   onFileSelected(event: Event) {
@@ -211,10 +153,8 @@ export class RegisterComponent {
 
     const reader = new FileReader();
     reader.onload = () => {
-      const base64String = reader.result as string;
-      this.gymLogoBase64 = base64String;
+      this.gymLogoBase64 = reader.result as string;
     };
-  
-    reader.readAsDataURL(file); // 🔁 Reads file as Base64s
+    reader.readAsDataURL(file);
   }
 }

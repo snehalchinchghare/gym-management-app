@@ -22,8 +22,8 @@
         <div
           class="text-danger small mt-1"
           *ngIf="
-            registerForm.get('name')?.touched &&
-            registerForm.get('name')?.invalid
+            registerForm.get('fullName')?.touched &&
+            registerForm.get('fullName')?.invalid
           "
         >
           Name is required.
@@ -79,13 +79,12 @@
           accept="image/*"
           (change)="onFileSelected($event)"
           formControlName="gymLogo"
-          placeholder=""
         />
         <div
           class="text-danger small mt-1"
           *ngIf="
             registerForm.get('gymLogo')?.touched &&
-            registerForm.get('gymLogo')?.invalid && 
+            registerForm.get('gymLogo')?.invalid &&
             fileError
           "
         >
@@ -93,31 +92,29 @@
         </div>
       </div>
 
-      <div class="accordion mb-3" id="packageAccordion">
+      <!-- Packages Accordion -->
+      <div class="accordion mb-3">
         <div class="accordion-item">
-          <h2 class="accordion-header" id="packageHeading">
+          <h2 class="accordion-header">
             <button
-              class="accordion-button collapsed fw-semibold"
+              class="accordion-button fw-semibold"
+              [ngClass]="{ collapsed: !isAccordionOpen }"
               type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#packageCollapse"
-              aria-expanded="false"
-              aria-controls="packageCollapse"
+              (click)="toggleAccordion()"
+              [attr.aria-expanded]="isAccordionOpen"
             >
               Packages
             </button>
           </h2>
           <div
-            id="packageCollapse"
             class="accordion-collapse collapse"
-            aria-labelledby="packageHeading"
-            data-bs-parent="#packageAccordion"
+            [ngClass]="{ show: isAccordionOpen }"
           >
             <div class="accordion-body p-2">
-              <div style="overflow-x: auto; width: 100%;">
+              <div style="overflow-x: auto; width: 100%">
                 <table
                   class="table table-bordered text-center align-middle small"
-                  style="min-width: 700px;"
+                  style="min-width: 700px"
                 >
                   <thead class="table-primary">
                     <tr>
@@ -131,127 +128,31 @@
                   <tbody>
                     <tr>
                       <td>Monthly</td>
-                      <td>
-                        <input
-                          type="text"
-                          class="form-control"
-                          formControlName="gym_monthly"
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          class="form-control"
-                          formControlName="gymCardio_monthly"
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          class="form-control"
-                          formControlName="cardio_monthly"
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          class="form-control"
-                          formControlName="pt_monthly"
-                        />
-                      </td>
+                      <td><input type="text" class="form-control" formControlName="gym_monthly" /></td>
+                      <td><input type="text" class="form-control" formControlName="cardio_monthly" /></td>
+                      <td><input type="text" class="form-control" formControlName="gymCardio_monthly" /></td>
+                      <td><input type="text" class="form-control" formControlName="pt_monthly" /></td>
                     </tr>
                     <tr>
                       <td>Quarterly</td>
-                      <td>
-                        <input
-                          type="text"
-                          class="form-control"
-                          formControlName="gym_quarterly"
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          class="form-control"
-                          formControlName="gymCardio_quarterly"
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          class="form-control"
-                          formControlName="cardio_quarterly"
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          class="form-control"
-                          formControlName="pt_quarterly"
-                        />
-                      </td>
+                      <td><input type="text" class="form-control" formControlName="gym_quarterly" /></td>
+                      <td><input type="text" class="form-control" formControlName="cardio_quarterly" /></td>
+                      <td><input type="text" class="form-control" formControlName="gymCardio_quarterly" /></td>
+                      <td><input type="text" class="form-control" formControlName="pt_quarterly" /></td>
                     </tr>
                     <tr>
                       <td>Half Yearly</td>
-                      <td>
-                        <input
-                          type="text"
-                          class="form-control"
-                          formControlName="gym_halfYearly"
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          class="form-control"
-                          formControlName="gymCardio_halfYearly"
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          class="form-control"
-                          formControlName="cardio_halfYearly"
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          class="form-control"
-                          formControlName="pt_halfYearly"
-                        />
-                      </td>
+                      <td><input type="text" class="form-control" formControlName="gym_halfYearly" /></td>
+                      <td><input type="text" class="form-control" formControlName="cardio_halfYearly" /></td>
+                      <td><input type="text" class="form-control" formControlName="gymCardio_halfYearly" /></td>
+                      <td><input type="text" class="form-control" formControlName="pt_halfYearly" /></td>
                     </tr>
                     <tr>
                       <td>Yearly</td>
-                      <td>
-                        <input
-                          type="text"
-                          class="form-control"
-                          formControlName="gym_yearly"
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          class="form-control"
-                          formControlName="gymCardio_yearly"
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          class="form-control"
-                          formControlName="cardio_yearly"
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          class="form-control"
-                          formControlName="pt_yearly"
-                        />
-                      </td>
+                      <td><input type="text" class="form-control" formControlName="gym_yearly" /></td>
+                      <td><input type="text" class="form-control" formControlName="cardio_yearly" /></td>
+                      <td><input type="text" class="form-control" formControlName="gymCardio_yearly" /></td>
+                      <td><input type="text" class="form-control" formControlName="pt_yearly" /></td>
                     </tr>
                   </tbody>
                 </table>

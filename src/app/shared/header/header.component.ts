@@ -15,6 +15,7 @@ export class HeaderComponent implements OnInit {
   gymName: string = '';
   gymLogo: string = '';
   isDashboardRoute: boolean = false;
+  isNavbarCollapsed:boolean = true;
   private readonly ADMIN_KEY = 'adminUser';
   private readonly TOKEN_KEY = 'adminToken';
 
@@ -33,6 +34,11 @@ export class HeaderComponent implements OnInit {
         this.gymLogo = logo;
       });
     }
+  }
+
+  toggleNavbar():void{
+    this.isNavbarCollapsed = !this.isNavbarCollapsed;
+
   }
 
   logout() {
