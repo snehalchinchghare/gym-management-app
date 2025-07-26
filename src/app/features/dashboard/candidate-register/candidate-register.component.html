@@ -85,8 +85,31 @@
   </div>
 </div>
 
-<div id="print-section" style="position: absolute; left: -9999px; width: 600px; padding: 20px; border: 1px solid #000;">
-  <h2 style="text-align:center;">Muscle-Up Unisex Gym</h2>
+<!-- 
+<div id="print-section" 
+  style="position: absolute; left: -9999px; width: 600px; padding: 20px; border: 1px solid #000;"> -->
+  <!-- <div id="print-section" 
+  style="width: 60%; padding: 20px; border: 1px solid #000;">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3">
+        <div style="text-align: center;" *ngIf="gymLogo != ''">
+          <img [src]="gymLogo" alt="Preview" height="170" />
+        </div>
+      </div>
+      <div class="col-md-8">
+        <br />
+        <h2 style="text-align:center;"><strong>{{ userDetails.gymName }}</strong></h2>
+        <h2 style="text-align:center; font-size: larger;">{{ userDetails.gymAddress }}</h2>
+        <h2 style="text-align:center; font-size: larger;">{{ userDetails.gymmobile }}</h2>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align: center;" *ngIf="gymLogo != ''">
+    <img [src]="gymLogo" alt="Preview" height="100" />
+  </div>
+  
   <p><strong>Sr. No:</strong> 528</p>
   <p><strong>Date:</strong> 12-02-2025 </p>
   <p><strong>Received from:</strong> Mr./Mrs./Miss Swapnil Wasnik</p>
@@ -111,6 +134,4 @@
     Admission Fee is one time only. Neither transferable nor refundable.<br />
     Membership Fee is non-transferable & non-refundable in any case.
   </p>
-</div>
-
-<!-- <button (click)="generatePDF()">Download PDF</button> -->
+</div> -->

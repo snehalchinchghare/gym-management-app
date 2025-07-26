@@ -19,6 +19,7 @@ export class CandidateRegisterComponent implements OnInit {
   packageList: any[] = [];
   serviceList: any[] = [];
   userDetails: any;
+  gymLogo: string = '';
   private readonly ADMIN_KEY = 'adminUser';
 
   constructor(
@@ -30,10 +31,14 @@ export class CandidateRegisterComponent implements OnInit {
     const today = dayjs().format('YYYY-MM-DD');
     const stored = localStorage.getItem(this.ADMIN_KEY);
     this.userDetails = stored ? JSON.parse(stored) : null;
+    console.log(this.userDetails);
+    this.supabaseService.getGymLogoByUserId(this.userDetails.userId).then(logo => {
+      this.gymLogo = logo;
+    });
 
     this.registerForm = this.fb.group({
       fullName: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.email]],
       mobile: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
       dob: ['', Validators.required],
       packageType: [{ value: '', disabled: true }, Validators.required],
@@ -66,19 +71,6 @@ export class CandidateRegisterComponent implements OnInit {
     });
     this.registerForm.get('startDate')?.valueChanges.subscribe(() => this.calculateEndDate());
     this.registerForm.get('admissionFee')?.valueChanges.subscribe(() => this.setTotalAmount());
-    
-    // const editData = localStorage.getItem('editCandidate');
-    // if (editData) {
-    //   const candidate = JSON.parse(editData);
-    //   this.registerForm.patchValue({
-    //     fullName: candidate.fullName,
-    //     email: candidate.email,
-    //     gymName: candidate.gymName,
-    //     mobile: candidate.mobile
-    //   });
-    //   localStorage.removeItem('editCandidate');
-    // }
-
     this.supabaseService.loadMasters().then(() => {
       this.packageList = this.supabaseService.getPackageTypes();
       this.serviceList = this.supabaseService.getServiceTypes();
@@ -106,24 +98,14 @@ export class CandidateRegisterComponent implements OnInit {
         startDate: formData.startDate,
         endDate: formData.endDate
     }
+
     var result = await this.supabaseService.registerCandidate(candidateData);
     if (result.success) {
+      console.log(result.candidateid);
       this.router.navigate(['/dashboard']);
     } else {
       alert(result.message);
     }
-
-    // let candidates = JSON.parse(localStorage.getItem('candidates') || '[]');
-    // const existingIndex = candidates.findIndex((c: any) => c.email === formData.email);
-
-    // if (existingIndex !== -1) {
-    //   candidates[existingIndex] = formData;
-    // } else {
-    //   candidates.push(formData);
-    // }
-
-    // localStorage.setItem('candidates', JSON.stringify(candidates));
-    // this.router.navigate(['/dashboard']);
   }
 
   updateBalance(): void {
