@@ -1,86 +1,104 @@
-<div class="container d-flex justify-content-center align-items-center min-vh-100">
-  <div class="card shadow-lg p-4 w-100" style="max-width: 500px;">
-    <h3 class="text-center mb-4">Add New Membership</h3>
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-12 col-sm-10 col-md-8 col-lg-6">
+      <div class="card shadow-lg p-4">
+        <h3 class="text-center text-primary mb-4">Add New Membership</h3>
 
-    <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
-      <div class="mb-3">
-        <label class="form-label">Full Name</label>
-        <input type="text" class="form-control" formControlName="fullName" />
-      </div>
+        <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+          <!-- Full Name -->
+          <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-control" formControlName="fullName" placeholder="Enter full name" />
+          </div>
 
-      <div class="mb-3">
-        <label class="form-label">Email</label>
-        <input type="email" class="form-control" formControlName="email" />
-      </div>
+          <!-- Email -->
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" formControlName="email" placeholder="example@gmail.com" />
+          </div>
 
-      <div class="mb-3">
-        <label class="form-label">Mobile</label>
-        <input type="text" class="form-control" formControlName="mobile" />
-      </div>
+          <!-- Mobile -->
+          <div class="mb-3">
+            <label class="form-label">Mobile</label>
+            <input type="text" class="form-control" formControlName="mobile" placeholder="Enter mobile number" />
+          </div>
 
-      <div class="mb-3">
-        <label class="form-label">Date of Birth</label>
-        <input type="date" class="form-control" formControlName="dob" />
-      </div>
+          <!-- Date of Birth -->
+          <div class="mb-3">
+            <label class="form-label">Date of Birth</label>
+            <input type="date" class="form-control" formControlName="dob" />
+          </div>
 
-      <div class="mb-3">
-        <label class="form-label">Service Type</label>
-        <select class="form-select" formControlName="serviceType">
-          <option value="">-- Select Service --</option>
-          <option *ngFor="let service of serviceList" [value]="service.servicetypeid">
-            {{ service.servicename }}
-          </option>
-        </select>
-      </div>
+          <!-- Service Type -->
+          <div class="mb-3">
+            <label class="form-label">Service Type</label>
+            <select class="form-select" formControlName="serviceType">
+              <option value="">-- Select Service --</option>
+              <option *ngFor="let service of serviceList" [value]="service.servicetypeid">
+                {{ service.servicename }}
+              </option>
+            </select>
+          </div>
 
-      <div class="mb-3">
-        <label class="form-label">Membership</label>
-        <select class="form-select" formControlName="packageType">
-          <option value="">-- Select Membership --</option>
-          <option *ngFor="let pkg of packageList" [value]="pkg.packagetypeid">
-            {{ pkg.packagename }}
-          </option>
-        </select>
-      </div>
+          <!-- Membership -->
+          <div class="mb-3">
+            <label class="form-label">Membership</label>
+            <select class="form-select" formControlName="packageType">
+              <option value="">-- Select Membership --</option>
+              <option *ngFor="let pkg of packageList" [value]="pkg.packagetypeid">
+                {{ pkg.packagename }}
+              </option>
+            </select>
+          </div>
 
-      <div class="mb-3">
-        <label class="form-label">Admission Fee</label>
-        <input type="number" class="form-control" formControlName="admissionFee" />
-      </div>
+          <!-- Admission Fee -->
+          <div class="mb-3">
+            <label class="form-label">Admission Fee</label>
+            <input type="number" class="form-control" formControlName="admissionFee" placeholder="Enter admission fee" />
+          </div>
 
-      <div class="mb-3">
-        <label class="form-label">Total Amount</label>
-        <input type="number" class="form-control" formControlName="totalAmt" readonly />
-      </div>
+          <!-- Total Amount -->
+          <div class="mb-3">
+            <label class="form-label">Total Amount</label>
+            <input type="number" class="form-control" formControlName="totalAmt" readonly />
+          </div>
 
-      <div class="mb-3">
-        <label class="form-label">Paid Amount</label>
-        <input type="number" class="form-control" formControlName="paidAmt" />
-      </div>
+          <!-- Paid Amount -->
+          <div class="mb-3">
+            <label class="form-label">Paid Amount</label>
+            <input type="number" class="form-control" formControlName="paidAmt" placeholder="Enter paid amount" />
+          </div>
 
-      <div class="mb-3">
-        <label class="form-label">Balance Amount</label>
-        <input type="number" class="form-control" formControlName="balanceAmt" readonly />
-      </div>
+          <!-- Balance Amount -->
+          <div class="mb-3">
+            <label class="form-label">Balance Amount</label>
+            <input type="number" class="form-control" formControlName="balanceAmt" readonly />
+          </div>
 
-      <div class="mb-3">
-        <label class="form-label">Admission Date</label>
-        <input type="date" class="form-control" formControlName="admissionDate" />
-      </div>
+          <!-- Admission Date -->
+          <div class="mb-3">
+            <label class="form-label">Admission Date</label>
+            <input type="date" class="form-control" formControlName="admissionDate" />
+          </div>
 
-      <div class="mb-3">
-        <label class="form-label">Start Date</label>
-        <input type="date" class="form-control" formControlName="startDate" />
-      </div>
+          <!-- Start Date -->
+          <div class="mb-3">
+            <label class="form-label">Start Date</label>
+            <input type="date" class="form-control" formControlName="startDate" />
+          </div>
 
-      <div class="mb-3">
-        <label class="form-label">End Date</label>
-        <input type="date" class="form-control" formControlName="endDate" readonly />
-      </div>
+          <!-- End Date -->
+          <div class="mb-3">
+            <label class="form-label">End Date</label>
+            <input type="date" class="form-control" formControlName="endDate" readonly />
+          </div>
 
-      <div class="d-grid">
-        <button class="btn btn-primary" type="submit">Register</button>
+          <!-- Submit Button -->
+          <div class="d-grid">
+            <button class="btn btn-primary" type="submit">Register</button>
+          </div>
+        </form>
       </div>
-    </form>
+    </div>
   </div>
 </div>
