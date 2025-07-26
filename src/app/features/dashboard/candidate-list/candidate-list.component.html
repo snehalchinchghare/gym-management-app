@@ -1,7 +1,21 @@
+<!-- Search and Pagination Controls -->
+<div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+  <input type="text" class="form-control w-auto me-2 mb-2" placeholder="Search candidates..." [(ngModel)]="searchText" />
+  <div class="mb-2">
+    <button class="btn btn-outline-secondary btn-sm me-2" 
+            (click)="currentPage = Math.max(1, currentPage - 1)" 
+            [disabled]="currentPage === 1">Prev</button>
+    <span class="fw-bold">{{ currentPage }} / {{ totalPages }}</span>
+    <button class="btn btn-outline-secondary btn-sm ms-2" 
+            (click)="currentPage = Math.min(totalPages, currentPage + 1)" 
+            [disabled]="currentPage === totalPages">Next</button>
+  </div>
+</div>
+
 <!-- TABLE VIEW for large screens -->
 <div class="table-responsive d-none d-md-block">
-  <table class="table">
-    <thead>
+  <table class="table table-hover align-middle">
+    <thead class="table-light">
       <tr>
         <th>Name</th>
         <th>Service</th>
@@ -12,18 +26,18 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let candidate of registeredCandidates">
+      <tr *ngFor="let candidate of paginatedCandidates">
         <td [ngStyle]="getCellStyle(candidate.end_date)">{{ candidate.full_name }}</td>
         <td [ngStyle]="getCellStyle(candidate.end_date)">{{ candidate.servicetype_name }}</td>
         <td [ngStyle]="getCellStyle(candidate.end_date)">{{ candidate.packagetype_name }}</td>
-        <td [ngStyle]="getCellStyle(candidate.end_date)">{{ candidate.balance_amount }}</td>
+        <td [ngStyle]="getCellStyle(candidate.end_date)">₹{{ candidate.balance_amount }}</td>
         <td [ngStyle]="getCellStyle(candidate.end_date)">{{ candidate.end_date }}</td>
         <td [ngStyle]="getCellStyle(candidate.end_date)">
-          <button class="btn btn-primary btn-sm me-2" (click)="editCandidate(candidate)">View</button>
-          <button class="btn btn-primary btn-sm me-2" (click)="sendLatestReceipt(candidate)">Receipt</button>
-          <button class="btn btn-primary btn-sm me-2"
-            *ngIf="getStatus(candidate.end_date) != 'active'" (click)="remindViaWhatsapp(candidate)">Remind</button>
-          <!-- <button class="btn btn-danger btn-sm" (click)="deleteCandidate(candidate)">Delete</button> -->
+          <button class="btn btn-sm btn-primary me-1">Renew</button>
+          <button class="btn btn-sm btn-primary me-1" (click)="sendLatestReceipt(candidate)">Receipt</button>
+          <button class="btn btn-sm btn-primary"
+                  *ngIf="getStatus(candidate.end_date) !== 'active'"
+                  (click)="remindViaWhatsapp(candidate)">Remind</button>
         </td>
       </tr>
     </tbody>
@@ -32,26 +46,28 @@
 
 <!-- CARD VIEW for small screens -->
 <div class="d-block d-md-none">
-  <div *ngFor="let candidate of registeredCandidates" class="candidate-card card shadow-sm border-0 mb-4">
-    <div class="card-body position-relative" [ngStyle]="getCellStyle(candidate.end_date)">
+  <div *ngFor="let candidate of paginatedCandidates" class="card shadow-sm border-0 mb-3" [ngStyle]="getCellStyle(candidate.end_date)">
+    <div class="card-body">
       <h5 class="card-title fw-bold">{{ candidate.full_name }}</h5>
-      <hr>
       <ul class="list-unstyled mb-3">
-        <li><strong>Service : </strong> {{ candidate.servicetype_name }}</li>
-        <li><strong>Package : </strong> {{ candidate.packagetype_name }}</li>
-        <li><strong>Balance Amount : </strong> {{ candidate.balance_amount }}</li>
-        <li><strong>End Date : </strong> {{ candidate.end_date }}</li>
+        <li><strong>Service:</strong> {{ candidate.servicetype_name }}</li>
+        <li><strong>Package:</strong> {{ candidate.packagetype_name }}</li>
+        <li><strong>Balance Amount:</strong> ₹{{ candidate.balance_amount }}</li>
+        <li><strong>End Date:</strong> {{ candidate.end_date }}</li>
       </ul>
-      <div class="d-flex justify-content-end gap-2">
-        <button class="btn btn-outline-primary btn-sm" (click)="editCandidate(candidate)">
-          <i class="bi bi-pencil"></i> Edit
+      <div class="d-flex justify-content-end gap-2 flex-wrap">
+        <button class="btn btn-sm btn-primary">
+          <i class="bi bi-pencil"></i> Renew
         </button>
-        <button class="btn btn-primary btn-sm me-2" (click)="sendLatestReceipt(candidate)">Receipt</button>
-        <button class="btn btn-primary btn-sm me-2"
-            *ngIf="getStatus(candidate.end_date) != 'active'" (click)="remindViaWhatsapp(candidate)">Remind</button>
+        <button class="btn btn-sm btn-primary" (click)="sendLatestReceipt(candidate)">
+          <i class="bi bi-receipt"></i> Receipt
+        </button>
+        <button class="btn btn-sm btn-primary"
+                *ngIf="getStatus(candidate.end_date) !== 'active'"
+                (click)="remindViaWhatsapp(candidate)">
+          <i class="bi bi-whatsapp"></i> Remind
+        </button>
       </div>
     </div>
   </div>
-
-
 </div>

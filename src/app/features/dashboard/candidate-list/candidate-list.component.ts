@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SupabaseService } from '../../supabase/common.supabase.service';
 import dayjs from 'dayjs';
@@ -8,7 +8,7 @@ import dayjs from 'dayjs';
 @Component({
   selector: 'app-candidate-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule,FormsModule],
   templateUrl: './candidate-list.component.html',
   styleUrls: ['./candidate-list.component.scss'],
 })
@@ -17,6 +17,9 @@ export class CandidateListComponent implements OnInit {
   userDetails: any;
   private readonly ADMIN_KEY = 'adminUser';
   messageTemplates: any[] = [];
+  searchText = '';
+  currentPage = 1;
+  pageSize = 10;
 
   constructor(
     private router: Router,
@@ -33,24 +36,30 @@ export class CandidateListComponent implements OnInit {
     this.messageTemplates = await this.supabaseService.getAllTemplates();
   }
 
-  trackByEmail(index: number, candidate: any): string {
-    return candidate.email;
+  get Math() {
+    return Math;
   }
 
-  deleteCandidate(candidateToDelete: any): void {
-    const confirmed = confirm('Are you sure you want to delete this candidate?');
-    if (confirmed) {
-      this.registeredCandidates = this.registeredCandidates.filter(
-        (candidate) => candidate.email !== candidateToDelete.email
-      );
-      localStorage.setItem('candidates', JSON.stringify(this.registeredCandidates));
-    }
+  get filteredCandidates() {
+    if (!this.searchText.trim()) return this.registeredCandidates;
+  
+    const text = this.searchText.toLowerCase();
+    return this.registeredCandidates.filter(c =>
+      c.full_name?.toLowerCase().includes(text) ||
+      c.servicetype_name?.toLowerCase().includes(text) ||
+      c.packagetype_name?.toLowerCase().includes(text)
+    );
   }
-
-  editCandidate(candidate: any): void {
-    localStorage.setItem('editCandidate', JSON.stringify(candidate));
+  
+  get totalPages(): number {
+    return Math.ceil(this.filteredCandidates.length / this.pageSize) || 1;
   }
-
+  
+  get paginatedCandidates() {
+    const start = (this.currentPage - 1) * this.pageSize;
+    return this.filteredCandidates.slice(start, start + this.pageSize);
+  }
+  
   getCellStyle(endDate: string): any {
     if (this.isExpired(endDate)) {
       return { 'background-color': 'red', 'color': 'white' }; // Red
