@@ -33,7 +33,7 @@
         <td [ngStyle]="getCellStyle(candidate.end_date)">₹{{ candidate.balance_amount }}</td>
         <td [ngStyle]="getCellStyle(candidate.end_date)">{{ candidate.end_date }}</td>
         <td [ngStyle]="getCellStyle(candidate.end_date)">
-          <button class="btn btn-sm btn-primary me-1">Renew</button>
+          <button class="btn btn-sm btn-primary me-1" (click)="renewMembership(candidate.candidateid)">Renew</button>
           <button class="btn btn-sm btn-primary me-1" (click)="sendLatestReceipt(candidate)">Receipt</button>
           <button class="btn btn-sm btn-primary"
                   *ngIf="getStatus(candidate.end_date) !== 'active'"

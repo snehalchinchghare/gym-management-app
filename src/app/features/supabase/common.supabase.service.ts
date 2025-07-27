@@ -74,7 +74,8 @@ export class SupabaseService {
         p_admission_date: candidate.admissionDate,
         p_start_date: candidate.startDate,
         p_end_date: candidate.endDate,
-        p_dob: candidate.dob
+        p_dob: candidate.dob,
+        p_receipttype: 'New'
       });
 
       if (error) {
@@ -164,9 +165,57 @@ export class SupabaseService {
       .then(({ data, error }) => {
         if (error) {
           console.error('Error updating receipt link:', error);
-        } else {
-          console.log('Receipt link updated successfully:', data);
         }
       });
+  }
+
+  async renewMembership(candidateid: any, candidate: any): Promise<{ candidateid: number; success: boolean; message: string }> {
+    try {
+      const { data, error } = await this.supabase.rpc('renew_membership', {
+        p_candidateid: candidateid,
+        p_full_name: candidate.fullName,
+        p_email: candidate.email,
+        p_mobile: candidate.mobile,
+        p_dateofbirth: candidate.dob,
+        p_updatedby: candidate.userId,
+      
+        p_packagetypeid: candidate.packageTypeId,
+        p_servicetypeid: candidate.serviceTypeId,
+        p_total_amount: candidate.totalAmt,
+        p_paid_amount: candidate.paidAmt,
+        p_balance_amount: candidate.balanceAmt,
+        p_admission_date: candidate.admissionDate,
+        p_start_date: candidate.startDate,
+        p_end_date: candidate.endDate,
+        p_admissionfee: candidate.admissionFee,
+        p_createdby: candidate.userId,
+        p_receipttype: 'Renewed'
+      });
+
+      if (error) {
+        console.error('RPC Error:', error);
+        return { candidateid: 0, success: false, message: error.message };
+      }
+
+      return { candidateid: data, success: true, message: 'Registration successful!' };
+    } catch (err) {
+      console.error('Unexpected Error:', err);
+      return { candidateid: 0, success: false, message: 'Unexpected error occurred' };
+    }
+  }
+
+  async getCandidateForRenewal(candidateid: number | null){
+    const { data, error } = await this.supabase
+      .rpc('get_candidate_by_id', {
+        p_candidateid: candidateid,
+        p_start_date: null,
+        p_end_date: null
+      });
+    
+    if (error) {
+      console.error('Error fetching candidate data:', error);
+    } else {
+      return data[0];
+    }
   }
 }

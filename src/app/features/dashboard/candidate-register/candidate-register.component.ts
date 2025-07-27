@@ -1,11 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SupabaseService } from '../../supabase/common.supabase.service';
 import dayjs from 'dayjs';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+import { LoaderService } from '../../services/loader.service';
 
 @Component({
   selector: 'app-candidate-register',
@@ -20,12 +19,16 @@ export class CandidateRegisterComponent implements OnInit {
   serviceList: any[] = [];
   userDetails: any;
   gymLogo: string = '';
+  isRenew: boolean = false;
+  candidateId: number | null = null;
   private readonly ADMIN_KEY = 'adminUser';
 
   constructor(
-    private fb: FormBuilder, 
+    private fb: FormBuilder,
     private router: Router,
-    private supabaseService: SupabaseService) {}
+    private route: ActivatedRoute,
+    private supabaseService: SupabaseService,
+    private loader: LoaderService) { }
 
   async ngOnInit() {
     const today = dayjs().format('YYYY-MM-DD');
@@ -51,6 +54,8 @@ export class CandidateRegisterComponent implements OnInit {
       endDate: [{ value: '', disabled: true }, Validators.required]
     });
 
+
+
     this.registerForm.get('totalAmt')?.valueChanges.subscribe(() => this.updateBalance());
     this.registerForm.get('paidAmt')?.valueChanges.subscribe(() => this.updateBalance());
 
@@ -72,6 +77,55 @@ export class CandidateRegisterComponent implements OnInit {
     this.registerForm.get('admissionFee')?.valueChanges.subscribe(() => this.setTotalAmount());
     this.packageList = await this.supabaseService.getPackageTypes();
     this.serviceList = await this.supabaseService.getServiceTypes();
+
+    this.route.queryParams.subscribe(params => {
+      const encoded = params['data'];
+      if (encoded) {
+        const decoded = JSON.parse(atob(encoded));
+        this.candidateId = decoded.candidateId;
+        this.isRenew = decoded.isRenew;
+
+        if (this.isRenew) {
+          this.loader.show();
+          this.supabaseService.getCandidateForRenewal(this.candidateId).then(result => {
+            if (result) {
+              const newStartDate = dayjs(result.end_date).add(1, 'day').format('YYYY-MM-DD');
+              const selectedPackage = this.packageList.find(p => p.packagetypeid === +result.packagetypeid);
+              const packageMonthsMap: { [key: string]: number } = {
+                'monthly': 1,
+                'quarterly': 3,
+                'half yearly': 6,
+                'yearly': 12
+              };
+              const monthsToAdd = packageMonthsMap[selectedPackage.packagename.toLowerCase()];
+              const newEndDate = dayjs(newStartDate).add(monthsToAdd, 'month').format('YYYY-MM-DD');
+
+              this.registerForm.patchValue({
+                fullName: result.full_name,
+                email: result.email,
+                mobile: result.mobile,
+                dob: result.dateofbirth,
+                packageType: result.packagetypeid,
+                serviceType: result.servicetypeid,
+                admissionFee: result.admissionfee,
+                totalAmt: result.total_amount - result.admissionfee,
+                balanceAmt: result.balance_amount,
+                admissionDate: result.admission_date,
+                startDate: newStartDate,
+                endDate: newEndDate
+              });
+              this.registerForm.get('fullName')?.disable();
+              this.registerForm.get('email')?.disable();
+              this.registerForm.get('mobile')?.disable();
+              this.registerForm.get('dob')?.disable();
+              this.registerForm.get('admissionDate')?.disable();
+            }
+          });
+          
+          this.loader.hide();
+        }
+      }
+    });
   }
 
   async onRegister() {
@@ -79,24 +133,30 @@ export class CandidateRegisterComponent implements OnInit {
 
     const formData = this.registerForm.getRawValue();
     const candidateData = {
-        fullName: formData.fullName,
-        email: formData.email,
-        mobile: formData.mobile,
-        dob: formData.dob,
-        userId: this.userDetails.userId,
-        createdBy: this.userDetails.userId,
-        packageTypeId: Number(formData.packageType),
-        serviceTypeId: Number(formData.serviceType),
-        admissionFee: formData.admissionFee,
-        totalAmt: formData.totalAmt,
-        paidAmt: formData.paidAmt,
-        balanceAmt: Number(formData.balanceAmt),
-        admissionDate: formData.admissionDate,
-        startDate: formData.startDate,
-        endDate: formData.endDate
+      fullName: formData.fullName,
+      email: formData.email,
+      mobile: formData.mobile,
+      dob: formData.dob,
+      userId: this.userDetails.userId,
+      createdBy: this.userDetails.userId,
+      packageTypeId: Number(formData.packageType),
+      serviceTypeId: Number(formData.serviceType),
+      admissionFee: formData.admissionFee,
+      totalAmt: formData.totalAmt,
+      paidAmt: formData.paidAmt,
+      balanceAmt: Number(formData.balanceAmt),
+      admissionDate: formData.admissionDate,
+      startDate: formData.startDate,
+      endDate: formData.endDate
     }
 
-    var result = await this.supabaseService.registerCandidate(candidateData);
+    let result: { candidateid: number; success: boolean; message: string };
+    if (this.isRenew) {
+      result = await this.supabaseService.renewMembership(this.candidateId, candidateData);
+    } else {
+      result = await this.supabaseService.registerCandidate(candidateData);
+    }
+
     if (result.success) {
       this.router.navigate(['/dashboard']);
     } else {
@@ -114,22 +174,22 @@ export class CandidateRegisterComponent implements OnInit {
   calculateEndDate(): void {
     const startDateValue = this.registerForm.get('startDate')?.value;
     const selectedPackageId = this.registerForm.get('packageType')?.value;
-  
+
     if (!startDateValue || !selectedPackageId) return;
-  
+
     const selectedPackage = this.packageList.find(p => p.packagetypeid === +selectedPackageId);
     if (!selectedPackage) return;
-  
+
     const packageMonthsMap: { [key: string]: number } = {
       'monthly': 1,
       'quarterly': 3,
       'half yearly': 6,
       'yearly': 12
     };
-  
+
     const monthsToAdd = packageMonthsMap[selectedPackage.packagename.toLowerCase()];
     if (!monthsToAdd) return;
-  
+
     const newEndDate = dayjs(startDateValue).add(monthsToAdd, 'month').format('YYYY-MM-DD');
     this.registerForm.patchValue({ endDate: newEndDate });
   }
@@ -139,32 +199,16 @@ export class CandidateRegisterComponent implements OnInit {
     const selectedServiceId = this.registerForm.get('serviceType')?.value;
     const admissionFee = this.registerForm.get('admissionFee')?.value;
     if (!this.userDetails || !selectedPackageId) return;
-    
+
     const packageInfo = this.userDetails.packages.find(
       (p: any) => p.packagetypeid === +selectedPackageId && p.servicetypeid === +selectedServiceId
     );
-  
+
     if (packageInfo) {
       this.registerForm.patchValue({ totalAmt: packageInfo.price + admissionFee });
     } else {
       this.registerForm.patchValue({ totalAmt: '' });
     }
-  }
-
-  generatePDF() {
-    const element = document.getElementById('print-section');
-    if (!element) return;
-  
-    html2canvas(element).then(canvas => {
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgProps = pdf.getImageProperties(imgData);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-  
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save('receipt.pdf');
-    });
   }
 }
 

@@ -8,7 +8,6 @@ export class GlobalErrorHandler implements ErrorHandler {
   private supabase = inject(SupabaseService);
 
   handleError(error: any): void {
-    console.log('exception');
     this.supabase.logError(
         error.message || error.toString(),
         error.stack || '',

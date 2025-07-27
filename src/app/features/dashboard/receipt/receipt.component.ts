@@ -39,6 +39,7 @@ import jsPDF from 'jspdf';
     let candidates = await this.supabaseService.getCandidateDetailsById(this.candidateId);
     if(candidates){
       this.candidateData = candidates[0];
+      this.receiptType = this.candidateData.receipttype;
     }
   }
 

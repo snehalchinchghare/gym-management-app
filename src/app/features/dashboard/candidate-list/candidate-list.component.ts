@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SupabaseService } from '../../supabase/common.supabase.service';
 import dayjs from 'dayjs';
+import { LoaderService } from '../../services/loader.service';
 
 @Component({
   selector: 'app-candidate-list',
@@ -20,10 +21,12 @@ export class CandidateListComponent implements OnInit {
   searchText = '';
   currentPage = 1;
   pageSize = 10;
+  baseUrl: string = window.location.origin;
 
   constructor(
     private router: Router,
-    private supabaseService: SupabaseService) {}
+    private supabaseService: SupabaseService,
+    private loaderService: LoaderService) {}
 
   async ngOnInit() {
     const stored = localStorage.getItem(this.ADMIN_KEY);
@@ -127,8 +130,7 @@ export class CandidateListComponent implements OnInit {
       receiptType: 'New',
     };
     const encodedData = btoa(JSON.stringify(data));
-    const baseUrl = window.location.origin + '/';
-    let receiptLink = baseUrl + '/receipt/' + encodedData;
+    let receiptLink = this.baseUrl + '/receipt/' + encodedData;
     await this.supabaseService.updateReceiptLink(candidate.registrationid, receiptLink);
     const message = template
       .replace(/{{name}}/g, candidate.full_name)
@@ -140,5 +142,21 @@ export class CandidateListComponent implements OnInit {
 
     const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
+  }
+
+  renewMembership(candidateid: any){
+    try{
+      this.loaderService.show();
+      const data = {
+        candidateId: candidateid,
+        isRenew: true,
+      };
+      const encodedData = btoa(JSON.stringify(data));
+      let renewalCandidateLink = 'dashboard/create-candidate?data=' + encodedData;
+      this.router.navigateByUrl(renewalCandidateLink);
+    }
+    finally{
+      this.loaderService.hide();
+    }
   }
 }

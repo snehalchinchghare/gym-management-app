@@ -2,7 +2,7 @@
   <div class="row justify-content-center">
     <div class="col-12 col-sm-10 col-md-8 col-lg-6">
       <div class="card shadow-lg p-4">
-        <h3 class="text-center text-primary mb-4">Add New Membership</h3>
+        <h3 class="text-center text-primary mb-4">{{isRenew ? 'Update Membership' : 'Add Membership'}}</h3>
 
         <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
           <!-- Full Name -->
@@ -52,7 +52,7 @@
           </div>
 
           <!-- Admission Fee -->
-          <div class="mb-3">
+          <div class="mb-3" *ngIf="!isRenew">
             <label class="form-label">Admission Fee</label>
             <input type="number" class="form-control" formControlName="admissionFee" placeholder="Enter admission fee" />
           </div>
@@ -78,7 +78,7 @@
           <!-- Admission Date -->
           <div class="mb-3">
             <label class="form-label">Admission Date</label>
-            <input type="date" class="form-control" formControlName="admissionDate" />
+            <input type="date" class="form-control" formControlName="admissionDate" [disabled]="!isRenew"/>
           </div>
 
           <!-- Start Date -->
@@ -95,7 +95,7 @@
 
           <!-- Submit Button -->
           <div class="d-grid">
-            <button class="btn btn-primary" type="submit">Register</button>
+            <button class="btn btn-primary" type="submit">{{ isRenew ? 'Renew Membership' : 'Add Membership' }}</button>
           </div>
         </form>
       </div>
