@@ -2,38 +2,30 @@
   <div class="container-fluid">
     <!-- Brand + Logo -->
     <a class="navbar-brand d-flex align-items-center fw-bold gap-2" routerLink="/dashboard">
-      <img [src]="gymLogo" alt="Gym Logo" height="40" class="rounded-circle border border-white" />
+      <img [src]="gymLogo" alt="Gym Logo" height="50" class="rounded-circle border border-white" />
       <span class="fs-5">{{ gymName }}</span>
     </a>
 
-    <!-- Mobile toggle -->
-    <button
-  class="navbar-toggler"
-  type="button"
-  data-bs-toggle="collapse"
-  data-bs-target="#navbarNav"
-  aria-controls="navbarNav"
-  aria-expanded="false"
-  aria-label="Toggle navigation"
->
-  <span class="navbar-toggler-icon"></span>
-</button>
+    <!-- Toggle button -->
+    <button class="navbar-toggler" type="button" (click)="toggleNavbar()" aria-controls="navbarNav"
+      [attr.aria-expanded]="isNavbarCollapsed" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-    <!-- Nav links -->
-    <div class="collapse navbar-collapse" id="navbarNav">
+    <!-- Collapsible Nav -->
+    <div class="navbar-collapse" [class.collapse]="!isNavbarCollapsed" [class.show]="isNavbarCollapsed" id="navbarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0 mt-2 mt-lg-0">
         <li class="nav-item">
-          <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">🏠 Dashboard</a>
+          <a class="nav-link" routerLink="/dashboard" routerLinkActive="active" (click)="closeNavbar()">🏠 Dashboard</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/dashboard/create-candidate" routerLinkActive="active">➕ Add Membership</a>
+          <a class="nav-link" routerLink="/dashboard/create-candidate" routerLinkActive="active" (click)="closeNavbar()">➕ Add Membership</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/dashboard/update-package" routerLinkActive="active">⚙️ Update Gym</a>
+          <a class="nav-link" routerLink="/dashboard/update-package" routerLinkActive="active" (click)="closeNavbar()">⚙️ Update Gym</a>
         </li>
       </ul>
 
-      <!-- Right-side section -->
       <div class="d-flex align-items-center gap-3 mt-3 mt-lg-0">
         <span class="text-white fw-semibold d-none d-lg-block">
           👋 Welcome, {{ adminName }}!

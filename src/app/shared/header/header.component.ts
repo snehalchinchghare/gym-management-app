@@ -17,6 +17,7 @@ export class HeaderComponent implements OnInit {
   isDashboardRoute: boolean = false;
   private readonly ADMIN_KEY = 'adminUser';
   private readonly TOKEN_KEY = 'adminToken';
+  isNavbarCollapsed: boolean = false;
 
   constructor(
     public router: Router,
@@ -33,6 +34,14 @@ export class HeaderComponent implements OnInit {
         this.gymLogo = logo;
       });
     }
+  }
+
+  toggleNavbar() {
+    this.isNavbarCollapsed = !this.isNavbarCollapsed;
+  }
+
+  closeNavbar() {
+    this.isNavbarCollapsed = false;
   }
 
   logout() {
