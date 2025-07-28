@@ -1,104 +1,113 @@
-<div class="container py-4">
-  <div class="row justify-content-center">
-    <div class="col-12 col-sm-10 col-md-8 col-lg-6">
-      <div class="card shadow-lg p-4">
-        <h3 class="text-center text-primary mb-4">{{isRenew ? 'Update Membership' : 'Add Membership'}}</h3>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
 
-        <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
-          <!-- Full Name -->
-          <div class="mb-3">
-            <label class="form-label">Full Name</label>
-            <input type="text" class="form-control" formControlName="fullName" placeholder="Enter full name" />
-          </div>
+<div class="container d-flex justify-content-center align-items-center py-5"
+  style="min-height: 100vh; font-family: 'Poppins', sans-serif;">
+  <div class="card border-0 shadow-lg rounded-5 p-4 w-100" style="max-width: 600px; background-color: #fefefe;">
+    <h3 class="text-center mb-4 text-success fw-semibold">{{isRenew ? 'Renew Membership' : 'Add Membership'}}</h3>
 
-          <!-- Email -->
-          <div class="mb-3">
-            <label class="form-label">Email</label>
-            <input type="email" class="form-control" formControlName="email" placeholder="example@gmail.com" />
-          </div>
+    <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+      <div class="row g-3">
 
-          <!-- Mobile -->
-          <div class="mb-3">
-            <label class="form-label">Mobile</label>
-            <input type="text" class="form-control" formControlName="mobile" placeholder="Enter mobile number" />
-          </div>
+        <!-- Full Name -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold text-muted ms-2">Full Name</label>
+          <input type="text" class="form-control rounded-pill px-4 py-2" formControlName="fullName"
+            placeholder="Enter full name" />
+        </div>
 
-          <!-- Date of Birth -->
-          <div class="mb-3">
-            <label class="form-label">Date of Birth</label>
-            <input type="date" class="form-control" formControlName="dob" />
-          </div>
+        <!-- Email -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold text-muted ms-2">Email</label>
+          <input type="email" class="form-control rounded-pill px-4 py-2" formControlName="email"
+            placeholder="example@gmail.com" />
+        </div>
 
-          <!-- Service Type -->
-          <div class="mb-3">
-            <label class="form-label">Service Type</label>
-            <select class="form-select" formControlName="serviceType">
-              <option value="">-- Select Service --</option>
-              <option *ngFor="let service of serviceList" [value]="service.servicetypeid">
-                {{ service.servicename }}
-              </option>
-            </select>
-          </div>
+        <!-- Mobile -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold text-muted ms-2">Mobile</label>
+          <input type="text" class="form-control rounded-pill px-4 py-2" formControlName="mobile"
+            placeholder="Enter mobile number" />
+        </div>
 
-          <!-- Membership -->
-          <div class="mb-3">
-            <label class="form-label">Membership</label>
-            <select class="form-select" formControlName="packageType">
-              <option value="">-- Select Membership --</option>
-              <option *ngFor="let pkg of packageList" [value]="pkg.packagetypeid">
-                {{ pkg.packagename }}
-              </option>
-            </select>
-          </div>
+        <!-- Date of Birth -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold text-muted ms-2">Date of Birth</label>
+          <input type="date" class="form-control rounded-pill px-4 py-2" formControlName="dob" />
+        </div>
 
-          <!-- Admission Fee -->
-          <div class="mb-3" *ngIf="!isRenew">
-            <label class="form-label">Admission Fee</label>
-            <input type="number" class="form-control" formControlName="admissionFee" placeholder="Enter admission fee" />
-          </div>
+        <!-- Service Type -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold text-muted ms-2">Service Type</label>
+          <select class="form-select rounded-pill px-4 py-2" formControlName="serviceType">
+            <option value="">-- Select Service --</option>
+            <option *ngFor="let service of serviceList" [value]="service.servicetypeid">
+              {{ service.servicename }}
+            </option>
+          </select>
+        </div>
 
-          <!-- Total Amount -->
-          <div class="mb-3">
-            <label class="form-label">Total Amount</label>
-            <input type="number" class="form-control" formControlName="totalAmt" readonly />
-          </div>
+        <!-- Membership -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold text-muted ms-2">Membership</label>
+          <select class="form-select rounded-pill px-4 py-2" formControlName="packageType">
+            <option value="">-- Select Membership --</option>
+            <option *ngFor="let pkg of packageList" [value]="pkg.packagetypeid">
+              {{ pkg.packagename }}
+            </option>
+          </select>
+        </div>
 
-          <!-- Paid Amount -->
-          <div class="mb-3">
-            <label class="form-label">Paid Amount</label>
-            <input type="number" class="form-control" formControlName="paidAmt" placeholder="Enter paid amount" />
-          </div>
+        <!-- Admission Fee -->
+        <div class="mb-3" *ngIf="!isRenew">
+          <label class="form-label fw-semibold text-muted ms-2">Admission Fee</label>
+          <input type="number" class="form-control rounded-pill px-4 py-2" formControlName="admissionFee"
+            placeholder="Enter admission fee" />
+        </div>
 
-          <!-- Balance Amount -->
-          <div class="mb-3">
-            <label class="form-label">Balance Amount</label>
-            <input type="number" class="form-control" formControlName="balanceAmt" readonly />
-          </div>
+        <!-- Total Amount -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold text-muted ms-2">Total Amount</label>
+          <input type="number" class="form-control rounded-pill px-4 py-2" formControlName="totalAmt" readonly />
+        </div>
 
-          <!-- Admission Date -->
-          <div class="mb-3">
-            <label class="form-label">Admission Date</label>
-            <input type="date" class="form-control" formControlName="admissionDate" [disabled]="!isRenew"/>
-          </div>
+        <!-- Paid Amount -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold text-muted ms-2">Paid Amount</label>
+          <input type="number" class="form-control rounded-pill px-4 py-2" formControlName="paidAmt"
+            placeholder="Enter paid amount" />
+        </div>
 
-          <!-- Start Date -->
-          <div class="mb-3">
-            <label class="form-label">Start Date</label>
-            <input type="date" class="form-control" formControlName="startDate" />
-          </div>
+        <!-- Balance Amount -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold text-muted ms-2">Balance Amount</label>
+          <input type="number" class="form-control rounded-pill px-4 py-2" formControlName="balanceAmt" readonly />
+        </div>
 
-          <!-- End Date -->
-          <div class="mb-3">
-            <label class="form-label">End Date</label>
-            <input type="date" class="form-control" formControlName="endDate" readonly />
-          </div>
+        <!-- Admission Date -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold text-muted ms-2">Admission Date</label>
+          <input type="date" class="form-control rounded-pill px-4 py-2" formControlName="admissionDate"
+            [disabled]="!isRenew" />
+        </div>
 
-          <!-- Submit Button -->
-          <div class="d-grid">
-            <button class="btn btn-primary" type="submit">{{ isRenew ? 'Renew Membership' : 'Add Membership' }}</button>
-          </div>
-        </form>
+        <!-- Start Date -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold text-muted ms-2">Start Date</label>
+          <input type="date" class="form-control rounded-pill px-4 py-2" formControlName="startDate" />
+        </div>
+
+        <!-- End Date -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold text-muted ms-2">End Date</label>
+          <input type="date" class="form-control rounded-pill px-4 py-2" formControlName="endDate" readonly />
+        </div>
+
+        <!-- Submit Button -->
+        <div class="d-grid">
+          <button class="btn btn-success rounded-pill w-100 py-2" type="submit">{{ isRenew ? 'Renew Membership' : 'Add
+            Membership' }}</button>
+        </div>
       </div>
-    </div>
+    </form>
   </div>
 </div>

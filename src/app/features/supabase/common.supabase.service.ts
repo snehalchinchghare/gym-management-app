@@ -41,6 +41,10 @@ export class SupabaseService {
     return this.supabase.rpc('add_admin_user', user);
   }
 
+  async updateAdminUser(user: any) {
+    return this.supabase.rpc('update_admin_user', user);
+  }
+
   async verifyAdminLogin(loginEmail: any, loginPassword: any){
     const { data, error } = await this.supabase.rpc('verify_admin_login', {
       p_email: loginEmail,

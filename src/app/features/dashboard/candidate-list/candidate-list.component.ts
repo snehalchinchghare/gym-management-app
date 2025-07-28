@@ -103,10 +103,10 @@ export class CandidateListComponent implements OnInit {
       day: 'numeric',
     });
     const message = template
-      .replace(/{{name}}/g, candidate.full_name)
+      .replace(/{{name}}/g, candidate.full_name.trim())
       .replace(/\\n/g, '\n')
       .replace(/{{end_date}}/g, formattedDate)
-      .replace(/{{gym_name}}/g, this.userDetails.gymName);
+      .replace(/{{gym_name}}/g, this.userDetails.gymName.trim());
 
     const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
@@ -133,11 +133,11 @@ export class CandidateListComponent implements OnInit {
     let receiptLink = this.baseUrl + '/receipt/' + encodedData;
     await this.supabaseService.updateReceiptLink(candidate.registrationid, receiptLink);
     const message = template
-      .replace(/{{name}}/g, candidate.full_name)
+      .replace(/{{name}}/g, candidate.full_name.trim())
       .replace(/\\n/g, '\n')
       .replace(/{{end_date}}/g, formattedendDate)
       .replace(/{{start_date}}/g, formattedstartDate)
-      .replace(/{{gym_name}}/g, this.userDetails.gymName)
+      .replace(/{{gym_name}}/g, this.userDetails.gymName.trim())
       .replace(/{{receiptLink}}/g, receiptLink);
 
     const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
