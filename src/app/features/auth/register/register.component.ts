@@ -17,6 +17,7 @@ export class RegisterComponent {
   errorMessage: string | null = null;
   fileError: boolean = false;
   gymLogoBase64: string | null = null;
+  isMembershipTableCollapsed: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -140,6 +141,10 @@ export class RegisterComponent {
       this.loader.hide();
     }
 
+  }
+
+  togglemembershipTable(){
+    this.isMembershipTableCollapsed = !this.isMembershipTableCollapsed;
   }
 
   async mapAdminToInsertPayload(admin: any) {

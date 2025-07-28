@@ -1,39 +1,44 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm py-2 px-3 rounded-bottom">
   <div class="container-fluid">
-    <a class="navbar-brand fw-bold" routerLink="/dashboard">
-      <img [src]="gymLogo" alt="Preview" height="50"/> {{ gymName }}
+    <!-- Brand + Logo -->
+    <a class="navbar-brand d-flex align-items-center fw-bold gap-2" routerLink="/dashboard">
+      <img [src]="gymLogo" alt="Gym Logo" height="40" class="rounded-circle border border-white" />
+      <span class="fs-5">{{ gymName }}</span>
     </a>
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+    <!-- Mobile toggle -->
+    <button
+  class="navbar-toggler"
+  type="button"
+  data-bs-toggle="collapse"
+  data-bs-target="#navbarNav"
+  aria-controls="navbarNav"
+  aria-expanded="false"
+  aria-label="Toggle navigation"
+>
+  <span class="navbar-toggler-icon"></span>
+</button>
 
+    <!-- Nav links -->
     <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0 mt-2 mt-lg-0">
         <li class="nav-item">
-          <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+          <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">🏠 Dashboard</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/dashboard/create-candidate" routerLinkActive="active">Add Membership</a>
+          <a class="nav-link" routerLink="/dashboard/create-candidate" routerLinkActive="active">➕ Add Membership</a>
         </li>
-        <!-- <li class="nav-item">
-          <a class="nav-link" routerLink="/dashboard/delete-candidate" routerLinkActive="active">Renew Membership</a>
-        </li> -->
         <li class="nav-item">
-          <a class="nav-link" routerLink="/dashboard/update-package" routerLinkActive="active">Update Gym Details</a>
+          <a class="nav-link" routerLink="/dashboard/update-package" routerLinkActive="active">⚙️ Update Gym</a>
         </li>
-        <!-- <li class="nav-item">
-          <a class="nav-link" routerLink="/dashboard/send-offer" routerLinkActive="active">Send Offer Message</a>
-        </li> -->
       </ul>
 
-      <!-- Right side: welcome message and logout -->
-      <div class="d-flex align-items-center gap-3">
+      <!-- Right-side section -->
+      <div class="d-flex align-items-center gap-3 mt-3 mt-lg-0">
         <span class="text-white fw-semibold d-none d-lg-block">
           👋 Welcome, {{ adminName }}!
         </span>
-        <button class="btn btn-sm btn-light fw-semibold" (click)="logout()">Logout</button>
+        <button class="btn btn-sm btn-outline-light fw-semibold rounded-pill px-3" (click)="logout()">Logout</button>
       </div>
     </div>
   </div>

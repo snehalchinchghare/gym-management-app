@@ -113,26 +113,20 @@
         </div>
       </div>
 
-      <div class="accordion mb-3" id="packageAccordion">
+      <div class="accordion mb-3">
         <div class="accordion-item">
-          <h2 class="accordion-header" id="packageHeading">
-            <button
-              class="accordion-button collapsed fw-semibold"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#packageCollapse"
-              aria-expanded="false"
-              aria-controls="packageCollapse"
-            >
-            Membership Pricing
+          <h2 class="accordion-header">
+            <button class="accordion-button fw-semibold form-label text-muted ms-2"
+                    [class.collapsed]="!isMembershipTableCollapsed"
+                    type="button"
+                    (click)="togglemembershipTable()">
+              Membership Pricing
             </button>
           </h2>
-          <div
-            id="packageCollapse"
-            class="accordion-collapse collapse"
-            aria-labelledby="packageHeading"
-            data-bs-parent="#packageAccordion"
-          >
+
+          <div class="accordion-collapse"
+                 [class.collapse]="true"
+                 [class.show]="isMembershipTableCollapsed">
             <div class="accordion-body p-2">
               <div style="overflow-x: auto; width: 100%;">
                 <table

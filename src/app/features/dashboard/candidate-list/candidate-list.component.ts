@@ -152,8 +152,12 @@ export class CandidateListComponent implements OnInit {
         isRenew: true,
       };
       const encodedData = btoa(JSON.stringify(data));
-      let renewalCandidateLink = 'dashboard/create-candidate?data=' + encodedData;
-      this.router.navigateByUrl(renewalCandidateLink);
+      let renewalCandidateLink = '/dashboard/create-candidate?data=' + encodedData;
+      this.router.navigate(['/dashboard/create-candidate'], {
+        queryParams: {
+          data: encodedData
+        }
+      });
     }
     finally{
       this.loaderService.hide();

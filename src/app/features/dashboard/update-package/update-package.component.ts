@@ -21,6 +21,8 @@ export class UpdatePackageComponent {
   private readonly TOKEN_KEY = 'adminToken';
   userDetails: any;
   isMembershipTableCollapsed: boolean = false;
+  packageMaster: any[] = [];
+  serviceMaster: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -31,6 +33,8 @@ export class UpdatePackageComponent {
     private cdr: ChangeDetectorRef) { }
 
   async ngOnInit() {
+    this.packageMaster = await this.supabaseService.getPackageTypes();
+    this.serviceMaster = await this.supabaseService.getServiceTypes();
     this.route.queryParams.subscribe(params => {
       if (params['reason'] === 'unauthorized') {
         this.errorMessage = 'Please login to access the requested page.';
@@ -51,22 +55,39 @@ export class UpdatePackageComponent {
         });
         this.loader.hide();    
       });
-      await this.populatePackages(this.userDetails.packages);
+      console.log('this.userDetails.packages',this.userDetails.packages);
+      this.populatePackages(this.userDetails.packages);
+
   }
 
-  async populatePackages(packages: any[]) {
-    let packageMaster = await this.supabaseService.getPackageTypes();
-    let serviceMaster = await this.supabaseService.getServiceTypes();
-    for (const pkg of packages) {
-      const packType = packageMaster.find(p => p.packagetypeid == pkg.packagetypeid).packagename;
-      const servType = serviceMaster.find(p => p.servicetypeid == pkg.servicetypeid).servicename;
-      if (packType && servType) {
-        const controlName = this.getKeyName(packType, servType);
-        if (this.registerForm.get(controlName)) {
-          this.registerForm.get(controlName)?.setValue(pkg.price);
+  populatePackages(packages: any[]) {
+    // this.supabaseService.getPackageTypes().then(packageMaster =>{
+    //   this.supabaseService.getServiceTypes().then(serviceMaster => {
+        for (const pkg of packages) {
+          console.log('packageMaster',this.packageMaster);
+          console.log('serviceMaster',this.serviceMaster);
+          console.log('pkg',pkg);
+          const packageMatch = this.packageMaster.find(p => p.packagetypeid == pkg.packagetypeid);
+          const serviceMatch = this.serviceMaster.find(p => p.servicetypeid == pkg.servicetypeid);
+
+          console.log('packageMatch',packageMatch);
+          console.log('serviceMatch',serviceMatch);
+          if (!packageMatch || !serviceMatch) {
+            console.warn('No match found for package or service', pkg);
+            continue;
+          }
+          const packType = packageMatch.packagename;
+          const servType = serviceMatch.servicename;
+          console.log('packType',packType);
+          console.log('servType',servType);
+          if (packType && servType) {
+            const controlName = this.getKeyName(packType, servType);
+            console.log(controlName);
+            if (this.registerForm.get(controlName)) {
+              this.registerForm.get(controlName)?.setValue(pkg.price);
+            }
+          }
         }
-      }
-    }
   }
 
   togglemembershipTable(){
@@ -204,9 +225,9 @@ export class UpdatePackageComponent {
 
         if (price !== undefined && price !== null && price !== '') {
           packageList.push({
-            PackageTypeId: p.packagetypeid,
-            ServiceTypeId: s.servicetypeid,
-            Price: Number(price)
+            packagetypeid: p.packagetypeid,
+            servicetypeid: s.servicetypeid,
+            price: Number(price)
           });
         }
       }
