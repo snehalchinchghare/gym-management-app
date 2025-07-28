@@ -6,6 +6,7 @@ import { UpdatePackageComponent } from './update-package/update-package.componen
 import { DeleteCandidateComponent } from './delete-candidate/delete-candidate.component';
 import { CandidateListComponent } from './candidate-list/candidate-list.component';
 import { ReceiptComponent } from './receipt/receipt.component';
+import { AboutComponent } from '../about/about.component';
 
 export const dashboardRoutes: Routes = [
   {
@@ -36,6 +37,10 @@ export const dashboardRoutes: Routes = [
       {
         path: 'candidate-list',
         component: CandidateListComponent,
+      },
+      {
+        path: 'about',
+        component: AboutComponent,
       }
       // ,
       // {
