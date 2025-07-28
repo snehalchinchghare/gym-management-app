@@ -29,8 +29,7 @@ export class UpdatePackageComponent {
     private router: Router,
     private route: ActivatedRoute,
     private supabaseService: SupabaseService,
-    private loader: LoaderService,
-    private cdr: ChangeDetectorRef) { }
+    private loader: LoaderService) { }
 
   async ngOnInit() {
     this.packageMaster = await this.supabaseService.getPackageTypes();
@@ -55,34 +54,20 @@ export class UpdatePackageComponent {
         });
         this.loader.hide();    
       });
-      console.log('this.userDetails.packages',this.userDetails.packages);
       this.populatePackages(this.userDetails.packages);
-
   }
 
   populatePackages(packages: any[]) {
-    // this.supabaseService.getPackageTypes().then(packageMaster =>{
-    //   this.supabaseService.getServiceTypes().then(serviceMaster => {
         for (const pkg of packages) {
-          console.log('packageMaster',this.packageMaster);
-          console.log('serviceMaster',this.serviceMaster);
-          console.log('pkg',pkg);
           const packageMatch = this.packageMaster.find(p => p.packagetypeid == pkg.packagetypeid);
           const serviceMatch = this.serviceMaster.find(p => p.servicetypeid == pkg.servicetypeid);
-
-          console.log('packageMatch',packageMatch);
-          console.log('serviceMatch',serviceMatch);
           if (!packageMatch || !serviceMatch) {
-            console.warn('No match found for package or service', pkg);
             continue;
           }
           const packType = packageMatch.packagename;
           const servType = serviceMatch.servicename;
-          console.log('packType',packType);
-          console.log('servType',servType);
           if (packType && servType) {
             const controlName = this.getKeyName(packType, servType);
-            console.log(controlName);
             if (this.registerForm.get(controlName)) {
               this.registerForm.get(controlName)?.setValue(pkg.price);
             }
@@ -92,7 +77,6 @@ export class UpdatePackageComponent {
 
   togglemembershipTable(){
     this.isMembershipTableCollapsed = !this.isMembershipTableCollapsed;
-    this.cdr.detectChanges();
   }
 
   registerForm = this.fb.group({
@@ -117,7 +101,7 @@ export class UpdatePackageComponent {
     pt_quarterly: ['', Validators.required],
     pt_halfYearly: ['', Validators.required],
     pt_yearly: ['', Validators.required],
-    gymLogo: ['', Validators.required],
+    gymLogo: [''],
   });
 
   async onRegister() {

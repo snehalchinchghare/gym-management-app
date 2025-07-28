@@ -1,22 +1,50 @@
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+
 <!-- Error Alert -->
 <div *ngIf="errorMessage" class="alert alert-warning text-center">
   {{ errorMessage }}
 </div>
 
 <!-- Login Container -->
-<div class="container d-flex justify-content-center align-items-center vh-100 bg-light">
-  <div class="card shadow-lg p-4 w-100" style="max-width: 420px;">
-    <h3 class="text-center text-primary mb-4">Admin Login</h3>
+<div
+  class="container d-flex justify-content-center align-items-center py-5"
+  style="min-height: 100vh; font-family: 'Poppins', sans-serif;"
+>
+  <div class="card border-0 shadow-lg rounded-5 p-4 w-100" style="max-width: 600px; background-color: #fefefe;">
+    <!-- Brand Heading -->
+    <div class="text-center mb-4">
+      <div style="font-size: 60px;">🏋️</div>
+    
+      <!-- Brand Name -->
+      <h1 
+        class="text-center fw-bold mb-2" 
+        style="font-size: 2.8rem; 
+               background: linear-gradient(90deg, #007bff, #00c9a7); 
+               -webkit-background-clip: text; 
+               -webkit-text-fill-color: transparent; 
+               letter-spacing: 1px;"
+      >
+        GymSync
+      </h1>
+    
+      <!-- Tagline -->
+      <div class="text-muted fst-italic" style="font-size: 1rem;">
+        – Sync every rep, every record –
+      </div>
+    </div>
+
+    <!-- Login Heading -->
+    <h4 class="text-center mb-4 text-success fw-semibold mt-4">Admin Login</h4>
 
     <!-- Login Form -->
     <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
       <!-- Email -->
       <div class="mb-3">
-        <label for="email" class="form-label">Email</label>
+        <label for="email" class="form-label fw-semibold text-muted ms-2">Email</label>
         <input
           id="email"
           type="email"
-          class="form-control"
+          class="form-control rounded-pill px-4 py-2"
           formControlName="email"
           placeholder="admin@gmail.com"
         />
@@ -30,11 +58,11 @@
 
       <!-- Password -->
       <div class="mb-3">
-        <label for="password" class="form-label">Password</label>
+        <label for="password" class="form-label fw-semibold text-muted ms-2">Password</label>
         <input
           id="password"
           type="password"
-          class="form-control"
+          class="form-control rounded-pill px-4 py-2"
           formControlName="password"
           placeholder="******"
         />
@@ -56,11 +84,16 @@
       </button>
     </form>
 
-    <!-- Register Link -->
+    <!-- Register & Pricing Links -->
     <div class="text-center mt-3">
-      <a routerLink="/register" class="text-decoration-none text-secondary">
+      <a routerLink="/register" class="text-decoration-none text-secondary d-block mb-2">
         New Admin? <span class="text-primary">Register here</span>
       </a>
+      <div class="text-center mt-4">
+        <a routerLink="/pricing" class="btn btn-outline-primary px-4 py-2 fw-semibold">
+          💰 Check Pricing Plans
+        </a>
+      </div>
     </div>
   </div>
 </div>
@@ -76,7 +109,6 @@
 >
   <div class="d-flex">
     <div class="toast-body">
-      <!-- Toast message will be injected dynamically -->
       Invalid login credentials. Please try again.
     </div>
     <button

@@ -38,7 +38,7 @@
         <div class="mb-3">
           <label class="form-label fw-semibold text-muted ms-2">Mobile</label>
           <input type="number" class="form-control rounded-pill px-4 py-2" formControlName="gymmobile"
-            placeholder="example@gmail.com" />
+            placeholder="" />
           <div class="text-danger small mt-1"
             *ngIf="registerForm.get('gymmobile')?.touched && registerForm.get('gymmobile')?.invalid">
             Mobile is required.
@@ -179,7 +179,7 @@
         <!-- Submit Button -->
         <div class="col-12">
           <button type="submit" class="btn btn-success rounded-pill w-100 py-2" [disabled]="registerForm.invalid">
-            Register
+            Update
           </button>
         </div>
       </div>
