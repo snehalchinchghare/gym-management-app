@@ -22,6 +22,7 @@ export class CandidateRegisterComponent implements OnInit {
   isRenew: boolean = false;
   candidateId: number | null = null;
   private readonly ADMIN_KEY = 'adminUser';
+  isBalancePayment: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -84,8 +85,9 @@ export class CandidateRegisterComponent implements OnInit {
         const decoded = JSON.parse(atob(encoded));
         this.candidateId = decoded.candidateId;
         this.isRenew = decoded.isRenew;
-
-        if (this.isRenew) {
+        this.isBalancePayment = decoded.isBalancePayment;
+        console.log(this.isRenew, this.isBalancePayment);
+        if (this.isRenew || this.isBalancePayment) {
           this.loader.show();
           this.supabaseService.getCandidateForRenewal(this.candidateId).then(result => {
             if (result) {
@@ -119,6 +121,13 @@ export class CandidateRegisterComponent implements OnInit {
               this.registerForm.get('mobile')?.disable();
               this.registerForm.get('dob')?.disable();
               this.registerForm.get('admissionDate')?.disable();
+              this.registerForm.get('admissionFee')?.disable();
+              if(this.isBalancePayment){
+                this.registerForm.get('serviceType')?.disable();
+                this.registerForm.get('packageType')?.disable();
+                this.registerForm.get('totalAmt')?.disable();
+                this.registerForm.get('startDate')?.disable();
+              }
             }
           });
           
@@ -152,7 +161,9 @@ export class CandidateRegisterComponent implements OnInit {
 
     let result: { candidateid: number; success: boolean; message: string };
     if (this.isRenew) {
-      result = await this.supabaseService.renewMembership(this.candidateId, candidateData);
+      result = await this.supabaseService.renewMembership(this.candidateId, candidateData, 'Renewed');
+    } else if(this.isBalancePayment){
+      result = await this.supabaseService.renewMembership(this.candidateId, candidateData, 'BalancePayment');
     } else {
       result = await this.supabaseService.registerCandidate(candidateData);
     }

@@ -3,7 +3,7 @@
 <div class="container d-flex justify-content-center align-items-center py-5"
   style="min-height: 100vh; font-family: 'Poppins', sans-serif;">
   <div class="card border-0 shadow-lg rounded-5 p-4 w-100" style="max-width: 600px; background-color: #fefefe;">
-    <h3 class="text-center mb-4 text-success fw-semibold">{{isRenew ? 'Renew Membership' : 'Add Membership'}}</h3>
+    <h3 class="text-center mb-4 text-success fw-semibold">{{isRenew ? 'Renew Membership' : (isBalancePayment ? 'Add Balance Payment' : 'Add Membership')}}</h3>
 
     <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
       <div class="row g-3">
@@ -58,7 +58,7 @@
         </div>
 
         <!-- Admission Fee -->
-        <div class="mb-3" *ngIf="!isRenew">
+        <div class="mb-3" *ngIf="!isRenew || !isBalancePayment">
           <label class="form-label fw-semibold text-muted ms-2">Admission Fee</label>
           <input type="number" class="form-control rounded-pill px-4 py-2" formControlName="admissionFee"
             placeholder="Enter admission fee" />
@@ -104,8 +104,7 @@
 
         <!-- Submit Button -->
         <div class="d-grid">
-          <button class="btn btn-success rounded-pill w-100 py-2" type="submit">{{ isRenew ? 'Renew Membership' : 'Add
-            Membership' }}</button>
+          <button class="btn btn-success rounded-pill w-100 py-2" type="submit">{{ isRenew ? 'Renew Membership' : (isBalancePayment ? 'Update' : 'Add Membership') }}</button>
         </div>
       </div>
     </form>

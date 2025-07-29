@@ -144,15 +144,15 @@ export class CandidateListComponent implements OnInit {
     window.open(url, '_blank');
   }
 
-  renewMembership(candidateid: any){
+  renewMembership(candidateid: any, isRenew: boolean, isBalancePayment: boolean){
     try{
       this.loaderService.show();
       const data = {
         candidateId: candidateid,
-        isRenew: true,
+        isRenew: isRenew,
+        isBalancePayment: isBalancePayment,
       };
       const encodedData = btoa(JSON.stringify(data));
-      let renewalCandidateLink = '/dashboard/create-candidate?data=' + encodedData;
       this.router.navigate(['/dashboard/create-candidate'], {
         queryParams: {
           data: encodedData

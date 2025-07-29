@@ -77,7 +77,8 @@
         <td [ngStyle]="getCellStyle(candidate.end_date)">{{ candidate.end_date }}</td>
         <td [ngStyle]="getCellStyle(candidate.end_date)">
           <div class="d-flex gap-1 flex-wrap">
-            <button class="btn btn-sm btn-primary" (click)="renewMembership(candidate.candidateid)">Renew</button>
+            <button *ngIf="candidate.balance_amount == 0" class="btn btn-sm btn-primary" (click)="renewMembership(candidate.candidateid, true, false)">Renew</button>
+            <button *ngIf="candidate.balance_amount > 0" class="btn btn-sm btn-primary" (click)="renewMembership(candidate.candidateid, false, true)">Balance</button>
             <button class="btn btn-sm btn-primary" (click)="sendLatestReceipt(candidate)">Receipt</button>
             <button class="btn btn-sm btn-primary"
                     *ngIf="getStatus(candidate.end_date) !== 'active'"
@@ -101,8 +102,11 @@
         <li><strong>End Date:</strong> {{ candidate.end_date }}</li>
       </ul>
       <div class="d-flex justify-content-end gap-2 flex-wrap">
-        <button class="btn btn-sm btn-primary" (click)="renewMembership(candidate.candidateid)">
+        <button class="btn btn-sm btn-primary" (click)="renewMembership(candidate.candidateid, true, false)">
           <i class="bi bi-pencil"></i> Renew
+        </button>
+        <button class="btn btn-sm btn-primary" (click)="renewMembership(candidate.candidateid, false, true)">
+          <i class="bi bi-pencil"></i> Balance
         </button>
         <button class="btn btn-sm btn-primary" (click)="sendLatestReceipt(candidate)">
           <i class="bi bi-receipt"></i> Receipt

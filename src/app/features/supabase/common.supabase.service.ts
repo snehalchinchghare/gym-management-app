@@ -173,7 +173,7 @@ export class SupabaseService {
       });
   }
 
-  async renewMembership(candidateid: any, candidate: any): Promise<{ candidateid: number; success: boolean; message: string }> {
+  async renewMembership(candidateid: any, candidate: any, receiptType: string): Promise<{ candidateid: number; success: boolean; message: string }> {
     try {
       const { data, error } = await this.supabase.rpc('renew_membership', {
         p_candidateid: candidateid,
@@ -193,7 +193,7 @@ export class SupabaseService {
         p_end_date: candidate.endDate,
         p_admissionfee: candidate.admissionFee,
         p_createdby: candidate.userId,
-        p_receipttype: 'Renewed'
+        p_receipttype: receiptType
       });
 
       if (error) {
