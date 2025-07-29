@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthService } from '../../../core/auth.service';
@@ -19,6 +19,8 @@ export class LoginComponent implements OnInit {
   errorMessage: string = '';
   private readonly ADMIN_KEY = 'adminUser';
   private readonly TOKEN_KEY = 'adminToken';
+  deferredPrompt: any;
+  showInstallButton = false;
 
   constructor(
     private fb: FormBuilder,
@@ -40,8 +42,38 @@ export class LoginComponent implements OnInit {
         this.showToast('Please login to access the requested page.');
       }
     });
+    this.checkIsMobile();
   }
 
+  // Detect 'beforeinstallprompt' event
+  @HostListener('window:beforeinstallprompt', ['$event'])
+  onBeforeInstallPrompt(event: Event) {
+    event.preventDefault();
+    this.deferredPrompt = event;
+    this.showInstallButton = this.isMobile(); // Show only on mobile
+  }
+
+  installApp() {
+    if (this.deferredPrompt) {
+      this.deferredPrompt.prompt();
+      this.deferredPrompt.userChoice.then((result: any) => {
+        if (result.outcome === 'accepted') {
+          console.log('User accepted the A2HS prompt');
+        }
+        this.deferredPrompt = null;
+        this.showInstallButton = false;
+      });
+    }
+  }
+
+  // Check if user is on a mobile device
+  isMobile(): boolean {
+    return /Mobi|Android|iPhone/i.test(navigator.userAgent);
+  }
+
+  checkIsMobile() {
+    this.showInstallButton = this.isMobile();
+  }
 
   async onLogin() {
     try {

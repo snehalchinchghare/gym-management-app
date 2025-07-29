@@ -5,6 +5,10 @@
   {{ errorMessage }}
 </div>
 
+<button *ngIf="showInstallButton" (click)="installApp()" class="btn btn-success m-3">
+  📲 Add to Home Screen
+</button>
+
 <!-- Login Container -->
 <div
   class="container d-flex justify-content-center align-items-center py-5"
