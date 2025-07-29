@@ -79,7 +79,7 @@
           <div class="d-flex gap-1 flex-wrap">
             <button class="btn btn-sm btn-primary" (click)="editCandidateDetails(candidate.candidateid)">View / Edit</button>
             <button *ngIf="candidate.balance_amount == 0" class="btn btn-sm btn-primary" (click)="renewMembership(candidate.candidateid, true, false)">Renew</button>
-            <button *ngIf="candidate.balance_amount > 0" class="btn btn-sm btn-primary" (click)="renewMembership(candidate.candidateid, false, true)">Balance</button>
+            <button *ngIf="candidate.balance_amount != 0" class="btn btn-sm btn-primary" (click)="renewMembership(candidate.candidateid, false, true)">Balance</button>
             <button class="btn btn-sm btn-primary" (click)="sendLatestReceipt(candidate)">Receipt</button>
             <button class="btn btn-sm btn-primary"
                     *ngIf="getStatus(candidate.end_date) !== 'active'"
@@ -109,7 +109,7 @@
         <button *ngIf="candidate.balance_amount == 0" class="btn btn-sm btn-primary" (click)="renewMembership(candidate.candidateid, true, false)">
           <i class="bi bi-pencil"></i> Renew
         </button>
-        <button *ngIf="candidate.balance_amount > 0" class="btn btn-sm btn-primary" (click)="renewMembership(candidate.candidateid, false, true)">
+        <button *ngIf="candidate.balance_amount != 0" class="btn btn-sm btn-primary" (click)="renewMembership(candidate.candidateid, false, true)">
           <i class="bi bi-pencil"></i> Balance
         </button>
         <button class="btn btn-sm btn-primary" (click)="sendLatestReceipt(candidate)">
