@@ -86,7 +86,6 @@ export class CandidateRegisterComponent implements OnInit {
         this.candidateId = decoded.candidateId;
         this.isRenew = decoded.isRenew;
         this.isBalancePayment = decoded.isBalancePayment;
-        console.log(this.isRenew, this.isBalancePayment);
         if (this.isRenew || this.isBalancePayment) {
           this.loader.show();
           this.supabaseService.getCandidateForRenewal(this.candidateId).then(result => {
