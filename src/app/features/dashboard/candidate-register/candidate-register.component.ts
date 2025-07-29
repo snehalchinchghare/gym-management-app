@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SupabaseService } from '../../supabase/common.supabase.service';
 import dayjs from 'dayjs';
 import { LoaderService } from '../../services/loader.service';
+import { initZone } from 'zone.js/lib/zone-impl';
 
 @Component({
   selector: 'app-candidate-register',
@@ -23,6 +24,8 @@ export class CandidateRegisterComponent implements OnInit {
   candidateId: number | null = null;
   private readonly ADMIN_KEY = 'adminUser';
   isBalancePayment: boolean = false;
+  initialBalanceAmt: number = 0;
+  initialTotalAmt: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -55,27 +58,6 @@ export class CandidateRegisterComponent implements OnInit {
       endDate: [{ value: '', disabled: true }, Validators.required]
     });
 
-
-
-    this.registerForm.get('totalAmt')?.valueChanges.subscribe(() => this.updateBalance());
-    this.registerForm.get('paidAmt')?.valueChanges.subscribe(() => this.updateBalance());
-
-    this.registerForm.get('serviceType')?.valueChanges.subscribe(serviceTypeId => {
-      if (serviceTypeId) {
-        this.registerForm.get('packageType')?.enable();
-      } else {
-        this.registerForm.get('packageType')?.disable();
-        this.registerForm.patchValue({ totalAmt: '' });
-        this.registerForm.patchValue({ package: '' });
-      }
-    });
-
-    this.registerForm.get('packageType')?.valueChanges.subscribe(val => {
-      this.calculateEndDate();
-      this.setTotalAmount();
-    });
-    this.registerForm.get('startDate')?.valueChanges.subscribe(() => this.calculateEndDate());
-    this.registerForm.get('admissionFee')?.valueChanges.subscribe(() => this.setTotalAmount());
     this.packageList = await this.supabaseService.getPackageTypes();
     this.serviceList = await this.supabaseService.getServiceTypes();
 
@@ -115,13 +97,15 @@ export class CandidateRegisterComponent implements OnInit {
                 startDate: newStartDate,
                 endDate: newEndDate
               });
+              this.initialBalanceAmt = result.balance_amount;
+              this.initialTotalAmt = result.total_amount;
               this.registerForm.get('fullName')?.disable();
               this.registerForm.get('email')?.disable();
               this.registerForm.get('mobile')?.disable();
               this.registerForm.get('dob')?.disable();
               this.registerForm.get('admissionDate')?.disable();
               this.registerForm.get('admissionFee')?.disable();
-              if(this.isBalancePayment){
+              if (this.isBalancePayment) {
                 this.registerForm.get('serviceType')?.disable();
                 this.registerForm.get('packageType')?.disable();
                 this.registerForm.get('totalAmt')?.disable();
@@ -129,11 +113,31 @@ export class CandidateRegisterComponent implements OnInit {
               }
             }
           });
-          
+
           this.loader.hide();
         }
       }
     });
+
+    this.registerForm.get('totalAmt')?.valueChanges.subscribe(() => this.updateBalance('totalAmt'));
+    this.registerForm.get('paidAmt')?.valueChanges.subscribe(() => this.updateBalance('paidAmt'));
+
+    this.registerForm.get('serviceType')?.valueChanges.subscribe(serviceTypeId => {
+      if (serviceTypeId) {
+        this.registerForm.get('packageType')?.enable();
+      } else {
+        this.registerForm.get('packageType')?.disable();
+        this.registerForm.patchValue({ totalAmt: '' });
+        this.registerForm.patchValue({ package: '' });
+      }
+    });
+
+    this.registerForm.get('packageType')?.valueChanges.subscribe(val => {
+      this.calculateEndDate();
+      this.setTotalAmount();
+    });
+    this.registerForm.get('startDate')?.valueChanges.subscribe(() => this.calculateEndDate());
+    this.registerForm.get('admissionFee')?.valueChanges.subscribe(() => this.setTotalAmount());
   }
 
   async onRegister() {
@@ -161,7 +165,7 @@ export class CandidateRegisterComponent implements OnInit {
     let result: { candidateid: number; success: boolean; message: string };
     if (this.isRenew) {
       result = await this.supabaseService.renewMembership(this.candidateId, candidateData, 'Renewed');
-    } else if(this.isBalancePayment){
+    } else if (this.isBalancePayment) {
       result = await this.supabaseService.renewMembership(this.candidateId, candidateData, 'BalancePayment');
     } else {
       result = await this.supabaseService.registerCandidate(candidateData);
@@ -174,50 +178,75 @@ export class CandidateRegisterComponent implements OnInit {
     }
   }
 
-  updateBalance(): void {
+  updateBalance(eventType: any): void {
     const total = parseFloat(this.registerForm.get('totalAmt')?.value) || 0;
     const paid = parseFloat(this.registerForm.get('paidAmt')?.value) || 0;
-    const balance = total - paid;
-    this.registerForm.patchValue({ balanceAmt: balance.toFixed(2) });
+    if (!this.isBalancePayment) {
+      const balance = total - paid;
+      this.registerForm.patchValue({ balanceAmt: balance.toFixed(2) });
+    }
+    else {
+      if (!isNaN(paid)) {
+        const newBalance = this.initialBalanceAmt - paid;
+        this.registerForm.patchValue(
+          {
+            balanceAmt: newBalance
+          },
+          { emitEvent: false }
+        );
+      } else {
+        // Reset to original if input is cleared or invalid
+        this.registerForm.patchValue(
+          {
+            balanceAmt: this.initialBalanceAmt
+          },
+          { emitEvent: false }
+        );
+      }
+    }
   }
 
   calculateEndDate(): void {
-    const startDateValue = this.registerForm.get('startDate')?.value;
-    const selectedPackageId = this.registerForm.get('packageType')?.value;
+    if (!this.isBalancePayment) {
+      const startDateValue = this.registerForm.get('startDate')?.value;
+      const selectedPackageId = this.registerForm.get('packageType')?.value;
 
-    if (!startDateValue || !selectedPackageId) return;
+      if (!startDateValue || !selectedPackageId) return;
 
-    const selectedPackage = this.packageList.find(p => p.packagetypeid === +selectedPackageId);
-    if (!selectedPackage) return;
+      const selectedPackage = this.packageList.find(p => p.packagetypeid === +selectedPackageId);
+      if (!selectedPackage) return;
 
-    const packageMonthsMap: { [key: string]: number } = {
-      'monthly': 1,
-      'quarterly': 3,
-      'half yearly': 6,
-      'yearly': 12
-    };
+      const packageMonthsMap: { [key: string]: number } = {
+        'monthly': 1,
+        'quarterly': 3,
+        'half yearly': 6,
+        'yearly': 12
+      };
 
-    const monthsToAdd = packageMonthsMap[selectedPackage.packagename.toLowerCase()];
-    if (!monthsToAdd) return;
+      const monthsToAdd = packageMonthsMap[selectedPackage.packagename.toLowerCase()];
+      if (!monthsToAdd) return;
 
-    const newEndDate = dayjs(startDateValue).add(monthsToAdd, 'month').format('YYYY-MM-DD');
-    this.registerForm.patchValue({ endDate: newEndDate });
+      const newEndDate = dayjs(startDateValue).add(monthsToAdd, 'month').format('YYYY-MM-DD');
+      this.registerForm.patchValue({ endDate: newEndDate });
+    }
   }
 
   setTotalAmount(): void {
-    const selectedPackageId = this.registerForm.get('packageType')?.value;
-    const selectedServiceId = this.registerForm.get('serviceType')?.value;
-    const admissionFee = this.registerForm.get('admissionFee')?.value;
-    if (!this.userDetails || !selectedPackageId) return;
+    if (!this.isBalancePayment) {
+      const selectedPackageId = this.registerForm.get('packageType')?.value;
+      const selectedServiceId = this.registerForm.get('serviceType')?.value;
+      const admissionFee = this.registerForm.get('admissionFee')?.value;
+      if (!this.userDetails || !selectedPackageId) return;
 
-    const packageInfo = this.userDetails.packages.find(
-      (p: any) => p.packagetypeid === +selectedPackageId && p.servicetypeid === +selectedServiceId
-    );
+      const packageInfo = this.userDetails.packages.find(
+        (p: any) => p.packagetypeid === +selectedPackageId && p.servicetypeid === +selectedServiceId
+      );
 
-    if (packageInfo) {
-      this.registerForm.patchValue({ totalAmt: packageInfo.price + admissionFee });
-    } else {
-      this.registerForm.patchValue({ totalAmt: '' });
+      if (packageInfo) {
+        this.registerForm.patchValue({ totalAmt: packageInfo.price + admissionFee });
+      } else {
+        this.registerForm.patchValue({ totalAmt: '' });
+      }
     }
   }
 }
