@@ -61,6 +61,32 @@ export class SupabaseService {
     }
   }
 
+  async updateCandidate(data: {
+    candidateId: number,
+    userid: number,
+    fullName: string,
+    email: string,
+    mobile: string,
+    dob: string
+  }) {
+    const { error } = await this.supabase.rpc('update_candidate_details', {
+      p_candidate_id: data.candidateId,
+      p_userid: data.userid,
+      p_full_name: data.fullName,
+      p_email: data.email,
+      p_mobile: data.mobile,
+      p_dob: data.dob,
+    });
+  
+    if (error) {
+      console.error('❌ Supabase function error:', error.message);
+      throw error;
+    }
+  
+    return true;
+  }
+  
+
   async registerCandidate(candidate: any): Promise<{ candidateid: number; success: boolean; message: string }> {
     try {
       const { data, error } = await this.supabase.rpc('register_candidate', {
@@ -221,5 +247,17 @@ export class SupabaseService {
     } else {
       return data[0];
     }
+  }
+
+  async getCandidateWithRegistrations(candidateId: number): Promise<any> {
+    const { data, error } = await this.supabase
+      .rpc('get_candidate_with_registrations', { p_candidateid: candidateId });
+  
+    if (error) {
+      console.error('Error fetching candidate with registrations:', error);
+      throw error;
+    }
+  
+    return data;
   }
 }

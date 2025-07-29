@@ -144,6 +144,24 @@ export class CandidateListComponent implements OnInit {
     window.open(url, '_blank');
   }
 
+  editCandidateDetails(candidateid: any){
+    try{
+      this.loaderService.show();
+      const data = {
+        candidateId: candidateid,
+      };
+      const encodedData = btoa(JSON.stringify(data));
+      this.router.navigate(['/dashboard/candidate-edit'], {
+        queryParams: {
+          data: encodedData
+        }
+      });
+    }
+    finally{
+      this.loaderService.hide();
+    }
+  }
+
   renewMembership(candidateid: any, isRenew: boolean, isBalancePayment: boolean){
     try{
       this.loaderService.show();
