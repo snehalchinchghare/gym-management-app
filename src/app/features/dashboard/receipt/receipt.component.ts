@@ -18,6 +18,7 @@ import jsPDF from 'jspdf';
   startDate: any = null;
   endDate: any = null;
   candidateData: any;
+  dataLoaded: boolean = false;
 
   constructor(
     private router: Router,
@@ -25,6 +26,7 @@ import jsPDF from 'jspdf';
     private supabaseService: SupabaseService) {}
     
   async ngOnInit() {
+    this.dataLoaded = false;
     this.route.paramMap.subscribe(params => {
       const encoded = params.get('data');
       if (encoded) {
@@ -40,6 +42,9 @@ import jsPDF from 'jspdf';
     if(candidates){
       this.candidateData = candidates[0];
       this.receiptType = this.candidateData.receipttype;
+      setTimeout(() => {
+        this.dataLoaded = true;        
+      }, 500); 
     }
   }
 

@@ -6,14 +6,14 @@
   <p>
     - Team <strong>{{ candidateData.gymname }}</strong>
   </p>
-  <button 
-    (click)="generatePDF()" 
+  <button (click)="generatePDF()" [disabled]="!dataLoaded" [ngClass]="{ 'btn-disabled': !dataLoaded }"
     style="padding: 10px 20px; font-size: 16px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
     Download PDF
   </button>
 </div>
 
-<div *ngIf="candidateData" id="print-section" style="width: 100%; padding: 20px; position: absolute; left: -9999px; top: -9999px;">
+<div *ngIf="candidateData" id="print-section"
+  style="width: 100%; padding: 20px; position: absolute; left: -9999px; top: -9999px;">
   <!DOCTYPE html>
   <html lang="en">
 
@@ -24,6 +24,14 @@
       body {
         font-family: Arial, sans-serif;
         margin: 30px;
+      }
+
+      .btn-disabled {
+        background-color: #a0a0a0 !important;
+        color: #fff !important;
+        cursor: not-allowed !important;
+        pointer-events: none;
+        opacity: 0.7;
       }
 
       .receipt {
