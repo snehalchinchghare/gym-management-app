@@ -58,7 +58,6 @@ export class LoginComponent implements OnInit {
       this.deferredPrompt.prompt();
       this.deferredPrompt.userChoice.then((result: any) => {
         if (result.outcome === 'accepted') {
-          console.log('User accepted the A2HS prompt');
         }
         this.deferredPrompt = null;
         this.showInstallButton = false;
