@@ -1,9 +1,10 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm py-2 px-3 rounded-bottom">
+<nav class="navbar navbar-expand-lg shadow-sm sticky-top" style="background-color: #121212;">
   <div class="container-fluid">
+
     <!-- Brand + Logo -->
     <a class="navbar-brand d-flex align-items-center fw-bold gap-2" routerLink="/dashboard">
-      <img [src]="gymLogo" alt="Gym Logo" height="50" class="rounded-circle border border-white" />
-      <span class="fs-5">{{ gymName }}</span>
+      <img [src]="gymLogo" alt="Gym Logo" height="45" class="rounded-circle border border-light shadow-sm" />
+      <span class="gym-name-gradient fs-4">{{ gymName }}</span>
     </a>
 
     <!-- Toggle button -->
@@ -16,25 +17,28 @@
     <div class="navbar-collapse" [class.collapse]="!isNavbarCollapsed" [class.show]="isNavbarCollapsed" id="navbarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0 mt-2 mt-lg-0">
         <li class="nav-item">
-          <a class="nav-link" routerLink="/dashboard" routerLinkActive="active" (click)="closeNavbar()">🏠 Dashboard</a>
+          <a class="nav-link nav-dark-link" routerLink="/dashboard" routerLinkActive="active" (click)="closeNavbar()">🏠 Dashboard</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/dashboard/create-candidate" routerLinkActive="active" (click)="closeNavbar()">➕ Add Membership</a>
+          <a class="nav-link nav-dark-link" routerLink="/dashboard/create-candidate" routerLinkActive="active" (click)="closeNavbar()">➕ Add Membership</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/dashboard/update-package" routerLinkActive="active" (click)="closeNavbar()">⚙️ Update Gym</a>
+          <a class="nav-link nav-dark-link" routerLink="/dashboard/update-package" routerLinkActive="active" (click)="closeNavbar()">⚙️ Update Gym</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/dashboard/about" routerLinkActive="active" (click)="closeNavbar()">🧠 Who We Are!</a>
+          <a class="nav-link nav-dark-link" routerLink="/dashboard/about" routerLinkActive="active" (click)="closeNavbar()">🧠 About</a>
         </li>
       </ul>
 
-      <div class="d-flex align-items-center gap-3 mt-3 mt-lg-0">
-        <span class="text-white fw-semibold d-none d-lg-block">
+      <div class="d-flex align-items-center gap-3 ms-auto mt-3 mt-lg-0">
+        <a class="premium-btn px-3 py-1 text-decoration-none" routerLink="/dashboard/subscriptions" routerLinkActive="active" (click)="closeNavbar()">
+          💎 Buy Premium
+        </a>
+        <span class="text-light fw-semibold d-none d-lg-block">
           👋 Welcome, {{ adminName }}!
         </span>
         <button class="btn btn-sm btn-outline-light fw-semibold rounded-pill px-3" (click)="logout()">Logout</button>
-      </div>
+      </div>s
     </div>
   </div>
 </nav>

@@ -8,6 +8,7 @@ import { CandidateListComponent } from './candidate-list/candidate-list.componen
 import { ReceiptComponent } from './receipt/receipt.component';
 import { AboutComponent } from '../about/about.component';
 import { CandidateEditComponent } from './candidate-edit/candidate-edit.component';
+import { SubscriptionsComponent } from '../subscriptions/subscriptions.component';
 
 export const dashboardRoutes: Routes = [
   {
@@ -46,6 +47,10 @@ export const dashboardRoutes: Routes = [
       {
         path: 'candidate-edit',
         component: CandidateEditComponent,
+      },
+      {
+        path: 'subscriptions',
+        component: SubscriptionsComponent,
       }
       // ,
       // {

@@ -26,6 +26,7 @@ export class CandidateRegisterComponent implements OnInit {
   isBalancePayment: boolean = false;
   initialBalanceAmt: number = 0;
   initialTotalAmt: number = 0;
+  isManualTotal: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -55,7 +56,8 @@ export class CandidateRegisterComponent implements OnInit {
       balanceAmt: [{ value: 0.00, disabled: true }, [Validators.required, Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$')]],
       admissionDate: [today, Validators.required],
       startDate: [today, Validators.required],
-      endDate: [{ value: '', disabled: true }, Validators.required]
+      endDate: [{ value: '', disabled: true }, Validators.required],
+      isManual: [false],
     });
 
     this.packageList = await this.supabaseService.getPackageTypes();
@@ -110,6 +112,7 @@ export class CandidateRegisterComponent implements OnInit {
                 this.registerForm.get('packageType')?.disable();
                 this.registerForm.get('totalAmt')?.disable();
                 this.registerForm.get('startDate')?.disable();
+                this.registerForm.get('isManual')?.disable();
               }
             }
           });
@@ -119,6 +122,8 @@ export class CandidateRegisterComponent implements OnInit {
       }
     });
 
+    this.registerForm.get('totalAmt')?.disable();
+    this.registerForm.get('isManual')?.valueChanges.subscribe(() => this.updateManualField());
     this.registerForm.get('totalAmt')?.valueChanges.subscribe(() => this.updateBalance('totalAmt'));
     this.registerForm.get('paidAmt')?.valueChanges.subscribe(() => this.updateBalance('paidAmt'));
 
@@ -178,9 +183,27 @@ export class CandidateRegisterComponent implements OnInit {
     }
   }
 
+  updateManualField() {
+    if(!this.isBalancePayment){
+      this.isManualTotal = this.registerForm.get('isManual')?.value;
+      if (this.isManualTotal) {
+        this.registerForm.patchValue({ totalAmt: 0 });
+        this.registerForm.patchValue({ admissionFee: 0 });
+        this.registerForm.get('admissionFee')?.disable();
+        this.registerForm.get('totalAmt')?.enable();
+      }
+      else {
+        this.setTotalAmount();
+        this.registerForm.get('admissionFee')?.enable();
+        this.registerForm.get('totalAmt')?.disable();
+      }
+    }
+  }
+
   updateBalance(eventType: any): void {
     const total = parseFloat(this.registerForm.get('totalAmt')?.value) || 0;
     const paid = parseFloat(this.registerForm.get('paidAmt')?.value) || 0;
+
     if (!this.isBalancePayment) {
       const balance = total - paid;
       this.registerForm.patchValue({ balanceAmt: balance.toFixed(2) });
@@ -232,10 +255,10 @@ export class CandidateRegisterComponent implements OnInit {
   }
 
   setTotalAmount(): void {
-    if (!this.isBalancePayment) {
+    if (!this.isBalancePayment && !this.isManualTotal) {
+      const admissionFee = this.registerForm.get('admissionFee')?.value;
       const selectedPackageId = this.registerForm.get('packageType')?.value;
       const selectedServiceId = this.registerForm.get('serviceType')?.value;
-      const admissionFee = this.registerForm.get('admissionFee')?.value;
       if (!this.userDetails || !selectedPackageId) return;
 
       const packageInfo = this.userDetails.packages.find(

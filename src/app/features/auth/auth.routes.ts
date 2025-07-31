@@ -5,13 +5,13 @@ import { RegisterComponent } from './register/register.component';
 import { ReceiptComponent } from '../dashboard/receipt/receipt.component';
 import { PricingComponent } from '../pricing/pricing.component';
 import { AboutComponent } from '../about/about.component';
+import { SubscriptionsComponent } from '../subscriptions/subscriptions.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'receipt/:data', component: ReceiptComponent, },
-  { path: 'pricing', component: PricingComponent, },
   { path: 'contactus', component: AboutComponent, },
 ];
 

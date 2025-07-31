@@ -8,3 +8,49 @@
     align-items: flex-end;
   }
 }
+
+.nav-link:hover {
+  color: #0d6efd;
+}
+
+.btn-warning:hover {
+  background-color: #ffc107cc;
+  color: black;
+}
+
+/* Brand Name Gradient */
+.gym-name-gradient {
+  background: linear-gradient(90deg, #00c9a7, #4facfe);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* Nav Link Styling */
+.nav-dark-link {
+  color: #e0e0e0 !important;
+  font-weight: 500;
+  transition: color 0.2s ease-in-out;
+}
+
+.nav-dark-link:hover {
+  color: #4e9af1 !important;
+}
+
+/* Premium Button Gradient */
+.premium-btn {
+  background: linear-gradient(90deg, #9c27b0, #e040fb);
+  color: white !important;
+  font-weight: 600;
+  border-radius: 50px;
+  box-shadow: 0 4px 12px rgba(156, 39, 176, 0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.premium-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 18px rgba(224, 64, 251, 0.5);
+}
+
+

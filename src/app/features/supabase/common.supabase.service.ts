@@ -260,4 +260,30 @@ export class SupabaseService {
   
     return data;
   }
+
+  async getPlans(): Promise<any> {
+    const { data, error } = await this.supabase
+      .from('plans')
+      .select('*')
+      .order('planid', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching plans:', error);
+    } else {
+      return data;
+    }
+  }
+
+  async getFeatures(): Promise<any> {
+    const { data, error } = await this.supabase
+      .from('features')
+      .select('*')
+      .order('featureid', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching features:', error);
+    } else {
+      return data;
+    }
+  }
 }
