@@ -41,9 +41,6 @@ import jsPDF from 'jspdf';
     if(candidates){
       this.candidateData = candidates[0];
       this.receiptType = this.candidateData.receipttype;
-      setTimeout(() => {
-        this.dataLoaded = true;        
-      }, 500); 
     }
   }
 
