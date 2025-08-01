@@ -24,7 +24,7 @@ export class CandidateListComponent implements OnInit {
   messageTemplates: any[] = [];
   searchText = '';
   currentPage = 1;
-  pageSize = 2;
+  pageSize = 10;
   baseUrl: string = window.location.origin;activeFilter: 'all' | 'active' | 'inactive' = 'active';
 
   constructor(
