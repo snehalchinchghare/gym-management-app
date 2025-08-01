@@ -25,8 +25,6 @@ export class InactivityService {
   }
 
   logout() {
-    console.log('User inactive for 10 minutes. Logging out...');
-    // Clear session (customize this part as needed)
     localStorage.clear();
     sessionStorage.clear();
     

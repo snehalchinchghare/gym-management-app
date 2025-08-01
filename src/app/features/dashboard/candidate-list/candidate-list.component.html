@@ -1,4 +1,5 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
 <style>
   body {
@@ -110,18 +111,21 @@
       <tr>
         <th>Name</th>
         <th>Service</th>
-        <th>Package</th>
         <th>Balance</th>
         <th>End Date</th>
         <th>Is Active</th>
+        <th>Receipt Type</th>
+        <th>Receipt</th>
+        <th>Remind Via</th> <!-- Always shown, but conditionally empty in rows -->
         <th>Actions</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let candidate of registeredCandidates.rows" class="text-muted">
         <td [ngStyle]="getCellStyle(candidate.end_date)">{{ candidate.full_name }}</td>
-        <td [ngStyle]="getCellStyle(candidate.end_date)">{{ candidate.servicetype_name }}</td>
-        <td [ngStyle]="getCellStyle(candidate.end_date)">{{ candidate.packagetype_name }}</td>
+        <td [ngStyle]="getCellStyle(candidate.end_date)">
+          {{ candidate.servicetype_name }} ({{ candidate.packagetype_name }})
+        </td>
         <td [ngStyle]="getCellStyle(candidate.end_date)">₹{{ candidate.balance_amount }}</td>
         <td [ngStyle]="getCellStyle(candidate.end_date)">{{ candidate.end_date }}</td>
         <td [ngStyle]="getCellStyle(candidate.end_date)">
@@ -132,25 +136,57 @@
               id="isActive" 
               role="switch"
               [checked]="candidate.isactive"
-              (change)="setActiveStatus(candidate)"
-            />
+              (change)="setActiveStatus(candidate)" />
           </div>
         </td>
+        <td [ngStyle]="getCellStyle(candidate.end_date)">{{ candidate.receipttype }}</td>
+        
+        <!-- Receipt buttons -->
+        <td class="text-nowrap" [ngStyle]="getCellStyle(candidate.end_date)">
+          <button class="btn btn-sm btn-outline-success me-2" (click)="sendMessageReceipt(candidate, 'whatsapp')">
+            <i class="bi bi-whatsapp"></i>
+          </button>
+          <button class="btn btn-sm btn-outline-secondary me-2" (click)="sendMessageReceipt(candidate, 'text')">
+            <i class="bi bi-chat-dots"></i>
+          </button>
+          <button class="btn btn-sm btn-outline-primary" (click)="downloadReceipt(candidate)">
+            <i class="bi bi-download"></i>
+          </button>
+        </td>
+
+        <!-- Remind buttons (conditionally shown in cell, not in header) -->
+        <td class="text-nowrap" [ngStyle]="getCellStyle(candidate.end_date)">
+          <ng-container *ngIf="getStatus(candidate.end_date) !== 'active'">
+            <button class="btn btn-sm btn-outline-success me-2" (click)="remindVia(candidate, 'whatsapp')">
+              <i class="bi bi-whatsapp"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-secondary me-2" (click)="remindVia(candidate, 'text')">
+              <i class="bi bi-chat-dots"></i>
+            </button>
+          </ng-container>
+        </td>
+
+        <!-- Action buttons -->
         <td [ngStyle]="getCellStyle(candidate.end_date)">
           <div class="d-flex gap-1 flex-wrap">
-            <button class="btn btn-sm btn-primary" (click)="editCandidateDetails(candidate.candidateid)">View / Edit</button>
-            <button *ngIf="candidate.balance_amount == 0" class="btn btn-sm btn-primary" (click)="renewMembership(candidate.candidateid, true, false)">Renew</button>
-            <button *ngIf="candidate.balance_amount != 0" class="btn btn-sm btn-primary" (click)="renewMembership(candidate.candidateid, false, true)">Balance</button>
-            <button class="btn btn-sm btn-primary" (click)="sendLatestReceipt(candidate)">Receipt</button>
-            <button class="btn btn-sm btn-primary"
-                    *ngIf="getStatus(candidate.end_date) !== 'active'"
-                    (click)="remindViaWhatsapp(candidate)">Remind</button>
+            <button class="btn btn-sm btn-primary" (click)="editCandidateDetails(candidate.candidateid)">
+              View / Edit
+            </button>
+            <button *ngIf="candidate.balance_amount == 0" class="btn btn-sm btn-primary" 
+              (click)="renewMembership(candidate.candidateid, true, false)">
+              Renew
+            </button>
+            <button *ngIf="candidate.balance_amount != 0" class="btn btn-sm btn-primary" 
+              (click)="renewMembership(candidate.candidateid, false, true)">
+              Balance
+            </button>
           </div>
         </td>
       </tr>
     </tbody>
   </table>
 </div>
+
 
 <!-- 📱 Card View (Mobile) -->
 <div class="d-block d-md-none">
@@ -159,29 +195,60 @@
        [ngStyle]="getCellStyle(candidate.end_date)">
     <div class="card-body">
 
-      <!-- Name and Toggle in a Row -->
+      <!-- Header: Name and Toggle -->
       <div class="d-flex justify-content-between align-items-center mb-2">
         <h5 class="card-title fw-bold text-dark mb-0">{{ candidate.full_name }}</h5>
         <div class="form-check form-switch mb-0">
           <input 
-              class="form-check-input" 
-              type="checkbox" 
-              id="isActive" 
-              role="switch"
-              [checked]="candidate.isactive"
-              (change)="setActiveStatus(candidate)"
-            />
+            class="form-check-input" 
+            type="checkbox" 
+            id="isActive" 
+            role="switch"
+            [checked]="candidate.isactive"
+            (change)="setActiveStatus(candidate)" />
         </div>
       </div>
 
-      <ul class="list-unstyled mb-3 text-muted small">
+      <!-- Info List -->
+      <ul class="list-unstyled text-muted small mb-3">
         <li><strong>Service:</strong> {{ candidate.servicetype_name }}</li>
         <li><strong>Package:</strong> {{ candidate.packagetype_name }}</li>
         <li><strong>Balance:</strong> ₹{{ candidate.balance_amount }}</li>
         <li><strong>End Date:</strong> {{ candidate.end_date }}</li>
+        <li><strong>Receipt Type:</strong> {{ candidate.receipttype }}</li>
       </ul>
 
-      <div class="d-flex justify-content-end gap-2 flex-wrap">
+      <!-- Receipt Buttons -->
+      <div class="mb-2">
+        <strong>Receipt:</strong>
+        <div class="mt-1 d-flex flex-wrap gap-2">
+          <button class="btn btn-sm btn-outline-success" (click)="sendMessageReceipt(candidate, 'whatsapp')">
+            <i class="bi bi-whatsapp"></i>
+          </button>
+          <button class="btn btn-sm btn-outline-secondary" (click)="sendMessageReceipt(candidate, 'text')">
+            <i class="bi bi-chat-dots"></i>
+          </button>
+          <button class="btn btn-sm btn-outline-primary" (click)="downloadReceipt(candidate)">
+            <i class="bi bi-download"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Remind Buttons (Conditional) -->
+      <div *ngIf="getStatus(candidate.end_date) !== 'active'" class="mb-2">
+        <strong>Remind:</strong>
+        <div class="mt-1 d-flex flex-wrap gap-2">
+          <button class="btn btn-sm btn-outline-success" (click)="remindVia(candidate, 'whatsapp')">
+            <i class="bi bi-whatsapp"></i>
+          </button>
+          <button class="btn btn-sm btn-outline-secondary" (click)="remindVia(candidate, 'text')">
+            <i class="bi bi-chat-dots"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end flex-wrap gap-2">
         <button class="btn btn-sm btn-primary" (click)="editCandidateDetails(candidate.candidateid)">
           <i class="bi bi-pencil"></i> View / Edit
         </button>
@@ -191,16 +258,8 @@
         <button *ngIf="candidate.balance_amount != 0" class="btn btn-sm btn-primary" (click)="renewMembership(candidate.candidateid, false, true)">
           <i class="bi bi-pencil"></i> Balance
         </button>
-        <button class="btn btn-sm btn-primary" (click)="sendLatestReceipt(candidate)">
-          <i class="bi bi-receipt"></i> Receipt
-        </button>
-        <button class="btn btn-sm btn-primary"
-                *ngIf="getStatus(candidate.end_date) !== 'active'"
-                (click)="remindViaWhatsapp(candidate)">
-          <i class="bi bi-whatsapp"></i> Remind
-        </button>
       </div>
+
     </div>
   </div>
 </div>
-

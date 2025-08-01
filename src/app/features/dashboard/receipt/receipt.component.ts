@@ -32,7 +32,6 @@ import jsPDF from 'jspdf';
       if (encoded) {
         const decoded = JSON.parse(atob(encoded));
         this.candidateId = decoded.candidateId;
-        this.receiptType = decoded.receiptType;
         this.startDate = decoded.startDate;
         this.endDate = decoded.endDate;
       }

@@ -25,7 +25,8 @@ export class CandidateListComponent implements OnInit {
   searchText = '';
   currentPage = 1;
   pageSize = 10;
-  baseUrl: string = window.location.origin;activeFilter: 'all' | 'active' | 'inactive' = 'active';
+  baseUrl: string = window.location.origin;
+  activeFilter: 'all' | 'active' | 'inactive' = 'active';
 
   constructor(
     private router: Router,
@@ -46,7 +47,7 @@ export class CandidateListComponent implements OnInit {
   async onFilterChange(status: 'all' | 'active' | 'inactive') {
     this.activeFilter = status;
     if (this.searchText.trim().length >= 3) {
-      switch(this.activeFilter){
+      switch (this.activeFilter) {
         case 'all':
           this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, this.searchText, this.currentPage, this.pageSize, null);
           break;
@@ -58,7 +59,7 @@ export class CandidateListComponent implements OnInit {
           break;
       }
     } else {
-      switch(this.activeFilter){
+      switch (this.activeFilter) {
         case 'all':
           this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, '', this.currentPage, this.pageSize, null);
           break;
@@ -79,7 +80,7 @@ export class CandidateListComponent implements OnInit {
   async getPrevRecordsByPage() {
     this.currentPage = Math.max(1, this.currentPage - 1);
     if (this.searchText.trim().length >= 3) {
-      switch(this.activeFilter){
+      switch (this.activeFilter) {
         case 'all':
           this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, this.searchText, this.currentPage, this.pageSize, null);
           break;
@@ -91,7 +92,7 @@ export class CandidateListComponent implements OnInit {
           break;
       }
     } else {
-      switch(this.activeFilter){
+      switch (this.activeFilter) {
         case 'all':
           this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, '', this.currentPage, this.pageSize, null);
           break;
@@ -108,7 +109,7 @@ export class CandidateListComponent implements OnInit {
   async getNextRecordsByPage() {
     this.currentPage = Math.min(this.totalPages, this.currentPage + 1);
     if (this.searchText.trim().length >= 3) {
-      switch(this.activeFilter){
+      switch (this.activeFilter) {
         case 'all':
           this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, this.searchText, this.currentPage, this.pageSize, null);
           break;
@@ -120,7 +121,7 @@ export class CandidateListComponent implements OnInit {
           break;
       }
     } else {
-      switch(this.activeFilter){
+      switch (this.activeFilter) {
         case 'all':
           this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, '', this.currentPage, this.pageSize, null);
           break;
@@ -169,7 +170,7 @@ export class CandidateListComponent implements OnInit {
     return dayjs(endDate).isBefore(dayjs(), 'day');
   }
 
-  async remindViaWhatsapp(candidate: any) {
+  async remindVia(candidate: any, source: string) {
     let templateKey = this.getStatus(candidate.end_date);
     const template = this.messageTemplates.find(t => t.template_key === templateKey).message;
     const phoneNumber = Number(candidate.mobile);
@@ -184,11 +185,17 @@ export class CandidateListComponent implements OnInit {
       .replace(/{{end_date}}/g, formattedDate)
       .replace(/{{gym_name}}/g, this.userDetails.gymName.trim());
 
-    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-    window.open(url, '_blank');
+      if (source == 'whatsapp') {
+        const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+        window.open(url, '_blank');
+      }
+      if (source == 'text') {
+        const smsUrl = `sms:${phoneNumber}?body=${encodeURIComponent(message)}`;
+        window.open(smsUrl, '_blank');
+      }
   }
 
-  async sendLatestReceipt(candidate: any) {
+  async sendMessageReceipt(candidate: any, source: string) {
     const template = this.messageTemplates.find(t => t.template_key === 'gym_receipt').message;
     const phoneNumber = Number(candidate.mobile);
     const formattedendDate = new Date(candidate.end_date).toLocaleDateString('en-US', {
@@ -201,12 +208,7 @@ export class CandidateListComponent implements OnInit {
       month: 'long',
       day: 'numeric',
     });
-    const data = {
-      candidateId: candidate.candidateid,
-      receiptType: 'New',
-    };
-    const encodedData = btoa(JSON.stringify(data));
-    let receiptLink = this.baseUrl + '/receipt/' + encodedData;
+    let receiptLink = candidate.receiptlink;
     await this.supabaseService.updateReceiptLink(candidate.registrationid, receiptLink);
     const message = template
       .replace(/{{name}}/g, candidate.full_name.trim())
@@ -216,8 +218,23 @@ export class CandidateListComponent implements OnInit {
       .replace(/{{gym_name}}/g, this.userDetails.gymName.trim())
       .replace(/{{receiptLink}}/g, receiptLink);
 
-    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-    window.open(url, '_blank');
+    if (source == 'whatsapp') {
+      const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+      window.open(url, '_blank');
+    }
+    if (source == 'text') {
+      const smsUrl = `sms:${phoneNumber}?body=${encodeURIComponent(message)}`;
+      window.open(smsUrl, '_blank');
+    }
+  }
+
+  downloadReceipt(candidate: any) {
+    if (candidate.receiptlink) {
+      window.open(candidate.receiptlink, '_blank');
+    }
+    else {
+      alert("No receipt found.");
+    }
   }
 
   editCandidateDetails(candidateid: any) {
@@ -261,7 +278,7 @@ export class CandidateListComponent implements OnInit {
   async onSearchKeyup() {
     if (this.searchText.trim().length >= 3) {
       this.currentPage = 1;
-      switch(this.activeFilter){
+      switch (this.activeFilter) {
         case 'all':
           this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, this.searchText, this.currentPage, this.pageSize, null);
           break;
@@ -274,7 +291,7 @@ export class CandidateListComponent implements OnInit {
       }
     } else {
       this.currentPage = 1;
-      switch(this.activeFilter){
+      switch (this.activeFilter) {
         case 'all':
           this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, '', this.currentPage, this.pageSize, null);
           break;

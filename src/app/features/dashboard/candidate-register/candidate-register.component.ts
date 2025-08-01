@@ -27,6 +27,7 @@ export class CandidateRegisterComponent implements OnInit {
   initialBalanceAmt: number = 0;
   initialTotalAmt: number = 0;
   isManualTotal: boolean = false;
+  baseUrl: string = window.location.origin;
 
   constructor(
     private fb: FormBuilder,
@@ -146,45 +147,57 @@ export class CandidateRegisterComponent implements OnInit {
   }
 
   async onRegister() {
-    if (this.registerForm.invalid) return;
+    try {
+      this.loader.show();
+      if (this.registerForm.invalid) return;
 
-    const formData = this.registerForm.getRawValue();
-    const candidateData = {
-      fullName: formData.fullName,
-      email: formData.email,
-      mobile: formData.mobile,
-      dob: formData.dob,
-      userId: this.userDetails.userId,
-      createdBy: this.userDetails.userId,
-      packageTypeId: Number(formData.packageType),
-      serviceTypeId: Number(formData.serviceType),
-      admissionFee: formData.admissionFee,
-      totalAmt: formData.totalAmt,
-      paidAmt: formData.paidAmt,
-      balanceAmt: Number(formData.balanceAmt),
-      admissionDate: formData.admissionDate,
-      startDate: formData.startDate,
-      endDate: formData.endDate
+      const formData = this.registerForm.getRawValue();
+      const candidateData = {
+        fullName: formData.fullName,
+        email: formData.email,
+        mobile: formData.mobile,
+        dob: formData.dob,
+        userId: this.userDetails.userId,
+        createdBy: this.userDetails.userId,
+        packageTypeId: Number(formData.packageType),
+        serviceTypeId: Number(formData.serviceType),
+        admissionFee: formData.admissionFee,
+        totalAmt: formData.totalAmt,
+        paidAmt: formData.paidAmt,
+        balanceAmt: Number(formData.balanceAmt),
+        admissionDate: formData.admissionDate,
+        startDate: formData.startDate,
+        endDate: formData.endDate
+      }
+
+      let result: { candidateid: any; success: boolean; message: string };
+      if (this.isRenew) {
+        result = await this.supabaseService.renewMembership(this.candidateId, candidateData, 'Renewed');
+      } else if (this.isBalancePayment) {
+        result = await this.supabaseService.renewMembership(this.candidateId, candidateData, 'BalancePayment');
+      } else {
+        result = await this.supabaseService.registerCandidate(candidateData);
+      }
+
+      if (result.success) {
+        const data = {
+          candidateId: result.candidateid[0].out_candidateid
+        };
+        const encodedData = btoa(JSON.stringify(data));
+        let receiptLink = this.baseUrl + '/receipt/' + encodedData;
+        await this.supabaseService.updateReceiptLink(result.candidateid[0].out_registrationid, receiptLink);
+        this.router.navigate(['/dashboard']);
+      } else {
+        alert(result.message);
+      }
     }
-
-    let result: { candidateid: number; success: boolean; message: string };
-    if (this.isRenew) {
-      result = await this.supabaseService.renewMembership(this.candidateId, candidateData, 'Renewed');
-    } else if (this.isBalancePayment) {
-      result = await this.supabaseService.renewMembership(this.candidateId, candidateData, 'BalancePayment');
-    } else {
-      result = await this.supabaseService.registerCandidate(candidateData);
-    }
-
-    if (result.success) {
-      this.router.navigate(['/dashboard']);
-    } else {
-      alert(result.message);
+    finally {
+      this.loader.hide();
     }
   }
 
   updateManualField() {
-    if(!this.isBalancePayment){
+    if (!this.isBalancePayment) {
       this.isManualTotal = this.registerForm.get('isManual')?.value;
       if (this.isManualTotal) {
         this.registerForm.patchValue({ totalAmt: 0 });
