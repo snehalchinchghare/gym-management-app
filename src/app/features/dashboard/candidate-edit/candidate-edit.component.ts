@@ -21,6 +21,7 @@ export class CandidateEditComponent implements OnInit {
   userDetails: any;
   private readonly ADMIN_KEY = 'adminUser';
   registrations: any[] = [];
+  messageTemplates: any[] = [];
 
   filteredRegistrations = [...this.registrations];
   paginatedRegistrations: any[] = [];
@@ -93,6 +94,7 @@ export class CandidateEditComponent implements OnInit {
         }
       }
     });
+    this.messageTemplates = await this.supabaseService.getAllTemplates();
   }
 
   async onRegister() {
@@ -154,5 +156,47 @@ export class CandidateEditComponent implements OnInit {
     const start = (this.currentPage - 1) * this.pageSize;
     const end = start + this.pageSize;
     this.paginatedRegistrations = this.filteredRegistrations.slice(start, end);
+  }
+
+  async sendMessageReceipt(row: any, source: string) {
+    const formData = this.registerForm.getRawValue();
+    const template = this.messageTemplates.find(t => t.template_key === 'gym_receipt').message;
+    const phoneNumber = Number(formData.mobile);
+    const formattedendDate = new Date(row.endDate).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+    const formattedstartDate = new Date(row.startDate).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+    let receiptLink = row.receiptUrl;
+    const message = template
+      .replace(/{{name}}/g, formData.fullName.trim())
+      .replace(/\\n/g, '\n')
+      .replace(/{{end_date}}/g, formattedendDate)
+      .replace(/{{start_date}}/g, formattedstartDate)
+      .replace(/{{gym_name}}/g, this.userDetails.gymName.trim())
+      .replace(/{{receiptLink}}/g, receiptLink);
+
+    if (source == 'whatsapp') {
+      const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+      window.open(url, '_blank');
+    }
+    if (source == 'text') {
+      const smsUrl = `sms:${phoneNumber}?body=${encodeURIComponent(message)}`;
+      window.open(smsUrl, '_blank');
+    }
+  }
+
+  downloadReceipt(candidate: any) {
+    if (candidate.receiptUrl) {
+      window.open(candidate.receiptUrl, '_blank');
+    }
+    else {
+      alert("No receipt found.");
+    }
   }
 }

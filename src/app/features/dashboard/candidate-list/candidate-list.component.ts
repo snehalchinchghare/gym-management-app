@@ -209,7 +209,6 @@ export class CandidateListComponent implements OnInit {
       day: 'numeric',
     });
     let receiptLink = candidate.receiptlink;
-    await this.supabaseService.updateReceiptLink(candidate.registrationid, receiptLink);
     const message = template
       .replace(/{{name}}/g, candidate.full_name.trim())
       .replace(/\\n/g, '\n')
