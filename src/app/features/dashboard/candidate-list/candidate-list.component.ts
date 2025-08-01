@@ -9,33 +9,33 @@ import { LoaderService } from '../../services/loader.service';
 @Component({
   selector: 'app-candidate-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule,FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './candidate-list.component.html',
   styleUrls: ['./candidate-list.component.scss'],
 })
 export class CandidateListComponent implements OnInit {
-  registeredCandidates: any[] = [];
+  registeredCandidates = {
+    rows: [] as any[],
+    total_count: 0
+  };
+
   userDetails: any;
   private readonly ADMIN_KEY = 'adminUser';
   messageTemplates: any[] = [];
   searchText = '';
   currentPage = 1;
-  pageSize = 10;
+  pageSize = 1;
   baseUrl: string = window.location.origin;
 
   constructor(
     private router: Router,
     private supabaseService: SupabaseService,
-    private loaderService: LoaderService) {}
+    private loaderService: LoaderService) { }
 
   async ngOnInit() {
     const stored = localStorage.getItem(this.ADMIN_KEY);
     this.userDetails = stored ? JSON.parse(stored) : null;
-    this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserId(this.userDetails.userId);
-    this.registeredCandidates = this.registeredCandidates.sort((a, b) =>
-      dayjs(a.end_date).isAfter(dayjs(b.end_date)) ? 1 : -1
-    );
-    
+    this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, '', this.currentPage, this.pageSize);
     this.messageTemplates = await this.supabaseService.getAllTemplates();
   }
 
@@ -43,26 +43,30 @@ export class CandidateListComponent implements OnInit {
     return Math;
   }
 
-  get filteredCandidates() {
-    if (!this.searchText.trim()) return this.registeredCandidates;
-  
-    const text = this.searchText.toLowerCase();
-    return this.registeredCandidates.filter(c =>
-      c.full_name?.toLowerCase().includes(text) ||
-      c.servicetype_name?.toLowerCase().includes(text) ||
-      c.packagetype_name?.toLowerCase().includes(text)
-    );
-  }
-  
   get totalPages(): number {
-    return Math.ceil(this.filteredCandidates.length / this.pageSize) || 1;
+    return Math.ceil(this.registeredCandidates.total_count / this.pageSize) || 1;
   }
-  
-  get paginatedCandidates() {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.filteredCandidates.slice(start, start + this.pageSize);
+
+  async getPrevRecordsByPage() {
+    this.currentPage = Math.max(1, this.currentPage - 1);
+    if (this.searchText.trim().length >= 3) {
+      this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, this.searchText, this.currentPage, this.pageSize);
+    } else {
+      this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, '', this.currentPage, this.pageSize);
+    }
+    console.log(this.currentPage);
   }
-  
+
+  async getNextRecordsByPage() {
+    this.currentPage = Math.min(this.totalPages, this.currentPage + 1);
+    if (this.searchText.trim().length >= 3) {
+      this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, this.searchText, this.currentPage, this.pageSize);
+    } else {
+      this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, '', this.currentPage, this.pageSize);
+    }
+    console.log(this.currentPage);
+  }
+
   getCellStyle(endDate: string): any {
     if (this.isExpired(endDate)) {
       return { 'background-color': 'red', 'color': 'white' }; // Red
@@ -81,6 +85,11 @@ export class CandidateListComponent implements OnInit {
     } else {
       return 'active';
     }
+  }
+
+  async setActiveStatus(candidate: any) {
+    let result = await this.supabaseService.updateCandidateStatusByUserId(candidate.candidateid, !candidate.isactive);
+    candidate.isactive = !candidate.isactive;
   }
 
   isEndingSoon(endDate: string): boolean {
@@ -112,7 +121,7 @@ export class CandidateListComponent implements OnInit {
     window.open(url, '_blank');
   }
 
-  async sendLatestReceipt(candidate: any){
+  async sendLatestReceipt(candidate: any) {
     const template = this.messageTemplates.find(t => t.template_key === 'gym_receipt').message;
     const phoneNumber = Number(candidate.mobile);
     const formattedendDate = new Date(candidate.end_date).toLocaleDateString('en-US', {
@@ -144,8 +153,8 @@ export class CandidateListComponent implements OnInit {
     window.open(url, '_blank');
   }
 
-  editCandidateDetails(candidateid: any){
-    try{
+  editCandidateDetails(candidateid: any) {
+    try {
       this.loaderService.show();
       const data = {
         candidateId: candidateid,
@@ -157,13 +166,13 @@ export class CandidateListComponent implements OnInit {
         }
       });
     }
-    finally{
+    finally {
       this.loaderService.hide();
     }
   }
 
-  renewMembership(candidateid: any, isRenew: boolean, isBalancePayment: boolean){
-    try{
+  renewMembership(candidateid: any, isRenew: boolean, isBalancePayment: boolean) {
+    try {
       this.loaderService.show();
       const data = {
         candidateId: candidateid,
@@ -177,8 +186,18 @@ export class CandidateListComponent implements OnInit {
         }
       });
     }
-    finally{
+    finally {
       this.loaderService.hide();
+    }
+  }
+
+  async onSearchKeyup() {
+    if (this.searchText.trim().length >= 3) {
+      this.currentPage = 1;
+      this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, this.searchText, this.currentPage, this.pageSize);
+    } else {
+      this.currentPage = 1;
+      this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, '', this.currentPage, this.pageSize);
     }
   }
 }

@@ -43,15 +43,13 @@
 
 <!-- 🔍 Search and Pagination -->
 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
-  <input type="text" class="form-control w-auto me-2" placeholder="🔍 Search candidates..." [(ngModel)]="searchText" />
+  <input type="text" class="form-control w-auto me-2" placeholder="🔍 Search candidates..." [(ngModel)]="searchText" (keyup)="onSearchKeyup()"/>
   <div class="d-flex align-items-center gap-2">
-    <button class="btn btn-outline-secondary btn-sm px-3" 
-            (click)="currentPage = Math.max(1, currentPage - 1)" 
-            [disabled]="currentPage === 1">⏪ Prev</button>
+    <button class="btn btn-outline-secondary btn-sm px-3"
+            [disabled]="currentPage === 1" (click)="getPrevRecordsByPage()">⏪ Prev</button>
     <span class="fw-semibold small">{{ currentPage }} / {{ totalPages }}</span>
     <button class="btn btn-outline-secondary btn-sm px-3" 
-            (click)="currentPage = Math.min(totalPages, currentPage + 1)" 
-            [disabled]="currentPage === totalPages">Next ⏩</button>
+            [disabled]="currentPage === totalPages" (click)="getNextRecordsByPage()">Next ⏩</button>
   </div>
 </div>
 
@@ -65,16 +63,29 @@
         <th>Package</th>
         <th>Balance</th>
         <th>End Date</th>
+        <th>Is Active</th>
         <th>Actions</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let candidate of paginatedCandidates" class="text-muted">
+      <tr *ngFor="let candidate of registeredCandidates.rows" class="text-muted">
         <td [ngStyle]="getCellStyle(candidate.end_date)">{{ candidate.full_name }}</td>
         <td [ngStyle]="getCellStyle(candidate.end_date)">{{ candidate.servicetype_name }}</td>
         <td [ngStyle]="getCellStyle(candidate.end_date)">{{ candidate.packagetype_name }}</td>
         <td [ngStyle]="getCellStyle(candidate.end_date)">₹{{ candidate.balance_amount }}</td>
         <td [ngStyle]="getCellStyle(candidate.end_date)">{{ candidate.end_date }}</td>
+        <td [ngStyle]="getCellStyle(candidate.end_date)">
+          <div class="form-check form-switch">
+            <input 
+              class="form-check-input" 
+              type="checkbox" 
+              id="isActive" 
+              role="switch"
+              [checked]="candidate.isactive"
+              (change)="setActiveStatus(candidate)"
+            />
+          </div>
+        </td>
         <td [ngStyle]="getCellStyle(candidate.end_date)">
           <div class="d-flex gap-1 flex-wrap">
             <button class="btn btn-sm btn-primary" (click)="editCandidateDetails(candidate.candidateid)">View / Edit</button>
@@ -93,15 +104,33 @@
 
 <!-- 📱 Card View (Mobile) -->
 <div class="d-block d-md-none">
-  <div *ngFor="let candidate of paginatedCandidates" class="card shadow-sm border-0 mb-3" [ngStyle]="getCellStyle(candidate.end_date)">
+  <div *ngFor="let candidate of registeredCandidates.rows" 
+       class="card shadow-sm border-0 mb-3" 
+       [ngStyle]="getCellStyle(candidate.end_date)">
     <div class="card-body">
-      <h5 class="card-title fw-bold text-dark">{{ candidate.full_name }}</h5>
+
+      <!-- Name and Toggle in a Row -->
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="card-title fw-bold text-dark mb-0">{{ candidate.full_name }}</h5>
+        <div class="form-check form-switch mb-0">
+          <input 
+              class="form-check-input" 
+              type="checkbox" 
+              id="isActive" 
+              role="switch"
+              [checked]="candidate.isactive"
+              (change)="setActiveStatus(candidate)"
+            />
+        </div>
+      </div>
+
       <ul class="list-unstyled mb-3 text-muted small">
         <li><strong>Service:</strong> {{ candidate.servicetype_name }}</li>
         <li><strong>Package:</strong> {{ candidate.packagetype_name }}</li>
         <li><strong>Balance:</strong> ₹{{ candidate.balance_amount }}</li>
         <li><strong>End Date:</strong> {{ candidate.end_date }}</li>
       </ul>
+
       <div class="d-flex justify-content-end gap-2 flex-wrap">
         <button class="btn btn-sm btn-primary" (click)="editCandidateDetails(candidate.candidateid)">
           <i class="bi bi-pencil"></i> View / Edit
@@ -124,3 +153,4 @@
     </div>
   </div>
 </div>
+
