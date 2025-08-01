@@ -24,8 +24,8 @@ export class CandidateListComponent implements OnInit {
   messageTemplates: any[] = [];
   searchText = '';
   currentPage = 1;
-  pageSize = 1;
-  baseUrl: string = window.location.origin;
+  pageSize = 2;
+  baseUrl: string = window.location.origin;activeFilter: 'all' | 'active' | 'inactive' = 'active';
 
   constructor(
     private router: Router,
@@ -43,6 +43,35 @@ export class CandidateListComponent implements OnInit {
     return Math;
   }
 
+  async onFilterChange(status: 'all' | 'active' | 'inactive') {
+    this.activeFilter = status;
+    if (this.searchText.trim().length >= 3) {
+      switch(this.activeFilter){
+        case 'all':
+          this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, this.searchText, this.currentPage, this.pageSize, null);
+          break;
+        case 'active':
+          this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, this.searchText, this.currentPage, this.pageSize, true);
+          break;
+        case 'inactive':
+          this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, this.searchText, this.currentPage, this.pageSize, false);
+          break;
+      }
+    } else {
+      switch(this.activeFilter){
+        case 'all':
+          this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, '', this.currentPage, this.pageSize, null);
+          break;
+        case 'active':
+          this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, '', this.currentPage, this.pageSize, true);
+          break;
+        case 'inactive':
+          this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, '', this.currentPage, this.pageSize, false);
+          break;
+      }
+    }
+  }
+
   get totalPages(): number {
     return Math.ceil(this.registeredCandidates.total_count / this.pageSize) || 1;
   }
@@ -50,21 +79,59 @@ export class CandidateListComponent implements OnInit {
   async getPrevRecordsByPage() {
     this.currentPage = Math.max(1, this.currentPage - 1);
     if (this.searchText.trim().length >= 3) {
-      this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, this.searchText, this.currentPage, this.pageSize);
+      switch(this.activeFilter){
+        case 'all':
+          this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, this.searchText, this.currentPage, this.pageSize, null);
+          break;
+        case 'active':
+          this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, this.searchText, this.currentPage, this.pageSize, true);
+          break;
+        case 'inactive':
+          this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, this.searchText, this.currentPage, this.pageSize, false);
+          break;
+      }
     } else {
-      this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, '', this.currentPage, this.pageSize);
+      switch(this.activeFilter){
+        case 'all':
+          this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, '', this.currentPage, this.pageSize, null);
+          break;
+        case 'active':
+          this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, '', this.currentPage, this.pageSize, true);
+          break;
+        case 'inactive':
+          this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, '', this.currentPage, this.pageSize, false);
+          break;
+      }
     }
-    console.log(this.currentPage);
   }
 
   async getNextRecordsByPage() {
     this.currentPage = Math.min(this.totalPages, this.currentPage + 1);
     if (this.searchText.trim().length >= 3) {
-      this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, this.searchText, this.currentPage, this.pageSize);
+      switch(this.activeFilter){
+        case 'all':
+          this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, this.searchText, this.currentPage, this.pageSize, null);
+          break;
+        case 'active':
+          this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, this.searchText, this.currentPage, this.pageSize, true);
+          break;
+        case 'inactive':
+          this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, this.searchText, this.currentPage, this.pageSize, false);
+          break;
+      }
     } else {
-      this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, '', this.currentPage, this.pageSize);
+      switch(this.activeFilter){
+        case 'all':
+          this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, '', this.currentPage, this.pageSize, null);
+          break;
+        case 'active':
+          this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, '', this.currentPage, this.pageSize, true);
+          break;
+        case 'inactive':
+          this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, '', this.currentPage, this.pageSize, false);
+          break;
+      }
     }
-    console.log(this.currentPage);
   }
 
   getCellStyle(endDate: string): any {
@@ -194,10 +261,30 @@ export class CandidateListComponent implements OnInit {
   async onSearchKeyup() {
     if (this.searchText.trim().length >= 3) {
       this.currentPage = 1;
-      this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, this.searchText, this.currentPage, this.pageSize);
+      switch(this.activeFilter){
+        case 'all':
+          this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, this.searchText, this.currentPage, this.pageSize, null);
+          break;
+        case 'active':
+          this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, this.searchText, this.currentPage, this.pageSize, true);
+          break;
+        case 'inactive':
+          this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, this.searchText, this.currentPage, this.pageSize, false);
+          break;
+      }
     } else {
       this.currentPage = 1;
-      this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, '', this.currentPage, this.pageSize);
+      switch(this.activeFilter){
+        case 'all':
+          this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, '', this.currentPage, this.pageSize, null);
+          break;
+        case 'active':
+          this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, '', this.currentPage, this.pageSize, true);
+          break;
+        case 'inactive':
+          this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, '', this.currentPage, this.pageSize, false);
+          break;
+      }
     }
   }
 }

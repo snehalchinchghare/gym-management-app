@@ -42,16 +42,66 @@
 </style>
 
 <!-- 🔍 Search and Pagination -->
-<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
-  <input type="text" class="form-control w-auto me-2" placeholder="🔍 Search candidates..." [(ngModel)]="searchText" (keyup)="onSearchKeyup()"/>
-  <div class="d-flex align-items-center gap-2">
+<div class="d-flex align-items-center flex-wrap gap-2 mb-4">
+
+  <!-- Search Box -->
+  <input type="text" class="form-control w-auto" 
+         placeholder="🔍 Search candidates..." 
+         [(ngModel)]="searchText" 
+         (keyup)="onSearchKeyup()" />
+
+  <!-- Filter Buttons -->
+  <div class="d-flex align-items-center ms-2 gap-3">
+
+    <!-- Filter Button Group -->
+    <div class="btn-group btn-group-sm" role="group" aria-label="Active Filter">
+  
+      <!-- Active -->
+      <input type="radio" class="btn-check" name="activeFilter" id="filterActive" autocomplete="off"
+             [checked]="activeFilter === 'active'" (change)="onFilterChange('active')">
+      <label class="btn btn-outline-success rounded-start" for="filterActive">Active</label>
+  
+      <!-- Inactive -->
+      <input type="radio" class="btn-check" name="activeFilter" id="filterInactive" autocomplete="off"
+             [checked]="activeFilter === 'inactive'" (change)="onFilterChange('inactive')">
+      <label class="btn btn-outline-danger rounded-0" for="filterInactive">Inactive</label>
+  
+      <!-- All -->
+      <input type="radio" class="btn-check" name="activeFilter" id="filterAll" autocomplete="off"
+             [checked]="activeFilter === 'all'" (change)="onFilterChange('all')">
+      <label class="btn btn-outline-secondary rounded-end" for="filterAll">All</label>
+  
+    </div>
+  
+    <!-- Dynamic Label -->
+    <span class="text-muted small fw-semibold">
+      Showing: 
+      <span [ngClass]="{
+        'text-success': activeFilter === 'active',
+        'text-danger': activeFilter === 'inactive',
+        'text-secondary': activeFilter === 'all'
+      }">
+        {{ activeFilter | titlecase }} Candidates
+      </span>
+    </span>
+  
+  </div>
+  
+
+  <!-- Pagination -->
+  <div class="ms-auto d-flex align-items-center gap-2">
     <button class="btn btn-outline-secondary btn-sm px-3"
-            [disabled]="currentPage === 1" (click)="getPrevRecordsByPage()">⏪ Prev</button>
+            [disabled]="currentPage === 1" 
+            (click)="getPrevRecordsByPage()">⏪ Prev</button>
+
     <span class="fw-semibold small">{{ currentPage }} / {{ totalPages }}</span>
+
     <button class="btn btn-outline-secondary btn-sm px-3" 
-            [disabled]="currentPage === totalPages" (click)="getNextRecordsByPage()">Next ⏩</button>
+            [disabled]="currentPage === totalPages" 
+            (click)="getNextRecordsByPage()">Next ⏩</button>
   </div>
 </div>
+
 
 <!-- 🖥️ Table View (Desktop) -->
 <div class="table-responsive d-none d-md-block">

@@ -120,19 +120,19 @@ export class SupabaseService {
     }
   }
 
-  async fetchCandidatesByUserIdOrSearchText(userId: number, searchText: string = '', currentPage: number = 1, pageSize: number = 2) {
+  async fetchCandidatesByUserIdOrSearchText(userId: number, searchText: string = '', currentPage: number = 1, pageSize: number = 2, isActive: boolean | null = null) {
     const { data, error } = await this.supabase.rpc('get_candidates_by_userid_searchterm', {
       p_userid: userId,
       p_search: searchText,
       p_offset: (currentPage - 1) * pageSize,
-      p_limit: pageSize
+      p_limit: pageSize,
+      p_isactive: isActive
     });
   
     if (error) {
       console.error('Error fetching candidates:', error);
       throw error;
     }
-    console.log(data);
     return data;
   }
 
@@ -303,38 +303,5 @@ export class SupabaseService {
     }
   
     return data;
-  }
-
-  async searchCandidate(searchTerm: string){
-    const { data, error } = await this.supabase
-  .from('registrations')
-  .select(`
-    registrationid,
-    admissionfee,
-    balance_amount,
-    start_date,
-    end_date,
-    servicetype_name, 
-    packagetype_name,
-    candidate: candidateid (
-      candidateid,
-      full_name,
-      mobile,
-      email,
-      isactive
-    )
-  `)
-  .or(
-    `candidate.full_name.ilike.%${searchTerm}%,` +
-    `servicetype_name.ilike.%${searchTerm}%,` +
-    `packagetype_name.ilike.%${searchTerm}%`
-  );
-
-if (error) {
-  console.error(error);
-} else {
-  console.log('data', data);
-}
-
   }
 }
