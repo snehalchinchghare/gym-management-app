@@ -6,27 +6,22 @@
 </div>
 
 <!-- Login Container -->
-<div
-  class="container d-flex justify-content-center align-items-center py-5"
-  style="min-height: 100vh; font-family: 'Poppins', sans-serif;"
->
+<div class="container d-flex justify-content-center align-items-center py-5"
+  style="min-height: 100vh; font-family: 'Poppins', sans-serif;">
   <div class="card border-0 shadow-lg rounded-5 p-4 w-100" style="max-width: 600px; background-color: #fefefe;">
     <!-- Brand Heading -->
     <div class="text-center mb-4">
       <div style="font-size: 60px;">🏋️</div>
-    
+
       <!-- Brand Name -->
-      <h1 
-        class="text-center fw-bold mb-2" 
-        style="font-size: 2.8rem; 
+      <h1 class="text-center fw-bold mb-2" style="font-size: 2.8rem; 
                background: linear-gradient(90deg, #007bff, #00c9a7); 
                -webkit-background-clip: text; 
                -webkit-text-fill-color: transparent; 
-               letter-spacing: 1px;"
-      >
-        GymSync
+               letter-spacing: 1px;">
+        GymSynq
       </h1>
-    
+
       <!-- Tagline -->
       <div class="text-muted fst-italic" style="font-size: 1rem;">
         – Sync every rep, every record –
@@ -41,17 +36,9 @@
       <!-- Email -->
       <div class="mb-3">
         <label for="email" class="form-label fw-semibold text-muted ms-2">Email</label>
-        <input
-          id="email"
-          type="email"
-          class="form-control rounded-pill px-4 py-2"
-          formControlName="email"
-          placeholder="admin@gmail.com"
-        />
-        <div
-          class="text-danger small mt-1"
-          *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid"
-        >
+        <input id="email" type="email" class="form-control rounded-pill px-4 py-2" formControlName="email"
+          placeholder="admin@gmail.com" />
+        <div class="text-danger small mt-1" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
           Please enter a valid email.
         </div>
       </div>
@@ -59,27 +46,16 @@
       <!-- Password -->
       <div class="mb-3">
         <label for="password" class="form-label fw-semibold text-muted ms-2">Password</label>
-        <input
-          id="password"
-          type="password"
-          class="form-control rounded-pill px-4 py-2"
-          formControlName="password"
-          placeholder="******"
-        />
-        <div
-          class="text-danger small mt-1"
-          *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid"
-        >
+        <input id="password" type="password" class="form-control rounded-pill px-4 py-2" formControlName="password"
+          placeholder="******" />
+        <div class="text-danger small mt-1"
+          *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
           Password is required.
         </div>
       </div>
 
       <!-- Submit Button -->
-      <button
-        class="btn btn-primary w-100"
-        type="submit"
-        [disabled]="loginForm.invalid"
-      >
+      <button class="btn btn-primary w-100" type="submit" [disabled]="loginForm.invalid">
         Login
       </button>
     </form>
@@ -90,27 +66,24 @@
         New Admin? <span class="text-primary">Register here</span>
       </a>
     </div>
+
+    <!-- Professional attribution -->
+    <div class="text-center w-100 mt-3">
+      <span class="text-muted" style="font-size: 0.9rem;">
+        &mdash; Powered by <strong style="color: #007bff;">NilSys Softwares</strong>
+      </span>
+    </div>
   </div>
 </div>
 
 <!-- Toast Notification -->
-<div
-  id="loginToast"
-  class="toast align-items-center text-white border-0 bg-danger position-fixed bottom-0 end-0 m-4"
-  role="alert"
-  aria-live="assertive"
-  aria-atomic="true"
-  style="z-index: 9999; min-width: 250px;"
->
+<div id="loginToast" class="toast align-items-center text-white border-0 bg-danger position-fixed bottom-0 end-0 m-4"
+  role="alert" aria-live="assertive" aria-atomic="true" style="z-index: 9999; min-width: 250px;">
   <div class="d-flex">
     <div class="toast-body">
       Invalid login credentials. Please try again.
     </div>
-    <button
-      type="button"
-      class="btn-close btn-close-white me-2 m-auto"
-      data-bs-dismiss="toast"
-      aria-label="Close"
-    ></button>
+    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+      aria-label="Close"></button>
   </div>
 </div>
