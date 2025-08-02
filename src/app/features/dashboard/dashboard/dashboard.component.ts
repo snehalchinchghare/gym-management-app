@@ -6,7 +6,7 @@ import { CandidateListComponent } from '../candidate-list/candidate-list.compone
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterModule,CandidateListComponent],
+  imports: [RouterModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
 })
