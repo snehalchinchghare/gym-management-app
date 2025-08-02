@@ -1,9 +1,33 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+/>
 
 <!-- Error Alert -->
 <div *ngIf="errorMessage" class="alert alert-warning text-center">
   {{ errorMessage }}
 </div>
+
+<div *ngIf="installAvailable$ | async" class="text-center mt-3">
+  <button class="btn btn-success px-4 py-2 rounded-pill" (click)="installApp()">
+    📲 Add GymSynq to Home Screen
+  </button>
+</div>
+
+<div
+  *ngIf="showIOSNote"
+  class="alert alert-info text-center px-3 py-2 mt-3"
+  style="font-size: 0.95rem; font-family: 'Poppins', sans-serif;"
+>
+  <strong>To install this app on your iPhone:</strong><br />
+  Tap the <span style="font-weight: bold;">Share</span> icon 
+  <i class="bi bi-share" style="font-size: 1rem; vertical-align: middle;"></i>
+  at the bottom of Safari,<br />
+  then select <strong>"Add to Home Screen"</strong>.
+</div>
+
+
 
 <!-- Login Container -->
 <div class="container d-flex justify-content-center align-items-center py-5"

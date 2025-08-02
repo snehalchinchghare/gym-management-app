@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { SupabaseService } from '../../supabase/common.supabase.service';
 import { Toast } from 'bootstrap';
 import { LoaderService } from '../../services/loader.service';
+import { PwaInstallService } from '../../services/pwa-install.service';
 
 @Component({
   selector: 'app-login',
@@ -21,6 +22,8 @@ export class LoginComponent implements OnInit {
   private readonly TOKEN_KEY = 'adminToken';
   deferredPrompt: any;
   showInstallButton = false;
+  installAvailable$ = this.pwaInstallService.installAvailable$;
+  showIOSNote: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -29,6 +32,7 @@ export class LoginComponent implements OnInit {
     private route: ActivatedRoute,
     private supabaseService: SupabaseService,
     private loader: LoaderService,
+    private pwaInstallService: PwaInstallService,
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -42,27 +46,30 @@ export class LoginComponent implements OnInit {
         this.showToast('Please login to access the requested page.');
       }
     });
-    this.checkIsMobile();
+    this.showIOSNote = this.isIOS() && this.isInSafari() && !this.isInStandaloneMode();
   }
 
-  // Detect 'beforeinstallprompt' event
-  @HostListener('window:beforeinstallprompt', ['$event'])
-  onBeforeInstallPrompt(event: Event) {
-    event.preventDefault();
-    this.deferredPrompt = event;
-    this.showInstallButton = this.isMobile(); // Show only on mobile
+  isIOS(): boolean {
+    return /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+  }
+  
+  isInSafari(): boolean {
+    return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  }
+  
+  isInStandaloneMode(): boolean {
+    // true if already installed
+    return 'standalone' in window.navigator && (window.navigator as any)['standalone'];
   }
 
   installApp() {
-    if (this.deferredPrompt) {
-      this.deferredPrompt.prompt();
-      this.deferredPrompt.userChoice.then((result: any) => {
-        if (result.outcome === 'accepted') {
-        }
-        this.deferredPrompt = null;
-        this.showInstallButton = false;
-      });
-    }
+    this.pwaInstallService.promptInstall().then(success => {
+      if (success) {
+        console.log('App installed');
+      } else {
+        console.log('User dismissed install prompt');
+      }
+    });
   }
 
   // Check if user is on a mobile device
