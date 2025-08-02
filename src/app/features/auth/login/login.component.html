@@ -9,7 +9,7 @@
   {{ errorMessage }}
 </div>
 
-<div *ngIf="installAvailable$ | async" class="text-center mt-3">
+<div *ngIf="installAvailable$ || showInstallButton | async" class="text-center mt-3">
   <button class="btn btn-success px-4 py-2 rounded-pill" (click)="installApp()">
     📲 Add GymSynq to Home Screen
   </button>
@@ -21,11 +21,11 @@
   style="font-size: 0.95rem; font-family: 'Poppins', sans-serif;"
 >
   <strong>To install this app on your iPhone:</strong><br />
-  Tap the <span style="font-weight: bold;">Share</span> icon 
-  <i class="bi bi-share" style="font-size: 1rem; vertical-align: middle;"></i>
-  at the bottom of Safari,<br />
-  then select <strong>"Add to Home Screen"</strong>.
+  Tap the <span class="fw-bold">Share</span> icon 
+  <i class="bi bi-share" style="font-size: 1rem;"></i>
+  and choose <strong>"Add to Home Screen"</strong>.
 </div>
+
 
 
 

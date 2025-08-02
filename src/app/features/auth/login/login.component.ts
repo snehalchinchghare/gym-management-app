@@ -46,20 +46,24 @@ export class LoginComponent implements OnInit {
         this.showToast('Please login to access the requested page.');
       }
     });
-    this.showIOSNote = this.isIOS() && this.isInSafari() && !this.isInStandaloneMode();
+    window.addEventListener('beforeinstallprompt', (event: any) => {
+      event.preventDefault();
+      this.showInstallButton = true;
+      this.deferredPrompt = event;
+    });
+  
+    // iOS note for Safari only (where beforeinstallprompt is NOT available)
+    if (this.isIOS() && !this.supportsPWAInstall()) {
+      this.showIOSNote = true;
+    }
   }
 
   isIOS(): boolean {
     return /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
   }
   
-  isInSafari(): boolean {
-    return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-  }
-  
-  isInStandaloneMode(): boolean {
-    // true if already installed
-    return 'standalone' in window.navigator && (window.navigator as any)['standalone'];
+  supportsPWAInstall(): boolean {
+    return 'onbeforeinstallprompt' in window;
   }
 
   installApp() {
@@ -70,15 +74,6 @@ export class LoginComponent implements OnInit {
         console.log('User dismissed install prompt');
       }
     });
-  }
-
-  // Check if user is on a mobile device
-  isMobile(): boolean {
-    return /Mobi|Android|iPhone/i.test(navigator.userAgent);
-  }
-
-  checkIsMobile() {
-    this.showInstallButton = this.isMobile();
   }
 
   async onLogin() {
