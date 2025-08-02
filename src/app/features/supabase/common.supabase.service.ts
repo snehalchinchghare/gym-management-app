@@ -13,9 +13,9 @@ export class SupabaseService {
     packageTypes: any[],
     serviceTypes: any[]
   } = {
-    packageTypes: [],
-    serviceTypes: []
-  };
+      packageTypes: [],
+      serviceTypes: []
+    };
 
   constructor() {
     this.supabase = createClient(supabaseUrl, supabaseKey);
@@ -45,12 +45,12 @@ export class SupabaseService {
     return this.supabase.rpc('update_admin_user', user);
   }
 
-  async verifyAdminLogin(loginEmail: any, loginPassword: any){
+  async verifyAdminLogin(loginEmail: any, loginPassword: any) {
     const { data, error } = await this.supabase.rpc('verify_admin_login', {
       p_email: loginEmail,
       p_password: loginPassword
     });
-    
+
     if (error) {
       console.error('Login failed:', error);
     } else if (data?.error) {
@@ -77,15 +77,15 @@ export class SupabaseService {
       p_mobile: data.mobile,
       p_dob: data.dob,
     });
-  
+
     if (error) {
       console.error('❌ Supabase function error:', error.message);
       throw error;
     }
-  
+
     return true;
   }
-  
+
 
   async registerCandidate(candidate: any): Promise<{ candidateid: number; success: boolean; message: string }> {
     try {
@@ -128,7 +128,7 @@ export class SupabaseService {
       p_limit: pageSize,
       p_isactive: isActive
     });
-  
+
     if (error) {
       console.error('Error fetching candidates:', error);
       throw error;
@@ -156,16 +156,16 @@ export class SupabaseService {
       .select('gymlogo')
       .eq('userid', userId)
       .single();
-  
+
     if (error) {
       console.error('Error fetching gymLogo:', error.message);
       return null;
     }
-  
+
     return data?.gymlogo;
   }
 
-  async getCandidateDetailsById(candidateid: any, startdate: any = null, enddate: any = null){
+  async getCandidateDetailsById(candidateid: any, startdate: any = null, enddate: any = null) {
     const { data, error } = await this.supabase.rpc('get_candidate_details_by_id', {
       p_candidateid: candidateid,
       p_start_date: startdate,
@@ -176,7 +176,7 @@ export class SupabaseService {
       console.error('Error fetching gymLogo:', error.message);
       return null;
     }
-  
+
     return data;
   }
 
@@ -212,7 +212,7 @@ export class SupabaseService {
         p_mobile: candidate.mobile,
         p_dateofbirth: candidate.dob,
         p_updatedby: candidate.userId,
-      
+
         p_packagetypeid: candidate.packageTypeId,
         p_servicetypeid: candidate.serviceTypeId,
         p_total_amount: candidate.totalAmt,
@@ -238,14 +238,14 @@ export class SupabaseService {
     }
   }
 
-  async getCandidateForRenewal(candidateid: number | null){
+  async getCandidateForRenewal(candidateid: number | null) {
     const { data, error } = await this.supabase
       .rpc('get_candidate_by_id', {
         p_candidateid: candidateid,
         p_start_date: null,
         p_end_date: null
       });
-    
+
     if (error) {
       console.error('Error fetching candidate data:', error);
     } else {
@@ -256,12 +256,12 @@ export class SupabaseService {
   async getCandidateWithRegistrations(candidateId: number): Promise<any> {
     const { data, error } = await this.supabase
       .rpc('get_candidate_with_registrations', { p_candidateid: candidateId });
-  
+
     if (error) {
       console.error('Error fetching candidate with registrations:', error);
       throw error;
     }
-  
+
     return data;
   }
 
@@ -296,12 +296,51 @@ export class SupabaseService {
       .from('candidates')
       .update({ isactive: isActive })  // 👈 column to update
       .eq('candidateid', candidateid);           // 👈 filtering by userid
-  
+
     if (error) {
       console.error('Error updating candidate:', error);
       return null;
     }
-  
+
     return data;
+  }
+
+  async loadMonthlyRevenueChart() {
+    const today = new Date();
+    const fromDate = new Date(today.getFullYear(), today.getMonth() - 2, 1); // June 1 if today is Aug
+    const toDate = new Date(today.getFullYear(), today.getMonth() + 1, 0); // Last day of current month (Aug 31)
+
+    const fromDateStr = fromDate.toISOString().split('T')[0];
+    const toDateStr = toDate.toISOString().split('T')[0];
+
+    const { data } = await this.supabase
+      .from('registrations')
+      .select('start_date, paid_amount')
+      .gte('start_date', fromDateStr)
+      .lte('start_date', toDateStr)
+      .order('start_date', { ascending: true });
+
+    const grouped: { [month: string]: number } = {};
+    data?.forEach(row => {
+      const month = new Date(row.start_date).toLocaleString('default', { month: 'short', year: 'numeric' });
+      grouped[month] = (grouped[month] || 0) + Number(row.paid_amount);
+    });
+
+    return grouped;
+  }
+
+  async loadPackageDistributionChart(){
+    let packageTypes = await this.getPackageTypes();
+    const { data } = await this.supabase
+      .from('registrations')
+      .select('packagetypeid, paid_amount');
+
+    const grouped: { [packageType: string]: number } = {};
+    data?.forEach(row => {
+      const key = packageTypes.find(p => p.packagetypeid == row.packagetypeid).packagename;
+      grouped[key] = (grouped[key] || 0) + Number(row.paid_amount);
+    });
+
+    return grouped;
   }
 }

@@ -1,0 +1,20 @@
+<div class="card p-3 shadow">
+    <div class="mb-3">
+      <label>Select Chart</label>
+      <select class="form-select" [(ngModel)]="chartType" (change)="loadChart(chartType)">
+        <option *ngFor="let chart of availableCharts" [value]="chart.id">{{ chart.label }}</option>
+      </select>
+    </div>
+  
+    <apx-chart
+      *ngIf="chartOptions?.chart"
+      [series]="chartOptions.series"
+      [chart]="chartOptions.chart"
+      [xaxis]="chartOptions.xaxis"
+      [labels]="chartOptions.labels"
+      [title]="chartOptions.title"
+      [responsive]="chartOptions.responsive"
+      [legend]="chartOptions.legend">
+    </apx-chart>
+  </div>
+  
