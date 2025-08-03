@@ -1,13 +1,25 @@
 <div class="card p-3 shadow">
-    <div class="mb-3">
-      <label>Select Chart</label>
-      <select class="form-select" [(ngModel)]="chartType" (change)="loadChart(chartType)">
-        <option *ngFor="let chart of availableCharts" [value]="chart.id">{{ chart.label }}</option>
-      </select>
+  <div class="mb-3">
+    <label>Select Chart</label>
+    <select class="form-select" [(ngModel)]="chartType" (change)="loadChart(chartType)">
+      <option *ngFor="let chart of availableCharts" [value]="chart.id">{{ chart.label }}</option>
+    </select>
+  </div>
+
+  <!-- Date Range Filter (only for Monthly Revenue) -->
+  <div class="row mb-3">
+    <div class="col-md-6">
+      <label>From Date</label>
+      <input type="date" class="form-control" [(ngModel)]="fromDate" (change)="onDateRangeChange()" />
     </div>
-  
-    <apx-chart
-      *ngIf="chartOptions?.chart"
+    <div class="col-md-6">
+      <label>To Date</label>
+      <input type="date" class="form-control" [(ngModel)]="toDate" (change)="onDateRangeChange()" />
+    </div>
+  </div>
+
+  <apx-chart
+      *ngIf="chartOptions?.chart && chartOptions?.series && chartType === 'monthlyRevenue'"
       [series]="chartOptions.series"
       [chart]="chartOptions.chart"
       [xaxis]="chartOptions.xaxis"
@@ -16,5 +28,8 @@
       [responsive]="chartOptions.responsive"
       [legend]="chartOptions.legend">
     </apx-chart>
-  </div>
-  
+
+  <apx-chart *ngIf="chartOptions?.chart && chartOptions?.series && chartType != 'monthlyRevenue'" [series]="chartOptions.series" [chart]="chartOptions.chart"
+    [labels]="chartOptions.labels" [dataLabels]="chartOptions.dataLabels" [tooltip]="chartOptions.tooltip"
+    [title]="chartOptions.title" [responsive]="chartOptions.responsive"></apx-chart>
+</div>

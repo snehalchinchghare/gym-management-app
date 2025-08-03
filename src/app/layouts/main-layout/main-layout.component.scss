@@ -1,0 +1,27 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .main-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  .main-content {
+    flex: 1;
+    padding-bottom: 80px; /* Equal to or greater than footer height */
+  }
+  
+  /* OPTIONAL: make footer fixed only if you want it visible always */
+  app-footer {
+    /* Optional if you want it always at bottom */
+    /* position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 60px; */
+    background-color: #f8f9fa;
+  }
+  

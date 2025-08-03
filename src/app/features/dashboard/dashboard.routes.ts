@@ -50,13 +50,13 @@ export const dashboardRoutes: Routes = [
         component: CandidateEditComponent,
       },
       {
-        path: 'subscriptions',
+        path: 'revenue',
         component: RevenueComponent,
+      },
+      {
+        path: 'subscriptions',
+        component: SubscriptionsComponent,
       }
-      // {
-      //   path: 'subscriptions',
-      //   component: SubscriptionsComponent,
-      // }
       // ,
       // {
       //   path: 'receipt',

@@ -305,35 +305,47 @@ export class SupabaseService {
     return data;
   }
 
-  async loadMonthlyRevenueChart() {
-    const today = new Date();
-    const fromDate = new Date(today.getFullYear(), today.getMonth() - 2, 1); // June 1 if today is Aug
-    const toDate = new Date(today.getFullYear(), today.getMonth() + 1, 0); // Last day of current month (Aug 31)
+  async loadMonthlyRevenueChart(fromDate: Date, toDate: Date) {
+    let dates = this.getFormattedDateForChart(fromDate, toDate);
 
-    const fromDateStr = fromDate.toISOString().split('T')[0];
-    const toDateStr = toDate.toISOString().split('T')[0];
-
-    const { data } = await this.supabase
+    const { data, error } = await this.supabase
       .from('registrations')
       .select('start_date, paid_amount')
-      .gte('start_date', fromDateStr)
-      .lte('start_date', toDateStr)
+      .gte('start_date', dates.fromDateStr)
+      .lte('start_date', dates.toDateStr)
       .order('start_date', { ascending: true });
 
+    if (error) {
+      console.error('Supabase error:', error);
+      return {};
+    }
+
+    if (!data) {
+      console.warn('No data received from Supabase');
+      return {};
+    }
+    
     const grouped: { [month: string]: number } = {};
-    data?.forEach(row => {
-      const month = new Date(row.start_date).toLocaleString('default', { month: 'short', year: 'numeric' });
+    data.forEach(row => {
+      const month = new Date(row.start_date).toLocaleString('default', {
+        month: 'short',
+        year: 'numeric'
+      });
       grouped[month] = (grouped[month] || 0) + Number(row.paid_amount);
     });
-
     return grouped;
+
   }
 
-  async loadPackageDistributionChart(){
+  async loadPackageDistributionChart(fromDate: Date, toDate: Date) {
+    let dates = this.getFormattedDateForChart(fromDate, toDate);
     let packageTypes = await this.getPackageTypes();
     const { data } = await this.supabase
       .from('registrations')
-      .select('packagetypeid, paid_amount');
+      .select('packagetypeid, paid_amount')
+      .gte('start_date', dates.fromDateStr)
+      .lte('start_date', dates.toDateStr)
+      .order('start_date', { ascending: true });
 
     const grouped: { [packageType: string]: number } = {};
     data?.forEach(row => {
@@ -342,5 +354,36 @@ export class SupabaseService {
     });
 
     return grouped;
+  }
+
+  async loadServiceDistributionChart(fromDate: Date, toDate: Date) {
+    let dates = this.getFormattedDateForChart(fromDate, toDate);
+    let serviceTypes = await this.getServiceTypes();
+    const { data } = await this.supabase
+      .from('registrations')
+      .select('servicetypeid, paid_amount')
+      .gte('start_date', dates.fromDateStr)
+      .lte('start_date', dates.toDateStr)
+      .order('start_date', { ascending: true });
+
+    const grouped: { [service: string]: number } = {};
+    data?.forEach(row => {
+      const key = serviceTypes.find(p => p.servicetypeid == row.servicetypeid).servicename;
+      grouped[key] = (grouped[key] || 0) + Number(row.paid_amount);
+    });
+    return grouped;
+  }
+
+  getFormattedDateForChart(fromDate: Date, toDate: Date){
+    const fromDateConverted = new Date(fromDate);
+    const toDateConverted = new Date(toDate);
+    
+    const fromDate1 = new Date(fromDateConverted.getFullYear(), fromDateConverted.getMonth(), 1); // Start of month 2 months ago
+    const toDate1 = new Date(toDateConverted.getFullYear(), toDateConverted.getMonth() + 1, 0);   // End of current month
+
+    const fromDateStr = fromDate1.toISOString().split('T')[0];
+    const toDateStr = toDate1.toISOString().split('T')[0];
+
+    return { fromDateStr, toDateStr};
   }
 }
