@@ -147,10 +147,13 @@ export class CandidateRegisterComponent implements OnInit {
   }
 
   async onRegister() {
+    if (this.registerForm.invalid) {
+      return;
+    }
+  
     try {
       this.loader.show();
-      if (this.registerForm.invalid) return;
-
+  
       const formData = this.registerForm.getRawValue();
       const candidateData = {
         fullName: formData.fullName,
@@ -168,8 +171,8 @@ export class CandidateRegisterComponent implements OnInit {
         admissionDate: formData.admissionDate,
         startDate: formData.startDate,
         endDate: formData.endDate
-      }
-
+      };
+  
       let result: { candidateid: any; success: boolean; message: string };
       if (this.isRenew) {
         result = await this.supabaseService.renewMembership(this.candidateId, candidateData, 'Renewed');
@@ -178,23 +181,25 @@ export class CandidateRegisterComponent implements OnInit {
       } else {
         result = await this.supabaseService.registerCandidate(candidateData);
       }
-
+  
       if (result.success) {
         const data = {
           candidateId: result.candidateid[0].out_candidateid
         };
         const encodedData = btoa(JSON.stringify(data));
-        let receiptLink = this.baseUrl + '/receipt/' + encodedData;
+        const receiptLink = this.baseUrl + '/receipt/' + encodedData;
         await this.supabaseService.updateReceiptLink(result.candidateid[0].out_registrationid, receiptLink);
         this.router.navigate(['/dashboard']);
       } else {
         alert(result.message);
       }
-    }
-    finally {
+    } catch (error) {
+      alert("Something went wrong during registration.");
+    } finally {
       this.loader.hide();
     }
   }
+  
 
   updateManualField() {
     if (!this.isBalancePayment) {
