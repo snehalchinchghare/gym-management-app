@@ -105,6 +105,7 @@ export class RevenueComponent implements OnInit {
   
       } catch (error) {
         alert('Error loading revenue chart: ' + error);
+        throw error;
       } finally {
         this.loader.hide();
       }
@@ -171,6 +172,7 @@ export class RevenueComponent implements OnInit {
   
       } catch (error) {
         alert('Error loading package chart: ' + error);
+        throw error;
       } finally {
         this.loader.hide();
       }
@@ -236,6 +238,7 @@ export class RevenueComponent implements OnInit {
   
       } catch (error) {
         alert('Error loading service chart: ' + error);
+        throw error;
       } finally {
         this.loader.hide();
       }

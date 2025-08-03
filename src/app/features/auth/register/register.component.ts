@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectorRef, Component } from '@angular/core';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import Toast from 'bootstrap/js/dist/toast';
 import { SupabaseService } from '../../supabase/common.supabase.service';
@@ -9,7 +9,7 @@ import { LoaderService } from '../../services/loader.service';
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterModule, CommonModule],
+  imports: [ReactiveFormsModule, RouterModule, CommonModule, FormsModule],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss',
 })
@@ -25,11 +25,16 @@ export class RegisterComponent {
     number: false,
     special: false
   };
+  otpSent: boolean = false;
+  otpValidated: boolean = false;
+  messageTemplates: any[] = [];
+  manuallyEnterOtp: boolean = false;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef,
     private supabaseService: SupabaseService,
     private loader: LoaderService) { }
 
@@ -39,6 +44,7 @@ export class RegisterComponent {
         this.errorMessage = 'Please login to access the requested page.';
       }
     });
+    this.messageTemplates = await this.supabaseService.getAllTemplates();
   }
 
   registerForm = this.fb.group({
@@ -66,6 +72,7 @@ export class RegisterComponent {
     password: ['', [Validators.required, Validators.minLength(6)]],
     confirmPassword: ['', Validators.required],
     gymLogo: ['', Validators.required],
+    emailOtp: [{ value: '', disabled: true }, Validators.required],
   });
 
   async onRegister() {
@@ -158,11 +165,90 @@ export class RegisterComponent {
       }, 2500);
     } catch (error) {
       alert('Registration error:' + error);
+      throw error;
     } finally {
       this.loader.hide();
     }
   }
 
+  onToggleManualOtp() {
+    this.manuallyEnterOtp = !this.manuallyEnterOtp;
+    if (this.manuallyEnterOtp) {
+      this.otpSent = true;
+      this.registerForm.get('emailOtp')?.enable();
+    }
+    else{
+      this.otpSent = false;
+      this.registerForm.get('emailOtp')?.disable();  
+      this.registerForm.patchValue({
+        emailOtp: ''
+      })    
+    }
+    this.cdr.detectChanges();
+  }
+
+  async sendOtp() {
+    try {
+      this.loader.show();
+      const fullName = this.registerForm.get('fullName')?.value;
+      const email = this.registerForm.get('email')?.value;
+      if (!email || this.registerForm.get('email')?.invalid || !fullName || this.registerForm.get('fullName')?.invalid) {
+        this.registerForm.get('email')?.markAsTouched();
+        this.registerForm.get('fullName')?.markAsTouched();
+        return;
+      }
+
+      let otpEmailTemplate = this.messageTemplates.find(m => m.template_key == "otp_email_template");
+      const message = otpEmailTemplate.message
+        .replace(/{{name}}/g, fullName.trim()).toString();
+
+      let otpResult = await this.supabaseService.sendOtp(email, otpEmailTemplate.title, message);
+
+      if (otpResult) {
+        this.registerForm.get('emailOtp')?.enable();
+        this.otpSent = true;
+      }
+      else {
+        this.otpSent = false;
+      }
+    }
+    catch (error) {
+      alert('send otp error:' + error);
+      throw error;
+    }
+    finally {
+      this.loader.hide();
+    }
+  }
+
+  async validateOtp() {
+    try {
+      this.loader.show();
+      const emailOtp = this.registerForm.get('emailOtp')?.value;
+      const email = this.registerForm.get('email')?.value;
+      if (!emailOtp || this.registerForm.get('emailOtp')?.invalid || !email || this.registerForm.get('email')?.invalid) {
+        this.registerForm.get('emailOtp')?.markAsTouched();
+        this.registerForm.get('email')?.markAsTouched();
+        return;
+      }
+
+      let otpResult = await this.supabaseService.validateOtp(email, emailOtp);
+
+      if (otpResult) {
+        this.otpValidated = true;
+      }
+      else {
+        this.otpValidated = false;
+      }
+    }
+    catch (error) {
+      alert('validate otp error:' + error);
+      throw error;
+    }
+    finally {
+      this.loader.hide();
+    }
+  }
 
   onPasswordInput() {
     const password = this.registerForm.get('password')?.value || '';

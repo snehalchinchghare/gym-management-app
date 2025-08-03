@@ -115,8 +115,8 @@ export class SupabaseService {
 
       return { candidateid: data, success: true, message: 'Registration successful!' };
     } catch (err) {
-      console.error('Unexpected Error:', err);
-      return { candidateid: 0, success: false, message: 'Unexpected error occurred' };
+      alert('Unexpected error occurred');
+      throw err;
     }
   }
 
@@ -234,7 +234,8 @@ export class SupabaseService {
       return { candidateid: data, success: true, message: 'Registration successful!' };
     } catch (err) {
       console.error('Unexpected Error:', err);
-      return { candidateid: 0, success: false, message: 'Unexpected error occurred' };
+      alert('Unexpected error occurred');;
+      throw err;
     }
   }
 
@@ -324,7 +325,7 @@ export class SupabaseService {
       console.warn('No data received from Supabase');
       return {};
     }
-    
+
     const grouped: { [month: string]: number } = {};
     data.forEach(row => {
       const month = new Date(row.start_date).toLocaleString('default', {
@@ -374,16 +375,66 @@ export class SupabaseService {
     return grouped;
   }
 
-  getFormattedDateForChart(fromDate: Date, toDate: Date){
+  getFormattedDateForChart(fromDate: Date, toDate: Date) {
     const fromDateConverted = new Date(fromDate);
     const toDateConverted = new Date(toDate);
-    
+
     const fromDate1 = new Date(fromDateConverted.getFullYear(), fromDateConverted.getMonth(), 1); // Start of month 2 months ago
     const toDate1 = new Date(toDateConverted.getFullYear(), toDateConverted.getMonth() + 1, 0);   // End of current month
 
     const fromDateStr = fromDate1.toISOString().split('T')[0];
     const toDateStr = toDate1.toISOString().split('T')[0];
 
-    return { fromDateStr, toDateStr};
+    return { fromDateStr, toDateStr };
   }
+
+  async sendOtp(to: string, subject: string, htmlContent: string): Promise<boolean> {
+    try {
+      const { data, error } = await this.supabase.functions.invoke('send-and-validate-otp-ts', {
+        body: {
+          email: to,
+          type: 'send',
+          template: htmlContent || `<html><body>Sample html {{OTP}}</body></html>`,
+          subject: subject
+        }
+      });
+      let response = JSON.parse(data);
+  
+      if (!response.valid) {
+        alert(response.message);
+        return response.valid;
+      }
+  
+      return response.valid;
+    } catch (err) {
+      alert('Unexpected error while sending OTP.');
+      return false;
+    }
+  }
+
+  async validateOtp(to: string, otp: string): Promise<boolean> {
+    try {
+      const { data, error } = await this.supabase.functions.invoke('send-and-validate-otp-ts', {
+        body: {
+          email: to,
+          otp: otp,
+          type: 'validate'
+        }
+      });
+
+      let response = JSON.parse(data);
+  
+      if (!response.valid) {
+        alert(response.message);
+        return response.valid;
+      }
+  
+      return response.valid;
+    } catch (err) {
+      console.log(err);
+      alert('Unexpected error while sending OTP.');
+      return false;
+    }
+  }
+  
 }

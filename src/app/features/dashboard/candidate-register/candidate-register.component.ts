@@ -195,6 +195,7 @@ export class CandidateRegisterComponent implements OnInit {
       }
     } catch (error) {
       alert("Something went wrong during registration.");
+      throw error;
     } finally {
       this.loader.hide();
     }

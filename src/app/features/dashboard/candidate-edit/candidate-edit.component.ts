@@ -91,6 +91,7 @@ export class CandidateEditComponent implements OnInit {
           }
         } catch (err) {
           console.error('Error fetching candidate data:', err);
+          throw err;
         }
       }
     });
