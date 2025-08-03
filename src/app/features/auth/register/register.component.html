@@ -308,17 +308,39 @@
           class="form-control rounded-pill px-4 py-2"
           formControlName="password"
           placeholder="******"
+          (input)="onPasswordInput()"
         />
-        <div
-          class="text-danger small mt-1"
-          *ngIf="
-            registerForm.get('password')?.touched &&
-            registerForm.get('password')?.invalid
-          "
-        >
+        <div class="text-danger small mt-1" *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid">
           Password is required.
         </div>
-      </div>
+      
+        <!-- Password rules checklist -->
+        <div class="password-hint-box mt-2 px-3 py-2 rounded">
+          <div class="small fw-semibold mb-2">Password must contain:</div>
+          <ul class="list-unstyled mb-0 small">
+            <li [class.text-success]="passwordRules.length" [class.text-danger]="!passwordRules.length">
+              <i class="bi me-1" [ngClass]="passwordRules.length ? 'bi-check-circle-fill' : 'bi-x-circle-fill'"></i>
+              Minimum 8 characters
+            </li>
+            <li [class.text-success]="passwordRules.uppercase" [class.text-danger]="!passwordRules.uppercase">
+              <i class="bi me-1" [ngClass]="passwordRules.uppercase ? 'bi-check-circle-fill' : 'bi-x-circle-fill'"></i>
+              At least 1 uppercase letter
+            </li>
+            <li [class.text-success]="passwordRules.lowercase" [class.text-danger]="!passwordRules.lowercase">
+              <i class="bi me-1" [ngClass]="passwordRules.lowercase ? 'bi-check-circle-fill' : 'bi-x-circle-fill'"></i>
+              At least 1 lowercase letter
+            </li>
+            <li [class.text-success]="passwordRules.number" [class.text-danger]="!passwordRules.number">
+              <i class="bi me-1" [ngClass]="passwordRules.number ? 'bi-check-circle-fill' : 'bi-x-circle-fill'"></i>
+              At least 1 number
+            </li>
+            <li [class.text-success]="passwordRules.special" [class.text-danger]="!passwordRules.special">
+              <i class="bi me-1" [ngClass]="passwordRules.special ? 'bi-check-circle-fill' : 'bi-x-circle-fill'"></i>
+              At least 1 special character
+            </li>
+          </ul>
+        </div>
+      </div>      
 
       <!-- Confirm Password -->
       <div class="mb-3">

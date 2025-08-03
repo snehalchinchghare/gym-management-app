@@ -18,6 +18,13 @@ export class RegisterComponent {
   fileError: boolean = false;
   gymLogoBase64: string | null = null;
   isMembershipTableCollapsed: boolean = false;
+  passwordRules = {
+    length: false,
+    uppercase: false,
+    lowercase: false,
+    number: false,
+    special: false
+  };
 
   constructor(
     private fb: FormBuilder,
@@ -64,9 +71,10 @@ export class RegisterComponent {
   async onRegister() {
     try {
       this.loader.show();
+
       if (this.registerForm.invalid) {
         this.registerForm.markAllAsTouched();
-        return;
+        alert('Form is invalid');
       }
 
       const {
@@ -96,8 +104,18 @@ export class RegisterComponent {
       } = this.registerForm.value;
 
       if (password !== confirmPassword) {
-        alert('Passwords do not match!');
-        return;
+        alert('Password mismatch');
+      }
+
+      const passwordValid =
+        password != null && password.length >= 8 &&
+        /[A-Z]/.test(password) &&
+        /[a-z]/.test(password) &&
+        /[0-9]/.test(password) &&
+        /[^A-Za-z0-9]/.test(password);
+
+      if (!passwordValid) {
+        alert('Password must contain at least 8 characters, including uppercase, lowercase, number, and special character.');
       }
 
       const admin = {
@@ -127,8 +145,7 @@ export class RegisterComponent {
       };
 
       const payload = await this.mapAdminToInsertPayload(admin);
-
-      this.supabaseService.insertAdminUser(payload);
+      await this.supabaseService.insertAdminUser(payload); // <== FIXED: added await
 
       const toastEl = document.getElementById('registerSuccessToast');
       if (toastEl) {
@@ -139,14 +156,25 @@ export class RegisterComponent {
       setTimeout(() => {
         this.router.navigate(['/login']);
       }, 2500);
-    }
-    finally {
+    } catch (error) {
+      alert('Registration error:' + error);
+    } finally {
       this.loader.hide();
     }
-
   }
 
-  togglemembershipTable(){
+
+  onPasswordInput() {
+    const password = this.registerForm.get('password')?.value || '';
+
+    this.passwordRules.length = password.length >= 8;
+    this.passwordRules.uppercase = /[A-Z]/.test(password);
+    this.passwordRules.lowercase = /[a-z]/.test(password);
+    this.passwordRules.number = /[0-9]/.test(password);
+    this.passwordRules.special = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+  }
+
+  togglemembershipTable() {
     this.isMembershipTableCollapsed = !this.isMembershipTableCollapsed;
   }
 
