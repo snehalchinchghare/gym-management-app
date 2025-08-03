@@ -42,7 +42,7 @@
         <!-- Enter OTP + Get OTP/Verify Button (Same row) -->
         <div class="mb-3">
           <div class="form-check mb-2">
-            <input type="checkbox" class="form-check-input" [checked]="manuallyEnterOtp" id="alreadyHaveOtp" [(ngModel)]="manuallyEnterOtp" (change)="onToggleManualOtp()" />
+            <input type="checkbox" class="form-check-input" [checked]="manuallyEnterOtp" id="alreadyHaveOtp" formControlName="otpExists" (change)="onToggleManualOtp()" />
             <label class="form-check-label" for="alreadyHaveOtp">I already have an OTP</label>
           </div>
           <div class="input-group">

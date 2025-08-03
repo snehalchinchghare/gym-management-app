@@ -73,6 +73,7 @@ export class RegisterComponent {
     confirmPassword: ['', Validators.required],
     gymLogo: ['', Validators.required],
     emailOtp: [{ value: '', disabled: true }, Validators.required],
+    otpExists: [false]
   });
 
   async onRegister() {
@@ -177,12 +178,12 @@ export class RegisterComponent {
       this.otpSent = true;
       this.registerForm.get('emailOtp')?.enable();
     }
-    else{
+    else {
       this.otpSent = false;
-      this.registerForm.get('emailOtp')?.disable();  
+      this.registerForm.get('emailOtp')?.disable();
       this.registerForm.patchValue({
         emailOtp: ''
-      })    
+      })
     }
     this.cdr.detectChanges();
   }
@@ -224,21 +225,29 @@ export class RegisterComponent {
   async validateOtp() {
     try {
       this.loader.show();
-      const emailOtp = this.registerForm.get('emailOtp')?.value;
-      const email = this.registerForm.get('email')?.value;
-      if (!emailOtp || this.registerForm.get('emailOtp')?.invalid || !email || this.registerForm.get('email')?.invalid) {
-        this.registerForm.get('emailOtp')?.markAsTouched();
-        this.registerForm.get('email')?.markAsTouched();
-        return;
-      }
+      if (!this.otpValidated) {
+        const emailOtp = this.registerForm.get('emailOtp')?.value;
+        const email = this.registerForm.get('email')?.value;
+        if (!emailOtp || this.registerForm.get('emailOtp')?.invalid || !email || this.registerForm.get('email')?.invalid) {
+          this.registerForm.get('emailOtp')?.markAsTouched();
+          this.registerForm.get('email')?.markAsTouched();
+          return;
+        }
 
-      let otpResult = await this.supabaseService.validateOtp(email, emailOtp);
+        let otpResult = await this.supabaseService.validateOtp(email, emailOtp);
 
-      if (otpResult) {
-        this.otpValidated = true;
-      }
-      else {
-        this.otpValidated = false;
+        if (otpResult) {
+          this.otpValidated = true;
+          this.registerForm.get('otpExists')?.disable();
+          this.registerForm.get('emailOtp')?.disable();
+          this.registerForm.get('email')?.disable();
+        }
+        else {
+          this.otpValidated = false;
+          this.registerForm.get('otpExists')?.enable();
+          this.registerForm.get('emailOtp')?.enable();
+          this.registerForm.get('email')?.enable();
+        }
       }
     }
     catch (error) {
