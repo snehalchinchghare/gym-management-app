@@ -3,40 +3,52 @@
 
 <style>
   @media (max-width: 576px) {
-    table td, table th {
+
+    table td,
+    table th {
       font-size: 0.85rem;
     }
   }
 </style>
 
 <!-- View/Edit Member Form -->
-<div class="container d-flex justify-content-center align-items-center py-5" style="font-family: 'Poppins', sans-serif;">
+<div class="container d-flex justify-content-center align-items-center py-5"
+  style="font-family: 'Poppins', sans-serif;">
   <div class="card border-0 shadow-lg rounded-5 p-4 w-100" style="max-width: 600px; background-color: #fefefe;">
+    <!-- Back Button -->
+    <a class="btn btn-outline-secondary px-3 d-inline-flex align-items-center gap-2 mb-3"
+      style="border-radius: 50px; width: 6rem; height: 2rem;" href="dashboard/candidate-list">
+      <i class="bi bi-arrow-left fs-5"></i>
+      <span>Back</span>
+    </a>
     <h3 class="text-center mb-4 text-success fw-semibold">View / Edit Member</h3>
 
     <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
       <div class="row g-3">
         <!-- Full Name -->
         <div class="col-12">
-          <label class="form-label fw-semibold text-muted ms-2">Full Name</label>
-          <input type="text" class="form-control rounded-pill px-4 py-2" formControlName="fullName" placeholder="Enter full name" />
+          <label class="form-label fw-semibold text-muted ms-2">Full Name *</label>
+          <input type="text" class="form-control rounded-pill px-4 py-2" formControlName="fullName"
+            placeholder="Enter full name" />
         </div>
 
         <!-- Email -->
         <div class="col-12">
           <label class="form-label fw-semibold text-muted ms-2">Email</label>
-          <input type="email" class="form-control rounded-pill px-4 py-2" formControlName="email" placeholder="example@gmail.com" />
+          <input type="email" class="form-control rounded-pill px-4 py-2" formControlName="email"
+            placeholder="example@gmail.com" />
         </div>
 
         <!-- Mobile -->
         <div class="col-12">
-          <label class="form-label fw-semibold text-muted ms-2">Mobile</label>
-          <input type="text" class="form-control rounded-pill px-4 py-2" formControlName="mobile" placeholder="Enter mobile number" />
+          <label class="form-label fw-semibold text-muted ms-2">Mobile *</label>
+          <input type="text" class="form-control rounded-pill px-4 py-2" formControlName="mobile"
+            placeholder="Enter mobile number" />
         </div>
 
         <!-- Date of Birth -->
         <div class="col-12">
-          <label class="form-label fw-semibold text-muted ms-2">Date of Birth</label>
+          <label class="form-label fw-semibold text-muted ms-2">Date of Birth *</label>
           <input type="date" class="form-control rounded-pill px-4 py-2" formControlName="dob" />
         </div>
 
@@ -60,21 +72,24 @@
         <div class="row g-3 mb-4">
           <div class="col-md-4 col-12">
             <label class="form-label fw-semibold">Search</label>
-            <input type="text" [(ngModel)]="searchTerm" (input)="filterRegistrations()" class="form-control rounded-pill px-3 py-2" placeholder="Search by membership or payment type" />
+            <input type="text" [(ngModel)]="searchTerm" (input)="filterRegistrations()"
+              class="form-control rounded-pill px-3 py-2" placeholder="Search by membership or payment type" />
           </div>
           <div class="col-md-4 col-12">
             <label class="form-label fw-semibold">Start Date</label>
-            <input type="date" [(ngModel)]="startDate" (change)="filterRegistrations()" class="form-control rounded-pill px-3 py-2" />
+            <input type="date" [(ngModel)]="startDate" (change)="filterRegistrations()"
+              class="form-control rounded-pill px-3 py-2" />
           </div>
           <div class="col-md-4 col-12">
             <label class="form-label fw-semibold">End Date</label>
-            <input type="date" [(ngModel)]="endDate" (change)="filterRegistrations()" class="form-control rounded-pill px-3 py-2" />
+            <input type="date" [(ngModel)]="endDate" (change)="filterRegistrations()"
+              class="form-control rounded-pill px-3 py-2" />
           </div>
         </div>
 
         <!-- Filter info -->
         <div *ngIf="startDate || endDate" class="alert alert-info py-2 px-3 mt-2">
-          Showing registrations 
+          Showing registrations
           <span *ngIf="startDate">starting <strong>after {{ startDate }}</strong></span>
           <span *ngIf="startDate && endDate"> and </span>
           <span *ngIf="endDate">ending <strong>before {{ endDate }}</strong></span>
@@ -128,11 +143,8 @@
               <li class="page-item" [class.disabled]="currentPage === 1">
                 <button class="page-link" (click)="changePage(currentPage - 1)">Previous</button>
               </li>
-              <li
-                class="page-item"
-                *ngFor="let page of [].constructor(totalPages); let i = index"
-                [class.active]="i + 1 === currentPage"
-              >
+              <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index"
+                [class.active]="i + 1 === currentPage">
                 <button class="page-link" (click)="changePage(i + 1)">{{ i + 1 }}</button>
               </li>
               <li class="page-item" [class.disabled]="currentPage === totalPages">

@@ -29,6 +29,8 @@ export class RegisterComponent {
   otpValidated: boolean = false;
   messageTemplates: any[] = [];
   manuallyEnterOtp: boolean = false;
+  showPassword = false;
+  showConfirmPassword = false;
 
   constructor(
     private fb: FormBuilder,
@@ -83,6 +85,7 @@ export class RegisterComponent {
       if (this.registerForm.invalid) {
         this.registerForm.markAllAsTouched();
         alert('Form is invalid');
+        return;
       }
 
       const {
@@ -113,6 +116,7 @@ export class RegisterComponent {
 
       if (password !== confirmPassword) {
         alert('Password mismatch');
+        return;
       }
 
       const passwordValid =
@@ -124,6 +128,7 @@ export class RegisterComponent {
 
       if (!passwordValid) {
         alert('Password must contain at least 8 characters, including uppercase, lowercase, number, and special character.');
+        return;
       }
 
       const admin = {
@@ -153,7 +158,7 @@ export class RegisterComponent {
       };
 
       const payload = await this.mapAdminToInsertPayload(admin);
-      await this.supabaseService.insertAdminUser(payload); // <== FIXED: added await
+      await this.supabaseService.insertAdminUser(payload);
 
       const toastEl = document.getElementById('registerSuccessToast');
       if (toastEl) {
@@ -161,9 +166,7 @@ export class RegisterComponent {
         toast.show();
       }
 
-      setTimeout(() => {
-        this.router.navigate(['/login']);
-      }, 2500);
+      this.router.navigate(['/login']);
     } catch (error) {
       alert('Registration error:' + error);
       throw error;
@@ -260,14 +263,33 @@ export class RegisterComponent {
   }
 
   onPasswordInput() {
-    const password = this.registerForm.get('password')?.value || '';
-
-    this.passwordRules.length = password.length >= 8;
-    this.passwordRules.uppercase = /[A-Z]/.test(password);
-    this.passwordRules.lowercase = /[a-z]/.test(password);
-    this.passwordRules.number = /[0-9]/.test(password);
-    this.passwordRules.special = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-  }
+    const passwordControl = this.registerForm.get('password');
+    const password = passwordControl?.value || '';
+  
+    // Check rules
+    const isValid =
+      password.length >= 8 &&
+      /[A-Z]/.test(password) &&
+      /[a-z]/.test(password) &&
+      /[0-9]/.test(password) &&
+      /[!@#$%^&*(),.?":{}|<>]/.test(password);
+  
+    // Store rule status for UI
+    this.passwordRules = {
+      length: password.length >= 8,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      number: /[0-9]/.test(password),
+      special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+    };
+  
+    // Set or clear error
+    if (!isValid) {
+      passwordControl?.setErrors({ passwordInvalid: true });
+    } else {
+      passwordControl?.setErrors(null);
+    }
+  }  
 
   togglemembershipTable() {
     this.isMembershipTableCollapsed = !this.isMembershipTableCollapsed;
@@ -361,5 +383,35 @@ export class RegisterComponent {
     };
 
     reader.readAsDataURL(file);
+  }
+
+  matchPassword() {
+    const passwordControl = this.registerForm.get('password');
+    const confirmPasswordControl = this.registerForm.get('confirmPassword');
+  
+    if (!passwordControl || !confirmPasswordControl) return;
+  
+    const password = passwordControl.value;
+    const confirmPassword = confirmPasswordControl.value;
+  
+    if (password !== confirmPassword) {
+      confirmPasswordControl.setErrors({ mismatch: true });
+      confirmPasswordControl.markAsTouched();
+    } else {
+      if (confirmPasswordControl.hasError('mismatch')) {
+        const errors = { ...confirmPasswordControl.errors };
+        delete errors['mismatch'];
+        const hasOtherErrors = Object.keys(errors).length > 0;
+        confirmPasswordControl.setErrors(hasOtherErrors ? errors : null);
+      }
+    }
+  }
+  
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+  
+  toggleConfirmPasswordVisibility(): void {
+    this.showConfirmPassword = !this.showConfirmPassword;
   }
 }

@@ -2,11 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import Toast from 'bootstrap/js/dist/toast';
 import { CandidateListComponent } from '../candidate-list/candidate-list.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterModule],
+  imports: [RouterModule, ReactiveFormsModule, CommonModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
 })
@@ -21,6 +23,10 @@ export class DashboardComponent implements OnInit {
       const parsed = JSON.parse(admin);
       this.adminName = parsed.fullName || 'Admin';
     }
+  }
+
+  goBack(){
+    this.router.navigate(["dashboard/candidate-list"]);
   }
 
   logout() {

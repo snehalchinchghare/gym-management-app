@@ -189,7 +189,7 @@ export class CandidateRegisterComponent implements OnInit {
         const encodedData = btoa(JSON.stringify(data));
         const receiptLink = this.baseUrl + '/receipt/' + encodedData;
         await this.supabaseService.updateReceiptLink(result.candidateid[0].out_registrationid, receiptLink);
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/dashboard/candidate-list']);
       } else {
         alert(result.message);
       }

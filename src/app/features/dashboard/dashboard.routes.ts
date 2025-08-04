@@ -2,10 +2,9 @@ import { Routes } from '@angular/router';
 import { CandidateRegisterComponent } from './candidate-register/candidate-register.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { SendOfferMessageComponent } from './send-offer-message/send-offer-message.component';
-import { UpdatePackageComponent } from './update-package/update-package.component';
+import { UpdateGymComponent as UpdateGymComponent } from './update-gym/update-gym.component';
 import { DeleteCandidateComponent } from './delete-candidate/delete-candidate.component';
 import { CandidateListComponent } from './candidate-list/candidate-list.component';
-import { ReceiptComponent } from './receipt/receipt.component';
 import { AboutComponent } from '../about/about.component';
 import { CandidateEditComponent } from './candidate-edit/candidate-edit.component';
 import { SubscriptionsComponent } from '../subscriptions/subscriptions.component';
@@ -30,8 +29,8 @@ export const dashboardRoutes: Routes = [
         component: DeleteCandidateComponent,
       },
       {
-        path: 'update-package',
-        component: UpdatePackageComponent,
+        path: 'update-gym',
+        component: UpdateGymComponent,
       },
       {
         path: 'send-offer',

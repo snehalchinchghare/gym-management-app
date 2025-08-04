@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { SupabaseService } from '../../features/supabase/common.supabase.service';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-header',
@@ -18,10 +19,23 @@ export class HeaderComponent implements OnInit {
   private readonly ADMIN_KEY = 'adminUser';
   private readonly TOKEN_KEY = 'adminToken';
   isNavbarCollapsed: boolean = false;
+  updateAvailable = false;
 
   constructor(
     public router: Router,
-    private supabaseService: SupabaseService) {}
+    private supabaseService: SupabaseService,
+    private swUpdate: SwUpdate) {
+      if (this.swUpdate.isEnabled) {
+        this.swUpdate.versionUpdates.subscribe((event) => {
+          if (event.type === 'VERSION_READY') {
+            this.updateAvailable = true;
+          }
+          else{
+            this.updateAvailable = false;
+          }
+        });
+      }
+    }
 
   async ngOnInit() {
     const admin = localStorage.getItem(this.ADMIN_KEY);
@@ -34,6 +48,10 @@ export class HeaderComponent implements OnInit {
         this.gymLogo = logo;
       });
     }
+  }
+
+  reloadApp() {
+    location.reload();
   }
 
   toggleNavbar() {

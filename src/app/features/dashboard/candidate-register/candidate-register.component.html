@@ -1,6 +1,11 @@
 <div class="container d-flex justify-content-center align-items-center py-5"
   style="min-height: 100vh; font-family: 'Poppins', sans-serif;">
   <div class="card border-0 shadow-lg rounded-5 p-4 w-100" style="max-width: 600px; background-color: #fefefe;">
+    <a class="btn btn-outline-secondary px-3 d-inline-flex align-items-center gap-2 mb-3" style="border-radius: 50px; width: 6rem; height: 2rem;"
+      href="dashboard/candidate-list">
+      <i class="bi bi-arrow-left fs-5"></i>
+      <span>Back</span>
+    </a>
     <h3 class="text-center mb-4 text-success fw-semibold">{{isRenew ? 'Renew Membership' : (isBalancePayment ? 'Add Balance Payment' : 'Add Membership')}}</h3>
 
     <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
@@ -8,7 +13,7 @@
 
         <!-- Full Name -->
         <div class="mb-3">
-          <label class="form-label fw-semibold text-muted ms-2">Full Name</label>
+          <label class="form-label fw-semibold text-muted ms-2">Full Name *</label>
           <input type="text" class="form-control rounded-pill px-4 py-2" formControlName="fullName"
             placeholder="Enter full name" />
         </div>
@@ -22,20 +27,20 @@
 
         <!-- Mobile -->
         <div class="mb-3">
-          <label class="form-label fw-semibold text-muted ms-2">Mobile</label>
+          <label class="form-label fw-semibold text-muted ms-2">Mobile *</label>
           <input type="text" class="form-control rounded-pill px-4 py-2" formControlName="mobile"
             placeholder="Enter mobile number" />
         </div>
 
         <!-- Date of Birth -->
         <div class="mb-3">
-          <label class="form-label fw-semibold text-muted ms-2">Date of Birth</label>
+          <label class="form-label fw-semibold text-muted ms-2">Date of Birth *</label>
           <input type="date" class="form-control rounded-pill px-4 py-2" formControlName="dob" />
         </div>
 
         <!-- Service Type -->
         <div class="mb-3">
-          <label class="form-label fw-semibold text-muted ms-2">Service Type</label>
+          <label class="form-label fw-semibold text-muted ms-2">Service Type *</label>
           <select class="form-select rounded-pill px-4 py-2" formControlName="serviceType">
             <option value="">-- Select Service --</option>
             <option *ngFor="let service of serviceList" [value]="service.servicetypeid">
@@ -46,7 +51,7 @@
 
         <!-- Membership -->
         <div class="mb-3">
-          <label class="form-label fw-semibold text-muted ms-2">Membership</label>
+          <label class="form-label fw-semibold text-muted ms-2">Membership *</label>
           <select class="form-select rounded-pill px-4 py-2" formControlName="packageType">
             <option value="">-- Select Membership --</option>
             <option *ngFor="let pkg of packageList" [value]="pkg.packagetypeid">
@@ -57,7 +62,7 @@
 
         <!-- Admission Fee -->
         <div class="mb-3" *ngIf="!isRenew || !isBalancePayment">
-          <label class="form-label fw-semibold text-muted ms-2">Admission Fee</label>
+          <label class="form-label fw-semibold text-muted ms-2">Admission Fee *</label>
           <input type="number" class="form-control rounded-pill px-4 py-2" formControlName="admissionFee"
             placeholder="Enter admission fee" />
         </div>
@@ -66,8 +71,8 @@
         <div class="mb-3">
           <!-- <label class="form-label fw-semibold text-muted ms-2">Total Amount</label> -->
           <div class="d-flex align-items-center justify-content-between">
-            <label *ngIf="!isManualTotal" class="form-label fw-semibold text-muted ms-2">Total Amount</label>
-            <label *ngIf="isManualTotal" class="form-label fw-semibold text-muted ms-2">Total Amount + Admission Fee</label>
+            <label *ngIf="!isManualTotal" class="form-label fw-semibold text-muted ms-2">Total Amount *</label>
+            <label *ngIf="isManualTotal" class="form-label fw-semibold text-muted ms-2">Total Amount + Admission Fee *</label>
         
             <div class="form-check form-switch">
               <input 
@@ -86,33 +91,33 @@
 
         <!-- Paid Amount -->
         <div class="mb-3">
-          <label class="form-label fw-semibold text-muted ms-2">Paid Amount</label>
+          <label class="form-label fw-semibold text-muted ms-2">Paid Amount *</label>
           <input type="number" class="form-control rounded-pill px-4 py-2" formControlName="paidAmt"
             placeholder="Enter paid amount" />
         </div>
 
         <!-- Balance Amount -->
         <div class="mb-3">
-          <label class="form-label fw-semibold text-muted ms-2">Balance Amount</label>
+          <label class="form-label fw-semibold text-muted ms-2">Balance Amount *</label>
           <input type="number" class="form-control rounded-pill px-4 py-2" formControlName="balanceAmt" readonly />
         </div>
 
         <!-- Admission Date -->
         <div class="mb-3">
-          <label class="form-label fw-semibold text-muted ms-2">Admission Date</label>
+          <label class="form-label fw-semibold text-muted ms-2">Admission Date *</label>
           <input type="date" class="form-control rounded-pill px-4 py-2" formControlName="admissionDate"
             [disabled]="!isRenew" />
         </div>
 
         <!-- Start Date -->
         <div class="mb-3">
-          <label class="form-label fw-semibold text-muted ms-2">Start Date</label>
+          <label class="form-label fw-semibold text-muted ms-2">Start Date *</label>
           <input type="date" class="form-control rounded-pill px-4 py-2" formControlName="startDate" />
         </div>
 
         <!-- End Date -->
         <div class="mb-3">
-          <label class="form-label fw-semibold text-muted ms-2">End Date</label>
+          <label class="form-label fw-semibold text-muted ms-2">End Date *</label>
           <input type="date" class="form-control rounded-pill px-4 py-2" formControlName="endDate" readonly />
         </div>
 

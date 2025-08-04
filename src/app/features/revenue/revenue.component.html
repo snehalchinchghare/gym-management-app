@@ -1,6 +1,11 @@
+<a class="btn btn-outline-secondary px-3 d-inline-flex align-items-center gap-2 mb-3" style="border-radius: 50px; width: 6rem; height: 2rem;"
+      href="dashboard/candidate-list">
+      <i class="bi bi-arrow-left fs-5"></i>
+      <span>Back</span>
+    </a>
 <div class="card p-3 shadow">
   <div class="mb-3">
-    <label>Select Chart</label>
+    <label>Select Chart *</label>
     <select class="form-select" [(ngModel)]="chartType" (change)="loadChart(chartType)">
       <option *ngFor="let chart of availableCharts" [value]="chart.id">{{ chart.label }}</option>
     </select>
@@ -9,27 +14,23 @@
   <!-- Date Range Filter (only for Monthly Revenue) -->
   <div class="row mb-3">
     <div class="col-md-6">
-      <label>From Date</label>
+      <label>From Date *</label>
       <input type="date" class="form-control" [(ngModel)]="fromDate" (change)="onDateRangeChange()" />
     </div>
     <div class="col-md-6">
-      <label>To Date</label>
+      <label>To Date *</label>
       <input type="date" class="form-control" [(ngModel)]="toDate" (change)="onDateRangeChange()" />
     </div>
   </div>
 
-  <apx-chart
-      *ngIf="chartOptions?.chart && chartOptions?.series && chartType === 'monthlyRevenue'"
-      [series]="chartOptions.series"
-      [chart]="chartOptions.chart"
-      [xaxis]="chartOptions.xaxis"
-      [labels]="chartOptions.labels"
-      [title]="chartOptions.title"
-      [responsive]="chartOptions.responsive"
-      [legend]="chartOptions.legend">
-    </apx-chart>
+  <apx-chart *ngIf="chartOptions?.chart && chartOptions?.series && chartType === 'monthlyRevenue'"
+    [series]="chartOptions.series" [chart]="chartOptions.chart" [xaxis]="chartOptions.xaxis"
+    [labels]="chartOptions.labels" [title]="chartOptions.title" [responsive]="chartOptions.responsive"
+    [legend]="chartOptions.legend">
+  </apx-chart>
 
-  <apx-chart *ngIf="chartOptions?.chart && chartOptions?.series && chartType != 'monthlyRevenue'" [series]="chartOptions.series" [chart]="chartOptions.chart"
-    [labels]="chartOptions.labels" [dataLabels]="chartOptions.dataLabels" [tooltip]="chartOptions.tooltip"
-    [title]="chartOptions.title" [responsive]="chartOptions.responsive"></apx-chart>
+  <apx-chart *ngIf="chartOptions?.chart && chartOptions?.series && chartType != 'monthlyRevenue'"
+    [series]="chartOptions.series" [chart]="chartOptions.chart" [labels]="chartOptions.labels"
+    [dataLabels]="chartOptions.dataLabels" [tooltip]="chartOptions.tooltip" [title]="chartOptions.title"
+    [responsive]="chartOptions.responsive"></apx-chart>
 </div>

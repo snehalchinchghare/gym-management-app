@@ -3,9 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { ReceiptComponent } from '../dashboard/receipt/receipt.component';
-import { PricingComponent } from '../pricing/pricing.component';
 import { AboutComponent } from '../about/about.component';
-import { SubscriptionsComponent } from '../subscriptions/subscriptions.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },

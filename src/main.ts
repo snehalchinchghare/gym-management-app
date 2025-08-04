@@ -61,23 +61,8 @@ bootstrapApplication(AppComponent, {
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
     ...(appConfig.providers || []),
     provideServiceWorker('ngsw-worker.js', {
-        registrationStrategy: 'registerImmediately'
+        registrationStrategy: 'registerWhenStable:30000'
     })
 ]
-}).then(appRef => {
-    const swUpdate = appRef.injector.get(SwUpdate);
-    swUpdate.versionUpdates.subscribe(() => {
-      const toastEl = document.getElementById('pwa-toast');
-      const reloadBtn = document.getElementById('reload-btn');
-
-      if (toastEl && reloadBtn) {
-        // Show the toast
-        // @ts-ignore
-        const toast = new bootstrap.Toast(toastEl);
-        toast.show();
-
-        reloadBtn.addEventListener('click', () => window.location.reload());
-      }
-    });
 })
 .catch((err) => console.error(err));

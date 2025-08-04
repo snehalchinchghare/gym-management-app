@@ -14,7 +14,7 @@
 
         <!-- Name -->
         <div class="mb-3">
-          <label class="form-label fw-semibold text-muted ms-2">Full Name</label>
+          <label class="form-label fw-semibold text-muted ms-2">Full Name *</label>
           <input type="text" class="form-control rounded-pill px-4 py-2" formControlName="fullName"
             placeholder="Full Name" />
           <div class="text-danger small mt-1" *ngIf="
@@ -27,7 +27,7 @@
 
         <!-- Email -->
         <div class="mb-3">
-          <label class="form-label fw-semibold text-muted ms-2">Email</label>
+          <label class="form-label fw-semibold text-muted ms-2">Email *</label>
           <input type="email" class="form-control rounded-pill px-4 py-2" formControlName="email"
             placeholder="admin@gmail.com" />
           <div class="text-danger small mt-1" *ngIf="
@@ -42,7 +42,8 @@
         <!-- Enter OTP + Get OTP/Verify Button (Same row) -->
         <div class="mb-3">
           <div class="form-check mb-2">
-            <input type="checkbox" class="form-check-input" [checked]="manuallyEnterOtp" id="alreadyHaveOtp" formControlName="otpExists" (change)="onToggleManualOtp()" />
+            <input type="checkbox" class="form-check-input" [checked]="manuallyEnterOtp" id="alreadyHaveOtp"
+              formControlName="otpExists" (change)="onToggleManualOtp()" />
             <label class="form-check-label" for="alreadyHaveOtp">I already have an OTP</label>
           </div>
           <div class="input-group">
@@ -57,7 +58,7 @@
               Verify
             </button>
           </div>
-          
+
           <!-- Success message -->
           <div class="text-success small mt-1 ms-1" *ngIf="!manuallyEnterOtp && otpSent && !otpValidated">
             OTP has been sent to your email.
@@ -71,7 +72,7 @@
 
         <!-- Mobile -->
         <div class="mb-3">
-          <label class="form-label fw-semibold text-muted ms-2">Mobile</label>
+          <label class="form-label fw-semibold text-muted ms-2">Mobile *</label>
           <input type="number" class="form-control rounded-pill px-4 py-2" formControlName="gymmobile"
             placeholder="mobile" />
           <div class="text-danger small mt-1" *ngIf="
@@ -84,7 +85,7 @@
 
         <!-- Gym Name -->
         <div class="mb-3">
-          <label class="form-label fw-semibold text-muted ms-2">Gym Name</label>
+          <label class="form-label fw-semibold text-muted ms-2">Gym Name *</label>
           <input type="text" class="form-control rounded-pill px-4 py-2" formControlName="gymName"
             placeholder="Gym Name" />
           <div class="text-danger small mt-1" *ngIf="
@@ -97,7 +98,7 @@
 
         <!-- Gym Address -->
         <div class="mb-3">
-          <label class="form-label fw-semibold text-muted ms-2">Gym Address</label>
+          <label class="form-label fw-semibold text-muted ms-2">Gym Address *</label>
           <input type="text" class="form-control rounded-pill px-4 py-2" formControlName="gymAddress"
             placeholder="Gym Address" />
           <div class="text-danger small mt-1" *ngIf="
@@ -110,7 +111,7 @@
 
         <!-- Gym Logo -->
         <div class="mb-3">
-          <label class="form-label fw-semibold text-muted ms-2">Gym Logo</label>
+          <label class="form-label fw-semibold text-muted ms-2">Gym Logo *</label>
           <input type="file" class="form-control rounded-pill px-4 py-2" accept="image/*"
             (change)="onFileSelected($event)" formControlName="gymLogo" placeholder="Gym Logo" />
           <div class="text-danger small mt-1" *ngIf="
@@ -128,7 +129,7 @@
             <h2 class="accordion-header">
               <button class="accordion-button fw-semibold form-label text-muted ms-2"
                 [class.collapsed]="!isMembershipTableCollapsed" type="button" (click)="togglemembershipTable()">
-                Membership Pricing
+                Membership Pricing *
               </button>
             </h2>
 
@@ -216,12 +217,20 @@
 
         <!-- Password -->
         <div class="mb-3">
-          <label class="form-label fw-semibold text-muted ms-2">Password</label>
-          <input type="password" class="form-control rounded-pill px-4 py-2" formControlName="password"
-            placeholder="******" (input)="onPasswordInput()" />
-          <div class="text-danger small mt-1"
-            *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid">
-            Password is required.
+          <label class="form-label fw-semibold text-muted ms-2">Password *</label>
+          <div class="input-group">
+            <input [type]="showPassword ? 'text' : 'password'" class="form-control px-4 py-2"
+              formControlName="password" placeholder="******" (input)="onPasswordInput()" />
+            <button *ngIf="!otpSent" type="button" class="btn btn-success px-4 py-2"
+              style="border-top-right-radius: 50rem; border-bottom-right-radius: 50rem;">
+              <i class="bi" [ngClass]="showConfirmPassword ? 'bi-eye-slash' : 'bi-eye'"
+                (click)="togglePasswordVisibility()"
+                style="position: absolute; top: 50%; right: 16px; transform: translateY(-50%); cursor: pointer;"></i>
+            </button>
+          </div>
+          <div class="text-danger small mt-1" *ngIf="registerForm.get('password')?.touched && 
+            registerForm.get('password')?.errors?.['passwordInvalid']">
+            Your password doesn’t meet the required criteria
           </div>
 
           <!-- Password rules checklist -->
@@ -256,14 +265,23 @@
 
         <!-- Confirm Password -->
         <div class="mb-3">
-          <label class="form-label fw-semibold text-muted ms-2">Confirm Password</label>
-          <input type="password" class="form-control rounded-pill px-4 py-2" formControlName="confirmPassword"
-            placeholder="******" />
+          <label class="form-label fw-semibold text-muted ms-2">Confirm Password *</label>
+          <div class="input-group">
+            <input [type]="showConfirmPassword ? 'text' : 'password'" class="form-control px-4 py-2"
+              style="border-top-left-radius: 50rem; border-bottom-left-radius: 50rem;" formControlName="confirmPassword"
+              (input)="matchPassword()" placeholder="******" />
+            <button *ngIf="!otpSent" type="button" class="btn btn-success px-4 py-2"
+              style="border-top-right-radius: 50rem; border-bottom-right-radius: 50rem;">
+              <i class="bi" [ngClass]="showConfirmPassword ? 'bi-eye-slash' : 'bi-eye'"
+                (click)="toggleConfirmPasswordVisibility()"
+                style="position: absolute; top: 50%; right: 16px; transform: translateY(-50%); cursor: pointer;"></i>
+            </button>
+          </div>
           <div class="text-danger small" *ngIf="
             registerForm.get('confirmPassword')?.touched &&
-            registerForm.get('confirmPassword')?.invalid
+            registerForm.get('confirmPassword')?.errors?.['mismatch']
           ">
-            Please confirm your password.
+            Passwords don’t match, try again
           </div>
         </div>
 

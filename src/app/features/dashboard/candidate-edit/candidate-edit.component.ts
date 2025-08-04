@@ -174,19 +174,26 @@ export class CandidateEditComponent implements OnInit {
       day: 'numeric',
     });
     let receiptLink = row.receiptUrl;
-    const message = template
-      .replace(/{{name}}/g, formData.fullName.trim())
-      .replace(/\\n/g, '\n')
-      .replace(/{{end_date}}/g, formattedendDate)
-      .replace(/{{start_date}}/g, formattedstartDate)
-      .replace(/{{gym_name}}/g, this.userDetails.gymName.trim())
-      .replace(/{{receiptLink}}/g, receiptLink);
-
     if (source == 'whatsapp') {
+      const message = template
+        .replace(/{{name}}/g, formData.fullName.trim())
+        .replace(/\\n/g, '\n')
+        .replace(/{{end_date}}/g, formattedendDate)
+        .replace(/{{start_date}}/g, formattedstartDate)
+        .replace(/{{gym_name}}/g, this.userDetails.gymName.trim())
+        .replace(/{{receiptLink}}/g, receiptLink);
       const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
       window.open(url, '_blank');
     }
     if (source == 'text') {
+      const message = template
+        .replace(/\*/g, '')
+        .replace(/{{name}}/g, formData.fullName.trim())
+        .replace(/\\n/g, '\n')
+        .replace(/{{end_date}}/g, formattedendDate)
+        .replace(/{{start_date}}/g, formattedstartDate)
+        .replace(/{{gym_name}}/g, this.userDetails.gymName.trim())
+        .replace(/{{receiptLink}}/g, receiptLink);
       const smsUrl = `sms:${phoneNumber}?body=${encodeURIComponent(message)}`;
       window.open(smsUrl, '_blank');
     }

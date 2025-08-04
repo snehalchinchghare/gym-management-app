@@ -1,17 +1,16 @@
 <div class="container py-5" style="font-family: 'Poppins', sans-serif;">
+      <!-- Back Button -->
+      <a class="btn btn-outline-secondary px-3 d-inline-flex align-items-center gap-2 mb-3"
+        style="border-radius: 50px; width: 6rem; height: 2rem;" href="dashboard/candidate-list">
+        <i class="bi bi-arrow-left fs-5"></i>
+        <span>Back</span>
+      </a>
   <h2 class="text-center text-success fw-bold mb-2">🏋️ Pricing Plans</h2>
   <p class="text-center text-muted mb-5">Choose a plan that fits your gym’s growth</p>
 
   <!-- Back Button -->
   <div class="container py-3">
     <div class="row align-items-start mb-4 gy-3">
-      <!-- Back Button -->
-      <!-- <div class="col-12 col-md-auto">
-        <a routerLink="/login" class="btn btn-outline-success fw-semibold px-3 py-2 shadow-sm w-100">
-          🔙 Back to Login
-        </a>
-      </div> -->
-  
       <!-- Duration Dropdown -->
       <div class="col-12 col-md-4">
         <label class="form-label fw-semibold">Select Duration</label>
@@ -21,7 +20,7 @@
           </option>
         </select>
       </div>
-  
+
       <!-- Start and End Date -->
       <div class="col-12 col-md-4" *ngIf="startDate && endDate">
         <label class="form-label fw-semibold d-block invisible">.</label> <!-- Keeps height consistent -->
@@ -37,39 +36,41 @@
   <div class="row row-cols-1 row-cols-md-4 g-4">
     <!-- Free Plan -->
     <div class="col">
-        <div class="card shadow-lg h-100 border-start border-success border-4">
-          <div class="card-body d-flex flex-column">
-            <h5 class="card-title text-success text-center fw-semibold mb-3">{{ getPlanDetails(1).planname }}</h5>
-            <h6 class="text-center text-muted text-decoration-line-through">₹ {{ getPlanDetails(1).original_price * selectedPackageType.duration_months }}</h6>
-            <h2 class="text-center fw-bold text-success">₹ {{ getPlanDetails(1).discounted_price * selectedPackageType.duration_months }} <small class="fs-6">/ month</small></h2>
-            <p class="text-center text-danger small mb-4">🔥 {{ getPlanDetails(1).discount_percent }}% OFF</p>
-            <ul class="list-unstyled mb-4">
-                <li *ngFor="let feature of getFeatures(1)" title="{{ feature.description }}">
-                    ✅ {{ feature.featurename }}
-                  </li>
-            </ul>
-            <button class="btn btn-success w-100 mt-auto"
-                    (click)="buyPlan('starter', selectedDurations['starter'])"
-                    [disabled]="!selectedDurations['starter']">Buy Now</button>
-          </div>
+      <div class="card shadow-lg h-100 border-start border-success border-4">
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title text-success text-center fw-semibold mb-3">{{ getPlanDetails(1).planname }}</h5>
+          <h6 class="text-center text-muted text-decoration-line-through">₹ {{ getPlanDetails(1).original_price *
+            selectedPackageType.duration_months }}</h6>
+          <h2 class="text-center fw-bold text-success">₹ {{ getPlanDetails(1).discounted_price *
+            selectedPackageType.duration_months }} <small class="fs-6">/ month</small></h2>
+          <p class="text-center text-danger small mb-4">🔥 {{ getPlanDetails(1).discount_percent }}% OFF</p>
+          <ul class="list-unstyled mb-4">
+            <li *ngFor="let feature of getFeatures(1)" title="{{ feature.description }}">
+              ✅ {{ feature.featurename }}
+            </li>
+          </ul>
+          <button class="btn btn-success w-100 mt-auto" (click)="buyPlan('starter', selectedDurations['starter'])"
+            [disabled]="!selectedDurations['starter']">Buy Now</button>
         </div>
       </div>
+    </div>
     <!-- Starter Plan -->
     <div class="col">
       <div class="card shadow-lg h-100 border-start border-success border-4">
         <div class="card-body d-flex flex-column">
           <h5 class="card-title text-success text-center fw-semibold mb-3">{{ getPlanDetails(2).planname }}</h5>
-          <h6 class="text-center text-muted text-decoration-line-through">₹{{ getPlanDetails(2).original_price * selectedPackageType.duration_months }}</h6>
-          <h2 class="text-center fw-bold text-success">₹ {{ getPlanDetails(2).discounted_price * selectedPackageType.duration_months }}<small class="fs-6">/ month</small></h2>
+          <h6 class="text-center text-muted text-decoration-line-through">₹{{ getPlanDetails(2).original_price *
+            selectedPackageType.duration_months }}</h6>
+          <h2 class="text-center fw-bold text-success">₹ {{ getPlanDetails(2).discounted_price *
+            selectedPackageType.duration_months }}<small class="fs-6">/ month</small></h2>
           <p class="text-center text-danger small mb-4">🔥 {{ getPlanDetails(2).discount_percent }}% OFF</p>
           <ul class="list-unstyled mb-4">
             <li *ngFor="let feature of getFeatures(2)" title="{{ feature.description }}">
-                ✅ {{ feature.featurename }}
-              </li>
+              ✅ {{ feature.featurename }}
+            </li>
           </ul>
-          <button class="btn btn-success w-100 mt-auto"
-                  (click)="buyPlan('starter', selectedDurations['starter'])"
-                  [disabled]="!selectedDurations['starter']">Buy Now</button>
+          <button class="btn btn-success w-100 mt-auto" (click)="buyPlan('starter', selectedDurations['starter'])"
+            [disabled]="!selectedDurations['starter']">Buy Now</button>
         </div>
       </div>
     </div>
@@ -79,17 +80,18 @@
       <div class="card shadow-lg h-100 border-start border-primary border-4">
         <div class="card-body d-flex flex-column">
           <h5 class="card-title text-primary text-center fw-semibold mb-3">{{ getPlanDetails(3).planname }}</h5>
-          <h6 class="text-center text-muted text-decoration-line-through">₹{{ getPlanDetails(3).original_price  * selectedPackageType.duration_months }}</h6>
-          <h2 class="text-center fw-bold text-primary">₹ {{ getPlanDetails(3).discounted_price  * selectedPackageType.duration_months }}<small class="fs-6">/ month</small></h2>
+          <h6 class="text-center text-muted text-decoration-line-through">₹{{ getPlanDetails(3).original_price *
+            selectedPackageType.duration_months }}</h6>
+          <h2 class="text-center fw-bold text-primary">₹ {{ getPlanDetails(3).discounted_price *
+            selectedPackageType.duration_months }}<small class="fs-6">/ month</small></h2>
           <p class="text-center text-danger small mb-4">🔥 {{ getPlanDetails(3).discount_percent }}% OFF</p>
           <ul class="list-unstyled mb-4">
             <li *ngFor="let feature of getFeatures(3)" title="{{ feature.description }}">
-                ✅ {{ feature.featurename }}
-              </li>
+              ✅ {{ feature.featurename }}
+            </li>
           </ul>
-          <button class="btn btn-primary w-100 mt-auto"
-                  (click)="buyPlan('pro', selectedDurations['pro'])"
-                  [disabled]="!selectedDurations['pro']">Buy Now</button>
+          <button class="btn btn-primary w-100 mt-auto" (click)="buyPlan('pro', selectedDurations['pro'])"
+            [disabled]="!selectedDurations['pro']">Buy Now</button>
         </div>
       </div>
     </div>
@@ -99,17 +101,18 @@
       <div class="card shadow-lg h-100 border-start border-warning border-4">
         <div class="card-body d-flex flex-column">
           <h5 class="card-title text-warning text-center fw-semibold mb-3">{{ getPlanDetails(4).planname }}</h5>
-          <h6 class="text-center text-muted text-decoration-line-through">₹{{ getPlanDetails(4).original_price  * selectedPackageType.duration_months }}</h6>
-          <h2 class="text-center fw-bold text-warning">₹ {{ getPlanDetails(4).discounted_price  * selectedPackageType.duration_months }}<small class="fs-6">/ month</small></h2>
+          <h6 class="text-center text-muted text-decoration-line-through">₹{{ getPlanDetails(4).original_price *
+            selectedPackageType.duration_months }}</h6>
+          <h2 class="text-center fw-bold text-warning">₹ {{ getPlanDetails(4).discounted_price *
+            selectedPackageType.duration_months }}<small class="fs-6">/ month</small></h2>
           <p class="text-center text-danger small mb-4">🔥 {{ getPlanDetails(4).discount_percent }}% OFF</p>
           <ul class="list-unstyled mb-4">
             <li *ngFor="let feature of getFeatures(4)" title="{{ feature.description }}">
-                ✅ {{ feature.featurename }}
-              </li>
+              ✅ {{ feature.featurename }}
+            </li>
           </ul>
-          <button class="btn btn-warning w-100 mt-auto"
-                  (click)="buyPlan('premium', selectedDurations['premium'])"
-                  [disabled]="!selectedDurations['premium']">Buy Now</button>
+          <button class="btn btn-warning w-100 mt-auto" (click)="buyPlan('premium', selectedDurations['premium'])"
+            [disabled]="!selectedDurations['premium']">Buy Now</button>
         </div>
       </div>
     </div>
@@ -117,7 +120,7 @@
 
   <!-- Help Section -->
   <div class="text-center mt-5">
-    <p class="text-muted small">Need help choosing? <br/>
+    <p class="text-muted small">Need help choosing? <br />
       <a routerLink="/contactus" class="btn btn-outline-primary px-4 py-2 fw-semibold">Contact Us</a>
     </p>
   </div>

@@ -7,13 +7,13 @@ import { LoaderService } from '../../services/loader.service';
 import { Toast } from 'bootstrap';
 
 @Component({
-  selector: 'app-update-package',
+  selector: 'app-update-gym',
   standalone: true,
   imports: [FormsModule, ReactiveFormsModule, CommonModule],
-  templateUrl: './update-package.component.html',
-  styleUrl: './update-package.component.scss'
+  templateUrl: './update-gym.component.html',
+  styleUrl: './update-gym.component.scss'
 })
-export class UpdatePackageComponent {
+export class UpdateGymComponent {
   errorMessage: string | null = null;
   fileError: boolean = false;
   gymLogoBase64: string | null = null;

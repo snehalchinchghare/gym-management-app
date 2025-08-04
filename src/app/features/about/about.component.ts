@@ -15,11 +15,10 @@ export class AboutComponent implements OnInit {
   constructor(
     private router: Router,
   ){
-
   }
 
   ngOnInit(): void {
-    if(this.router.url.includes('/contactus')){
+    if(this.router.url.includes('/dashboard/about')){
       this.showBackButtons = true;
     }
   }
