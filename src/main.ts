@@ -5,7 +5,7 @@ import { routes } from './app/app.routes';
 import { appConfig } from './app/app.config';
 import { ErrorHandler, isDevMode } from '@angular/core';
 import { GlobalErrorHandler } from './app/features/services/global-error-handler';
-import { provideServiceWorker } from '@angular/service-worker';
+import { provideServiceWorker, SwUpdate } from '@angular/service-worker';
 
 // ✅ Patch console.error to suppress NavigatorLockAcquireTimeoutError
 const originalConsoleError = console.error;
@@ -61,8 +61,23 @@ bootstrapApplication(AppComponent, {
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
     ...(appConfig.providers || []),
     provideServiceWorker('ngsw-worker.js', {
-        enabled: !isDevMode(),
-        registrationStrategy: 'registerWhenStable:30000'
+        registrationStrategy: 'registerImmediately'
     })
 ]
-}).catch((err) => console.error(err));
+}).then(appRef => {
+    const swUpdate = appRef.injector.get(SwUpdate);
+    swUpdate.versionUpdates.subscribe(() => {
+      const toastEl = document.getElementById('pwa-toast');
+      const reloadBtn = document.getElementById('reload-btn');
+
+      if (toastEl && reloadBtn) {
+        // Show the toast
+        // @ts-ignore
+        const toast = new bootstrap.Toast(toastEl);
+        toast.show();
+
+        reloadBtn.addEventListener('click', () => window.location.reload());
+      }
+    });
+})
+.catch((err) => console.error(err));
