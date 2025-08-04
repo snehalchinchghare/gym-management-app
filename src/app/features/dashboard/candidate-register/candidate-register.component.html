@@ -18,6 +18,22 @@
             placeholder="Enter full name" />
         </div>
 
+        <!-- Candidate Photo -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold text-muted ms-2">Photo</label>
+          <input type="file"
+            accept="image/*"
+            capture="environment"
+            formControlName="photo"
+            class="form-control rounded-pill px-4 py-2"
+            (change)="onPhotoSelected($event)" />
+        </div>
+
+        <!-- Photo Preview -->
+        <div class="mb-3 text-center" *ngIf="candidatePhotoUrl">
+          <img [src]="candidatePhotoUrl" alt="Candidate Preview" class="img-thumbnail rounded-circle" style="max-width: 10rem; height: 10rem;">
+        </div>  
+
         <!-- Email -->
         <div class="mb-3">
           <label class="form-label fw-semibold text-muted ms-2">Email</label>

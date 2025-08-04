@@ -55,9 +55,6 @@ bootstrapApplication(AppComponent, {
   ...appConfig,
   providers: [
     provideRouter(routes),
-    provideServiceWorker('ngsw-worker.js', {
-      enabled: true, // Enable in all environments
-    }),
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
     ...(appConfig.providers || []),
     provideServiceWorker('ngsw-worker.js', {

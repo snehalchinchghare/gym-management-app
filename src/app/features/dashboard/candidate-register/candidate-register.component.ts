@@ -28,6 +28,7 @@ export class CandidateRegisterComponent implements OnInit {
   initialTotalAmt: number = 0;
   isManualTotal: boolean = false;
   baseUrl: string = window.location.origin;
+  candidatePhotoUrl: string | ArrayBuffer | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -150,10 +151,10 @@ export class CandidateRegisterComponent implements OnInit {
     if (this.registerForm.invalid) {
       return;
     }
-  
+
     try {
       this.loader.show();
-  
+
       const formData = this.registerForm.getRawValue();
       const candidateData = {
         fullName: formData.fullName,
@@ -170,9 +171,11 @@ export class CandidateRegisterComponent implements OnInit {
         balanceAmt: Number(formData.balanceAmt),
         admissionDate: formData.admissionDate,
         startDate: formData.startDate,
-        endDate: formData.endDate
+        endDate: formData.endDate,
+        photo: this.candidatePhotoUrl
       };
-  
+      console.log(candidateData.photo);
+
       let result: { candidateid: any; success: boolean; message: string };
       if (this.isRenew) {
         result = await this.supabaseService.renewMembership(this.candidateId, candidateData, 'Renewed');
@@ -181,7 +184,7 @@ export class CandidateRegisterComponent implements OnInit {
       } else {
         result = await this.supabaseService.registerCandidate(candidateData);
       }
-  
+
       if (result.success) {
         const data = {
           candidateId: result.candidateid[0].out_candidateid
@@ -192,6 +195,7 @@ export class CandidateRegisterComponent implements OnInit {
         this.router.navigate(['/dashboard/candidate-list']);
       } else {
         alert(result.message);
+        return;
       }
     } catch (error) {
       alert("Something went wrong during registration.");
@@ -200,7 +204,7 @@ export class CandidateRegisterComponent implements OnInit {
       this.loader.hide();
     }
   }
-  
+
 
   updateManualField() {
     if (!this.isBalancePayment) {
@@ -289,6 +293,59 @@ export class CandidateRegisterComponent implements OnInit {
       } else {
         this.registerForm.patchValue({ totalAmt: '' });
       }
+    }
+  }
+
+  onPhotoSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 800;
+          const MAX_HEIGHT = 800;
+
+          let width = img.width;
+          let height = img.height;
+
+          // Scale proportionally
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+
+          // Try compressing by reducing quality until size ≤ MAX_FILE_SIZE_KB
+          let quality = 0.9;
+          let dataUrl = '';
+          let fileSizeKB = Number.MAX_VALUE;
+
+          while (quality > 0.1 && fileSizeKB > 500) {
+            dataUrl = canvas.toDataURL('image/jpeg', quality);
+            const byteString = atob(dataUrl.split(',')[1]);
+            fileSizeKB = Math.round((byteString.length / 1024));
+            quality -= 0.05;
+          }
+
+          this.candidatePhotoUrl = dataUrl;
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
     }
   }
 }
