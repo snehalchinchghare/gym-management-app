@@ -174,7 +174,6 @@ export class CandidateRegisterComponent implements OnInit {
         endDate: formData.endDate,
         photo: this.candidatePhotoUrl
       };
-      console.log(candidateData.photo);
 
       let result: { candidateid: any; success: boolean; message: string };
       if (this.isRenew) {

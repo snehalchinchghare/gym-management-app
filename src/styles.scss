@@ -12,3 +12,11 @@ body {
 main {
   flex: 1 0 auto;
 }
+
+body, html, * {
+  caret-color: transparent;
+}
+
+input, textarea {
+  caret-color: auto; /* or specify a color like black */
+}

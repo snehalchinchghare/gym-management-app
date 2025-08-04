@@ -22,6 +22,7 @@ export class CandidateEditComponent implements OnInit {
   private readonly ADMIN_KEY = 'adminUser';
   registrations: any[] = [];
   messageTemplates: any[] = [];
+  candidatePhotoUrl: string | ArrayBuffer | null = null;
 
   filteredRegistrations = [...this.registrations];
   paginatedRegistrations: any[] = [];
@@ -63,12 +64,14 @@ export class CandidateEditComponent implements OnInit {
   
           // Patch candidate form
           if (result?.candidate) {
+            console.log(result);
             this.registerForm.patchValue({
               fullName: result.candidate.full_name,
               email: result.candidate.email,
               mobile: result.candidate.mobile,
               dob: result.candidate.dateofbirth
             });
+            this.candidatePhotoUrl = result.candidate.photo;
           }
   
           // Transform registrations
@@ -108,7 +111,8 @@ export class CandidateEditComponent implements OnInit {
       fullName: formData.fullName,
       email: formData.email,
       mobile: formData.mobile,
-      dob: formData.dob
+      dob: formData.dob,
+      photo: this.candidatePhotoUrl
     }
     
     let result = await this.supabaseService.updateCandidate(candidateData);
@@ -205,6 +209,59 @@ export class CandidateEditComponent implements OnInit {
     }
     else {
       alert("No receipt found.");
+    }
+  }
+
+  onPhotoSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 800;
+          const MAX_HEIGHT = 800;
+
+          let width = img.width;
+          let height = img.height;
+
+          // Scale proportionally
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+
+          // Try compressing by reducing quality until size ≤ MAX_FILE_SIZE_KB
+          let quality = 0.9;
+          let dataUrl = '';
+          let fileSizeKB = Number.MAX_VALUE;
+
+          while (quality > 0.1 && fileSizeKB > 500) {
+            dataUrl = canvas.toDataURL('image/jpeg', quality);
+            const byteString = atob(dataUrl.split(',')[1]);
+            fileSizeKB = Math.round((byteString.length / 1024));
+            quality -= 0.05;
+          }
+
+          this.candidatePhotoUrl = dataUrl;
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
     }
   }
 }

@@ -3,7 +3,8 @@
     font-family: 'Poppins', sans-serif;
   }
 
-  .table td, .table th {
+  .table td,
+  .table th {
     vertical-align: middle;
   }
 
@@ -43,37 +44,35 @@
 <div class="d-flex align-items-center flex-wrap gap-2 mb-4">
 
   <!-- Search Box -->
-  <input type="text" class="form-control w-auto" 
-         placeholder="🔍 Search candidates..." 
-         [(ngModel)]="searchText" 
-         (keyup)="onSearchKeyup()" />
+  <input type="text" class="form-control w-auto" placeholder="🔍 Search candidates..." [(ngModel)]="searchText"
+    (keyup)="onSearchKeyup()" />
 
   <!-- Filter Buttons -->
   <div class="d-flex align-items-center ms-2 gap-3">
 
     <!-- Filter Button Group -->
     <div class="btn-group btn-group-sm" role="group" aria-label="Active Filter">
-  
+
       <!-- Active -->
       <input type="radio" class="btn-check" name="activeFilter" id="filterActive" autocomplete="off"
-             [checked]="activeFilter === 'active'" (change)="onFilterChange('active')">
+        [checked]="activeFilter === 'active'" (change)="onFilterChange('active')">
       <label class="btn btn-outline-success rounded-start" for="filterActive">Active</label>
-  
+
       <!-- Inactive -->
       <input type="radio" class="btn-check" name="activeFilter" id="filterInactive" autocomplete="off"
-             [checked]="activeFilter === 'inactive'" (change)="onFilterChange('inactive')">
+        [checked]="activeFilter === 'inactive'" (change)="onFilterChange('inactive')">
       <label class="btn btn-outline-danger rounded-0" for="filterInactive">Inactive</label>
-  
+
       <!-- All -->
       <input type="radio" class="btn-check" name="activeFilter" id="filterAll" autocomplete="off"
-             [checked]="activeFilter === 'all'" (change)="onFilterChange('all')">
+        [checked]="activeFilter === 'all'" (change)="onFilterChange('all')">
       <label class="btn btn-outline-secondary rounded-end" for="filterAll">All</label>
-  
+
     </div>
-  
+
     <!-- Dynamic Label -->
     <span class="text-muted small fw-semibold">
-      Showing: 
+      Showing:
       <span [ngClass]="{
         'text-success': activeFilter === 'active',
         'text-danger': activeFilter === 'inactive',
@@ -82,21 +81,19 @@
         {{ activeFilter | titlecase }} Candidates
       </span>
     </span>
-  
+
   </div>
-  
+
 
   <!-- Pagination -->
   <div class="ms-auto d-flex align-items-center gap-2">
-    <button class="btn btn-outline-secondary btn-sm px-3"
-            [disabled]="currentPage === 1" 
-            (click)="getPrevRecordsByPage()">⏪ Prev</button>
+    <button class="btn btn-outline-secondary btn-sm px-3" [disabled]="currentPage === 1"
+      (click)="getPrevRecordsByPage()">⏪ Prev</button>
 
     <span class="fw-semibold small">{{ currentPage }} / {{ totalPages }}</span>
 
-    <button class="btn btn-outline-secondary btn-sm px-3" 
-            [disabled]="currentPage === totalPages" 
-            (click)="getNextRecordsByPage()">Next ⏩</button>
+    <button class="btn btn-outline-secondary btn-sm px-3" [disabled]="currentPage === totalPages"
+      (click)="getNextRecordsByPage()">Next ⏩</button>
   </div>
 </div>
 
@@ -120,6 +117,7 @@
   <table class="table table-hover align-middle shadow-sm rounded overflow-hidden">
     <thead class="table-light">
       <tr>
+        <th>Photo</th>
         <th>Name</th>
         <th>Service</th>
         <th>Balance</th>
@@ -133,6 +131,12 @@
     </thead>
     <tbody>
       <tr *ngFor="let candidate of registeredCandidates.rows" class="text-muted">
+        <td>
+          <a class="btn btn-sm btn-primary" [attr.data-bs-target]="'#photoModal' + candidate.candidateid"
+            data-bs-toggle="modal">
+            <i class="bi bi-person-bounding-box fs-5"></i>
+          </a>
+        </td>
         <td [ngStyle]="getCellStyle(candidate.end_date)">{{ candidate.full_name }}</td>
         <td [ngStyle]="getCellStyle(candidate.end_date)">
           {{ candidate.servicetype_name }} ({{ candidate.packagetype_name }})
@@ -141,20 +145,14 @@
         <td [ngStyle]="getCellStyle(candidate.end_date)">{{ candidate.end_date }}</td>
         <td [ngStyle]="getCellStyle(candidate.end_date)">
           <div class="form-check form-switch">
-            <input 
-              class="form-check-input" 
-              type="checkbox" 
-              id="isActive" 
-              role="switch"
-              [checked]="candidate.isactive"
+            <input class="form-check-input" type="checkbox" id="isActive" role="switch" [checked]="candidate.isactive"
               (change)="setActiveStatus(candidate)" />
           </div>
         </td>
         <td [ngStyle]="getCellStyle(candidate.end_date)">{{ candidate.receipttype }}</td>
-        
+
         <!-- Receipt buttons -->
-        <td class="text-nowrap" [ngStyle]="getCellStyle(candidate.end_date)" 
-        [ngClass]="{
+        <td class="text-nowrap" [ngStyle]="getCellStyle(candidate.end_date)" [ngClass]="{
           'white-buttons': isExpired(candidate.end_date) || isEndingSoon(candidate.end_date)
         }">
           <button class="btn btn-sm btn-outline-success me-2" (click)="sendMessageReceipt(candidate, 'whatsapp')">
@@ -169,8 +167,7 @@
         </td>
 
         <!-- Remind buttons (conditionally shown in cell, not in header) -->
-        <td class="text-nowrap" [ngStyle]="getCellStyle(candidate.end_date)"
-        [ngClass]="{
+        <td class="text-nowrap" [ngStyle]="getCellStyle(candidate.end_date)" [ngClass]="{
           'white-buttons': isExpired(candidate.end_date) || isEndingSoon(candidate.end_date)
         }">
           <ng-container *ngIf="getStatus(candidate.end_date) !== 'active'">
@@ -189,11 +186,11 @@
             <button class="btn btn-sm btn-primary" (click)="editCandidateDetails(candidate.candidateid)">
               View / Edit
             </button>
-            <button *ngIf="candidate.balance_amount == 0" class="btn btn-sm btn-primary" 
+            <button *ngIf="candidate.balance_amount == 0" class="btn btn-sm btn-primary"
               (click)="renewMembership(candidate.candidateid, true, false)">
               Renew
             </button>
-            <button *ngIf="candidate.balance_amount != 0" class="btn btn-sm btn-primary" 
+            <button *ngIf="candidate.balance_amount != 0" class="btn btn-sm btn-primary"
               (click)="renewMembership(candidate.candidateid, false, true)">
               Balance
             </button>
@@ -202,87 +199,110 @@
       </tr>
     </tbody>
   </table>
+
+  <!-- Below your entire table -->
+  <ng-container *ngFor="let candidate of registeredCandidates.rows">
+    <div class="modal fade" [id]="'photoModal' + candidate.candidateid" tabindex="-1" aria-labelledby="photoModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4">
+          <div class="modal-header">
+            <h5 class="modal-title" id="photoModalLabel">Candidate Photo</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <img *ngIf="candidate?.photo" [src]="candidate.photo" alt="Candidate Photo" class="img-fluid"
+              style="max-width: 200px;" />
+            <p *ngIf="!candidate?.photo" class="text-muted">No photo available</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
 </div>
 
 
 <!-- 📱 Card View (Mobile) -->
 <div class="d-block d-md-none">
-  <div *ngFor="let candidate of registeredCandidates.rows" 
-       class="card shadow-sm border-0 mb-3" 
-       [ngStyle]="getCellStyle(candidate.end_date)">
+  <div *ngFor="let candidate of registeredCandidates.rows" class="card shadow-sm border-0 mb-3"
+    [ngStyle]="getCellStyle(candidate.end_date)">
     <div class="card-body">
+      <div class="row align-items-center">
+        <!-- LEFT COLUMN: All details -->
+        <div class="col-8">
+          <!-- Header: Name and Toggle -->
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="card-title fw-bold text-dark mb-0">{{ candidate.full_name }}</h5>
+            <div class="form-check form-switch mb-0">
+              <input class="form-check-input" type="checkbox" id="isActive" role="switch" [checked]="candidate.isactive"
+                (change)="setActiveStatus(candidate)" />
+            </div>
+          </div>
 
-      <!-- Header: Name and Toggle -->
-      <div class="d-flex justify-content-between align-items-center mb-2">
-        <h5 class="card-title fw-bold text-dark mb-0">{{ candidate.full_name }}</h5>
-        <div class="form-check form-switch mb-0">
-          <input 
-            class="form-check-input" 
-            type="checkbox" 
-            id="isActive" 
-            role="switch"
-            [checked]="candidate.isactive"
-            (change)="setActiveStatus(candidate)" />
-        </div>
-      </div>
+          <!-- Info List -->
+          <ul class="list-unstyled text-muted small mb-3">
+            <li><strong>Service:</strong> {{ candidate.servicetype_name }}</li>
+            <li><strong>Package:</strong> {{ candidate.packagetype_name }}</li>
+            <li><strong>Balance:</strong> ₹{{ candidate.balance_amount }}</li>
+            <li><strong>End Date:</strong> {{ candidate.end_date }}</li>
+            <li><strong>Receipt Type:</strong> {{ candidate.receipttype }}</li>
+          </ul>
 
-      <!-- Info List -->
-      <ul class="list-unstyled text-muted small mb-3">
-        <li><strong>Service:</strong> {{ candidate.servicetype_name }}</li>
-        <li><strong>Package:</strong> {{ candidate.packagetype_name }}</li>
-        <li><strong>Balance:</strong> ₹{{ candidate.balance_amount }}</li>
-        <li><strong>End Date:</strong> {{ candidate.end_date }}</li>
-        <li><strong>Receipt Type:</strong> {{ candidate.receipttype }}</li>
-      </ul>
-
-      <!-- Receipt Buttons -->
-      <div class="mb-2">
-        <strong>Receipt:</strong>
-        <div class="mt-1 d-flex flex-wrap gap-2"
-        [ngClass]="{
+          <!-- Receipt Buttons -->
+          <div class="mb-2">
+            <strong>Receipt:</strong>
+            <div class="mt-1 d-flex flex-wrap gap-2" [ngClass]="{
           'white-buttons': isExpired(candidate.end_date) || isEndingSoon(candidate.end_date)
         }">
-          <button class="btn btn-sm btn-outline-success" (click)="sendMessageReceipt(candidate, 'whatsapp')">
-            <i class="bi bi-whatsapp"></i>
-          </button>
-          <button class="btn btn-sm btn-outline-secondary" (click)="sendMessageReceipt(candidate, 'text')">
-            <i class="bi bi-chat-dots"></i>
-          </button>
-          <button class="btn btn-sm btn-outline-primary" (click)="downloadReceipt(candidate)">
-            <i class="bi bi-download"></i>
-          </button>
-        </div>
-      </div>
+              <button class="btn btn-sm btn-outline-success" (click)="sendMessageReceipt(candidate, 'whatsapp')">
+                <i class="bi bi-whatsapp"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-secondary" (click)="sendMessageReceipt(candidate, 'text')">
+                <i class="bi bi-chat-dots"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-primary" (click)="downloadReceipt(candidate)">
+                <i class="bi bi-download"></i>
+              </button>
+            </div>
+          </div>
 
-      <!-- Remind Buttons (Conditional) -->
-      <div *ngIf="getStatus(candidate.end_date) !== 'active'" class="mb-2"
-      [ngClass]="{
+          <!-- Remind Buttons (Conditional) -->
+          <div *ngIf="getStatus(candidate.end_date) !== 'active'" class="mb-2" [ngClass]="{
         'white-buttons': isExpired(candidate.end_date) || isEndingSoon(candidate.end_date)
       }">
-        <strong>Remind:</strong>
-        <div class="mt-1 d-flex flex-wrap gap-2">
-          <button class="btn btn-sm btn-outline-success" (click)="remindVia(candidate, 'whatsapp')">
-            <i class="bi bi-whatsapp"></i>
-          </button>
-          <button class="btn btn-sm btn-outline-secondary" (click)="remindVia(candidate, 'text')">
-            <i class="bi bi-chat-dots"></i>
-          </button>
+            <strong>Remind:</strong>
+            <div class="mt-1 d-flex flex-wrap gap-2">
+              <button class="btn btn-sm btn-outline-success" (click)="remindVia(candidate, 'whatsapp')">
+                <i class="bi bi-whatsapp"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-secondary" (click)="remindVia(candidate, 'text')">
+                <i class="bi bi-chat-dots"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="d-flex justify-content-end flex-wrap gap-2">
+            <button class="btn btn-sm btn-primary" (click)="editCandidateDetails(candidate.candidateid)">
+              <i class="bi bi-pencil"></i> View / Edit
+            </button>
+            <button *ngIf="candidate.balance_amount == 0" class="btn btn-sm btn-primary"
+              (click)="renewMembership(candidate.candidateid, true, false)">
+              <i class="bi bi-pencil"></i> Renew
+            </button>
+            <button *ngIf="candidate.balance_amount != 0" class="btn btn-sm btn-primary"
+              (click)="renewMembership(candidate.candidateid, false, true)">
+              <i class="bi bi-pencil"></i> Balance
+            </button>
+          </div>
+        </div>
+        <!-- RIGHT COLUMN: Image -->
+        <div class="col-4 text-center">
+          <img *ngIf="candidate.photo" [src]="candidate.photo" alt="Photo" class="img-fluid rounded-circle border"
+            style="width: 100px; height: 100px; object-fit: cover;" />
         </div>
       </div>
-
-      <!-- Action Buttons -->
-      <div class="d-flex justify-content-end flex-wrap gap-2">
-        <button class="btn btn-sm btn-primary" (click)="editCandidateDetails(candidate.candidateid)">
-          <i class="bi bi-pencil"></i> View / Edit
-        </button>
-        <button *ngIf="candidate.balance_amount == 0" class="btn btn-sm btn-primary" (click)="renewMembership(candidate.candidateid, true, false)">
-          <i class="bi bi-pencil"></i> Renew
-        </button>
-        <button *ngIf="candidate.balance_amount != 0" class="btn btn-sm btn-primary" (click)="renewMembership(candidate.candidateid, false, true)">
-          <i class="bi bi-pencil"></i> Balance
-        </button>
-      </div>
-
     </div>
   </div>
 </div>

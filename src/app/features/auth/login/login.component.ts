@@ -24,6 +24,7 @@ export class LoginComponent implements OnInit {
   showInstallButton = false;
   installAvailable$ = this.pwaInstallService.installAvailable$;
   showIOSNote: boolean = false;
+  showPassword = false;
 
   constructor(
     private fb: FormBuilder,
@@ -116,5 +117,9 @@ export class LoginComponent implements OnInit {
 
     const toast = new Toast(toastEl!);
     toast.show();
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 }

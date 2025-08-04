@@ -31,7 +31,7 @@
 
         <!-- Photo Preview -->
         <div class="mb-3 text-center" *ngIf="candidatePhotoUrl">
-          <img [src]="candidatePhotoUrl" alt="Candidate Preview" class="img-thumbnail rounded-circle" style="max-width: 10rem; height: 10rem;">
+          <img [src]="candidatePhotoUrl" alt="Candidate Preview" class="img-thumbnail rounded-circle" style="width: 100px; height: 100pxm;">
         </div>  
 
         <!-- Email -->
@@ -139,7 +139,7 @@
 
         <!-- Submit Button -->
         <div class="d-grid">
-          <button class="btn btn-success rounded-pill w-100 py-2" type="submit">{{ isRenew ? 'Renew Membership' : (isBalancePayment ? 'Update' : 'Add Membership') }}</button>
+          <button class="btn btn-success rounded-pill w-100 py-2" [disabled]="registerForm.invalid" type="submit">{{ isRenew ? 'Renew Membership' : (isBalancePayment ? 'Update' : 'Add Membership') }}</button>
         </div>
       </div>
     </form>

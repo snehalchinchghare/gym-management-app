@@ -37,6 +37,7 @@ export class CandidateListComponent implements OnInit {
     const stored = localStorage.getItem(this.ADMIN_KEY);
     this.userDetails = stored ? JSON.parse(stored) : null;
     this.registeredCandidates = await this.supabaseService.fetchCandidatesByUserIdOrSearchText(this.userDetails.userId, '', this.currentPage, this.pageSize);
+    console.log(this.registeredCandidates);
     this.messageTemplates = await this.supabaseService.getAllTemplates();
   }
 
