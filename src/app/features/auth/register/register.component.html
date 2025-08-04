@@ -221,9 +221,9 @@
           <div class="input-group">
             <input [type]="showPassword ? 'text' : 'password'" class="form-control px-4 py-2"
               formControlName="password" placeholder="******" (input)="onPasswordInput()" />
-            <button *ngIf="!otpSent" type="button" class="btn btn-success px-4 py-2"
+            <button type="button" class="btn btn-success px-4 py-2"
               style="border-top-right-radius: 50rem; border-bottom-right-radius: 50rem;">
-              <i class="bi" [ngClass]="showConfirmPassword ? 'bi-eye-slash' : 'bi-eye'"
+              <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"
                 (click)="togglePasswordVisibility()"
                 style="position: absolute; top: 50%; right: 16px; transform: translateY(-50%); cursor: pointer;"></i>
             </button>
@@ -270,7 +270,7 @@
             <input [type]="showConfirmPassword ? 'text' : 'password'" class="form-control px-4 py-2"
               style="border-top-left-radius: 50rem; border-bottom-left-radius: 50rem;" formControlName="confirmPassword"
               (input)="matchPassword()" placeholder="******" />
-            <button *ngIf="!otpSent" type="button" class="btn btn-success px-4 py-2"
+            <button type="button" class="btn btn-success px-4 py-2"
               style="border-top-right-radius: 50rem; border-bottom-right-radius: 50rem;">
               <i class="bi" [ngClass]="showConfirmPassword ? 'bi-eye-slash' : 'bi-eye'"
                 (click)="toggleConfirmPasswordVisibility()"
