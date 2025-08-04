@@ -30,9 +30,6 @@ export class HeaderComponent implements OnInit {
           if (event.type === 'VERSION_READY') {
             this.updateAvailable = true;
           }
-          else{
-            this.updateAvailable = false;
-          }
         });
       }
     }
