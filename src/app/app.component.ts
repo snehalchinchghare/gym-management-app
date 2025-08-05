@@ -5,6 +5,7 @@ import { LoaderService } from './features/services/loader.service';
 import { InactivityService } from './features/services/inactivity.service';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { VersionUpdateService } from './features/services/version-update.service';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +17,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 export class AppComponent implements OnInit {
   title = 'gym-management';
 
-  constructor(public loaderService: LoaderService, private inactivityService: InactivityService) {
+  constructor(public loaderService: LoaderService, private inactivityService: InactivityService, public updateService: VersionUpdateService) {
   }
 
   ngOnInit(): void {

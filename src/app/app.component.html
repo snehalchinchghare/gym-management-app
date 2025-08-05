@@ -4,5 +4,13 @@
 <p-toast position="bottom-center" styleClass="custom-contrast-toast"></p-toast>
 <p-confirmDialog></p-confirmDialog>
 
+<div *ngIf="updateService.isUpdating$ | async" class="update-banner">
+    <span>Installing updates... ({{ updateService.progress$ | async }}%)</span>
+    <div class="progress-container">
+      <div class="progress-bar" [style.width.%]="updateService.progress$ | async"></div>
+    </div>
+  </div>
+  
+
 <router-outlet></router-outlet>
 

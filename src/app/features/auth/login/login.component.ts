@@ -8,6 +8,7 @@ import { Toast } from 'bootstrap';
 import { LoaderService } from '../../services/loader.service';
 import { PwaInstallService } from '../../services/pwa-install.service';
 import { ToastService } from '../../services/toast.service';
+import { VersionUpdateService } from '../../services/version-update.service';
 
 @Component({
   selector: 'app-login',
@@ -34,7 +35,8 @@ export class LoginComponent implements OnInit {
     private supabaseService: SupabaseService,
     private loader: LoaderService,
     private pwaInstallService: PwaInstallService,
-    private toast: ToastService
+    private toast: ToastService,
+    private updateService: VersionUpdateService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -105,6 +107,7 @@ export class LoginComponent implements OnInit {
         localStorage.setItem(this.TOKEN_KEY, token);
 
         this.toast.success('Success', 'Login successful');
+        this.updateService.checkAndUpdateApp();
         this.router.navigate(['/dashboard/candidate-list']);
       } else {
         this.toast.error('Error', 'Invalid email or password!');

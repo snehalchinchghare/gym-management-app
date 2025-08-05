@@ -19,19 +19,10 @@ export class HeaderComponent implements OnInit {
   private readonly ADMIN_KEY = 'adminUser';
   private readonly TOKEN_KEY = 'adminToken';
   isNavbarCollapsed: boolean = false;
-  updateAvailable = false;
 
   constructor(
     public router: Router,
-    private supabaseService: SupabaseService,
-    private swUpdate: SwUpdate) {
-      if (this.swUpdate.isEnabled) {
-        this.swUpdate.versionUpdates.subscribe((event) => {
-          if (event.type === 'VERSION_READY') {
-            this.updateAvailable = true;
-          }
-        });
-      }
+    private supabaseService: SupabaseService) {
     }
 
   async ngOnInit() {

@@ -109,3 +109,30 @@
     opacity: 1;
   }
 }
+
+
+/* UI for version update progress bar */
+.update-banner {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: #ffc107;
+  color: black;
+  font-weight: bold;
+  padding: 10px;
+  z-index: 9999;
+  text-align: center;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
+}
+
+.progress-container {
+  height: 5px;
+  background: #e0e0e0;
+  margin-top: 5px;
+}
+
+.progress-bar {
+  height: 5px;
+  background-color: #007bff;
+  transition: width 0.2s ease;
+}
