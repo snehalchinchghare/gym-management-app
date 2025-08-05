@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SupabaseService } from '../../supabase/common.supabase.service';
@@ -42,64 +42,70 @@ export class CandidateEditComponent implements OnInit {
     private route: ActivatedRoute,
     private supabaseService: SupabaseService,
     private loader: LoaderService,
-    private toast: ToastService) { }
+    private toast: ToastService,
+    private cdr: ChangeDetectorRef) { }
 
   async ngOnInit() {
-    this.loader.show();
     try {
+      //this.loader.show();
       const stored = localStorage.getItem(this.ADMIN_KEY);
       this.userDetails = stored ? JSON.parse(stored) : null;
 
       this.registerForm = this.fb.group({
-        fullName: ['abcd', Validators.required],
+        fullName: ['', Validators.required],
         email: ['', [Validators.email]],
         mobile: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-        dob: ['', Validators.required]
+        dob: ['', Validators.required],
+        photo: ['']
       });
 
-      this.route.queryParams.subscribe(async params => {
+      this.route.queryParams.subscribe(params => {
         const encoded = params['data'];
         if (encoded) {
-          const decoded = JSON.parse(atob(encoded));
-          this.candidateId = decoded.candidateId;
-
-          const result = await this.supabaseService.getCandidateWithRegistrations(this.candidateId);
-
-          // Patch candidate form
-          if (result?.candidate) {
-            this.registerForm.patchValue({
-              fullName: result.candidate.full_name,
-              email: result.candidate.email,
-              mobile: result.candidate.mobile,
-              dob: result.candidate.dateofbirth
-            });
-            this.candidatePhotoUrl = result.candidate.photo;
-          }
-
-          // Transform registrations
-          if (result?.registrations) {
-            this.registrations = result.registrations.map((r: any) => ({
-              startDate: r.start_date,
-              endDate: r.end_date,
-              package: r.package,
-              service: r.service,
-              fee: r.total_amount,
-              paid: r.paid_amount,
-              balance: r.balance_amount,
-              receiptUrl: r.receiptlink,
-              receipttype: r.receipttype,
-            }))
-              .sort((a: any, b: any) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime());
-
-            this.filteredRegistrations = [...this.registrations];
-            this.updatePaginatedData();
-          }
+          this.loadCandidateData(encoded); // move logic out
         }
       });
+
       this.messageTemplates = await this.supabaseService.getAllTemplates();
     } finally {
+      //setTimeout(() => this.loader.hide(), 0); // still needed in some cases
       this.toast.info('Info', 'Membership data loaded successfully');
-      this.loader.hide();
+    }
+  }
+
+
+  private async loadCandidateData(encoded: string) {
+    const decoded = JSON.parse(atob(encoded));
+    this.candidateId = decoded.candidateId;
+
+    const result = await this.supabaseService.getCandidateWithRegistrations(this.candidateId);
+
+    if (result?.candidate) {
+      this.registerForm.patchValue({
+        fullName: result.candidate.full_name,
+        email: result.candidate.email,
+        mobile: result.candidate.mobile,
+        dob: result.candidate.dateofbirth,
+      });
+      this.candidatePhotoUrl = result.candidate.photo;
+    }
+
+    if (result?.registrations) {
+      this.registrations = result.registrations.map((r: any) => ({
+        startDate: r.start_date,
+        endDate: r.end_date,
+        package: r.package,
+        service: r.service,
+        fee: r.total_amount,
+        paid: r.paid_amount,
+        balance: r.balance_amount,
+        receiptUrl: r.receiptlink,
+        receipttype: r.receipttype,
+      }))
+        .sort((a: any, b: any) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime());
+
+      this.filteredRegistrations = [...this.registrations];
+      this.updatePaginatedData();
     }
   }
 

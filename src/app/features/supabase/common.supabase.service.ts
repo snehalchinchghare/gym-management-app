@@ -261,11 +261,6 @@ export class SupabaseService {
     const { data, error } = await this.supabase
       .rpc('get_candidate_with_registrations', { p_candidateid: candidateId });
 
-    if (error) {
-      console.error('Error fetching candidate with registrations:', error);
-      throw error;
-    }
-
     return data;
   }
 
