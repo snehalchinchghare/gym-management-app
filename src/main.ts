@@ -6,6 +6,7 @@ import { appConfig } from './app/app.config';
 import { ErrorHandler, isDevMode } from '@angular/core';
 import { GlobalErrorHandler } from './app/features/services/global-error-handler';
 import { provideServiceWorker, SwUpdate } from '@angular/service-worker';
+import { ConfirmationService } from 'primeng/api';
 
 // ✅ Patch console.error to suppress NavigatorLockAcquireTimeoutError
 const originalConsoleError = console.error;
@@ -59,7 +60,8 @@ bootstrapApplication(AppComponent, {
     ...(appConfig.providers || []),
     provideServiceWorker('ngsw-worker.js', {
         registrationStrategy: 'registerWhenStable:30000'
-    })
+    }),
+    ConfirmationService
 ]
 })
 .catch((err) => console.error(err));

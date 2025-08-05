@@ -22,6 +22,77 @@ input, textarea {
 }
 
 
+/* Dialog Styling */
+/* ConfirmDialog Container - Warning Style */
+.p-confirm-dialog {
+  border-radius: 16px !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2) !important;
+  padding: 2rem 2rem !important;
+  background-color: #fff8e1 !important; /* Light amber background */
+  font-family: 'Poppins', sans-serif;
+  max-width: 400px;
+}
+
+/* Dialog Header Icon */
+.p-confirm-dialog .p-confirm-dialog-icon {
+  font-size: 2.5rem;
+  color: #f59e0b !important; /* Amber-500 */
+  margin-right: 0.75rem;
+}
+
+/* Dialog Message Text */
+.p-confirm-dialog .p-confirm-dialog-message {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #78350f; /* Dark amber-brown */
+  margin: 0.5rem 0 1rem 0;
+}
+
+/* Dialog Footer */
+.p-confirm-dialog .p-dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+/* OK (Accept) Button - Emphasize Warning Action */
+.p-confirm-dialog .p-button.p-confirm-dialog-accept {
+  background: #f97316 !important; /* Orange-500 */
+  border: none !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.5rem 1.5rem;
+  transition: background-color 0.3s ease;
+}
+
+.p-confirm-dialog .p-button.p-confirm-dialog-accept:hover {
+  background-color: #ea580c !important; /* Orange-600 */
+}
+
+/* Cancel (Reject) Button */
+.p-confirm-dialog .p-button.p-confirm-dialog-reject {
+  background-color: transparent !important;
+  border: 2px solid #fcd34d !important; /* Amber-300 */
+  color: #92400e !important; /* Amber-800 */
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 0.5rem 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.p-confirm-dialog .p-button.p-confirm-dialog-reject:hover {
+  background-color: #fef3c7 !important; /* Amber-100 */
+}
+
+/* Hide close button (X) in ConfirmDialog */
+.p-confirm-dialog .p-dialog-header .p-dialog-header-icon {
+  display: none !important;
+}
+
+
+
 
 
 

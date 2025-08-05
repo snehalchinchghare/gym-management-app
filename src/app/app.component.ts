@@ -4,11 +4,12 @@ import { RouterOutlet } from '@angular/router';
 import { LoaderService } from './features/services/loader.service';
 import { InactivityService } from './features/services/inactivity.service';
 import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, ToastModule],
+  imports: [RouterOutlet, CommonModule, ToastModule, ConfirmDialogModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
