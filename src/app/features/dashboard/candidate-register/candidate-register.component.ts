@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SupabaseService } from '../../supabase/common.supabase.service';
 import dayjs from 'dayjs';
@@ -31,6 +31,7 @@ export class CandidateRegisterComponent implements OnInit {
     isManualTotal: boolean = false;
     baseUrl: string = window.location.origin;
     candidatePhotoUrl: string | ArrayBuffer | null = null;
+    maxDobAllowed: string = new Date().toISOString().split('T')[0];
 
     constructor(
         private fb: FormBuilder,
@@ -157,40 +158,44 @@ export class CandidateRegisterComponent implements OnInit {
 
     async onRegister() {
         if (this.registerForm.invalid) {
-            console.log('scaf');
+            return;
+        }
+
+        if (this.registerForm.value.dob > this.maxDobAllowed) {
+            this.toast.warn('Date of birth cannot be in the future!');
             return;
         }
 
         const formData = this.registerForm.getRawValue();
         if (formData.paidAmt === 0) {
             let message = '';
-          
+
             if (this.isRenew) {
-              message = `Renew the membership with ₹ ${formData.paidAmt} payment?`;
+                message = `Renew the membership with ₹ ${formData.paidAmt} payment?`;
             } else if (this.isBalancePayment) {
-              message = `Update balance payment with ₹ ${formData.paidAmt} amount?`;
+                message = `Update balance payment with ₹ ${formData.paidAmt} amount?`;
             }
-          
+
             if (message) {
-              this.dialog.warn(message, async () => {
-                try {
-                  this.loader.show();
-                  await this.updateCandidateDetails(formData);
-                } finally {
-                  this.loader.hide();
-                }
-              });
+                this.dialog.warn(message, async () => {
+                    try {
+                        this.loader.show();
+                        await this.updateCandidateDetails(formData);
+                    } finally {
+                        this.loader.hide();
+                    }
+                });
             }
-          }
-          else{
+        }
+        else {
             try {
                 this.loader.show();
                 await this.updateCandidateDetails(formData);
-              } finally {
+            } finally {
                 this.loader.hide();
-              }
-          }
-          
+            }
+        }
+
     }
 
 
