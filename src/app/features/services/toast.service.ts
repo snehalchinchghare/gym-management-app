@@ -6,39 +6,43 @@ import { MessageService } from 'primeng/api';
 export class ToastService {
   constructor(private messageService: MessageService) {}
 
-  success(summary: string, detail: string = '', life: number = 3000) {
+  success(summary: string, detail: string = '', life: number = 1000) {
     this.messageService.add({
-      severity: 'success',
+      severity: 'contrast',
       summary,
       detail,
-      life
+      life,
+      closable: false
     });
   }
 
-  error(summary: string, detail: string = '', life: number = 4000) {
+  error(summary: string, detail: string = '', life: number = 1500) {
     this.messageService.add({
-      severity: 'error',
+      severity: 'contrast',
       summary,
       detail,
-      life
+      life,
+      closable: false
     });
   }
 
-  info(summary: string, detail: string = '', life: number = 3000) {
+  info(summary: string, detail: string = '', life: number = 1000) {
     this.messageService.add({
-      severity: 'info',
+      severity: 'contrast',
       summary,
       detail,
-      life
+      life,
+      closable: false
     });
   }
 
-  warn(summary: string, detail: string = '', life: number = 3000) {
+  warn(summary: string, detail: string = '', life: number = 1500) {
     this.messageService.add({
-      severity: 'warn',
+      severity: 'contrast',
       summary,
       detail,
-      life
+      life,
+      closable: false
     });
   }
 

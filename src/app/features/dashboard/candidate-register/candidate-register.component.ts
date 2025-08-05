@@ -60,6 +60,7 @@ export class CandidateRegisterComponent implements OnInit {
       startDate: [today, Validators.required],
       endDate: [{ value: '', disabled: true }, Validators.required],
       isManual: [false],
+      photo: []
     });
 
     this.packageList = await this.supabaseService.getPackageTypes();

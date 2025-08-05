@@ -22,7 +22,7 @@
     </a>
     <h3 class="text-center mb-4 text-success fw-semibold">View / Edit Member</h3>
 
-    <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+    <form [formGroup]="registerForm" (ngSubmit)="onUpdate()">
       <div class="row g-3">
         <!-- Full Name -->
         <div class="col-12">
@@ -36,7 +36,6 @@
           <label class="form-label fw-semibold text-muted ms-2">Photo</label>
           <input type="file"
             accept="image/*"
-            capture="environment"
             formControlName="photo"
             class="form-control rounded-pill px-4 py-2"
             (change)="onPhotoSelected($event)" />

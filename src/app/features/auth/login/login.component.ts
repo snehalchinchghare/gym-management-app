@@ -7,6 +7,7 @@ import { SupabaseService } from '../../supabase/common.supabase.service';
 import { Toast } from 'bootstrap';
 import { LoaderService } from '../../services/loader.service';
 import { PwaInstallService } from '../../services/pwa-install.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +18,6 @@ import { PwaInstallService } from '../../services/pwa-install.service';
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
-  errorMessage: string = '';
   private readonly ADMIN_KEY = 'adminUser';
   private readonly TOKEN_KEY = 'adminToken';
   deferredPrompt: any;
@@ -34,6 +34,7 @@ export class LoginComponent implements OnInit {
     private supabaseService: SupabaseService,
     private loader: LoaderService,
     private pwaInstallService: PwaInstallService,
+    private toast: ToastService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -44,7 +45,7 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       if (params['reason'] === 'unauthorized') {
-        this.showToast('Please login to access the requested page.');
+        this.toast.warn('Warn', 'Please login to access the requested page.');
       }
     });
     window.addEventListener('beforeinstallprompt', (event: any) => {
@@ -52,7 +53,7 @@ export class LoginComponent implements OnInit {
       this.showInstallButton = true;
       this.deferredPrompt = event;
     });
-  
+
     // iOS note for Safari only (where beforeinstallprompt is NOT available)
     if (this.isIOS() && !this.supportsPWAInstall()) {
       this.showIOSNote = true;
@@ -62,7 +63,7 @@ export class LoginComponent implements OnInit {
   isIOS(): boolean {
     return /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
   }
-  
+
   supportsPWAInstall(): boolean {
     return 'onbeforeinstallprompt' in window;
   }
@@ -80,7 +81,11 @@ export class LoginComponent implements OnInit {
   async onLogin() {
     try {
       this.loader.show();
-      if (this.loginForm.invalid) return;
+      if (this.loginForm.invalid) {
+        this.loginForm.markAllAsTouched();
+        this.toast.error('Error', 'Form is invalid');
+        return;
+      }
 
       const { email, password } = this.loginForm.value;
       let data = await this.supabaseService.verifyAdminLogin(email, password);
@@ -99,24 +104,15 @@ export class LoginComponent implements OnInit {
         const token = btoa(`${email}:${new Date().getTime()}`);
         localStorage.setItem(this.TOKEN_KEY, token);
 
-        this.router.navigate(['/dashboard']);
+        this.toast.success('Success', 'Login successful');
+        this.router.navigate(['/dashboard/candidate-list']);
       } else {
-        this.errorMessage = 'Invalid email or password!';
+        this.toast.error('Error', 'Invalid email or password!');
       }
     }
     finally {
       this.loader.hide();
     }
-  }
-
-  showToast(message: string) {
-    const toastEl = document.getElementById('loginToast');
-    const toastBody = toastEl?.querySelector('.toast-body');
-
-    if (toastBody) toastBody.textContent = message;
-
-    const toast = new Toast(toastEl!);
-    toast.show();
   }
 
   togglePasswordVisibility(): void {

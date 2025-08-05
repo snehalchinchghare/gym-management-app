@@ -32,6 +32,19 @@ export class RegisterComponent {
   manuallyEnterOtp: boolean = false;
   showPassword = false;
   showConfirmPassword = false;
+  HTTP_SUCCESS_CODES: number[] = [
+    200, // OK
+    201, // Created
+    202, // Accepted
+    203, // Non-Authoritative Information
+    204, // No Content
+    205, // Reset Content
+    206, // Partial Content
+    207, // Multi-Status (WebDAV)
+    208, // Already Reported (WebDAV)
+    226  // IM Used
+  ];
+  
 
   constructor(
     private fb: FormBuilder,
@@ -56,7 +69,7 @@ export class RegisterComponent {
     email: ['', [Validators.required, Validators.email]],
     gymName: ['', Validators.required],
     gymAddress: ['', Validators.required],
-    gymmobile: ['', Validators.required],
+    gymmobile: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
     gym_monthly: ['', Validators.required],
     gymCardio_monthly: ['', Validators.required],
     cardio_monthly: ['', Validators.required],
@@ -164,7 +177,7 @@ export class RegisterComponent {
 
       if (res.error?.details.includes(`Key (email)=(${payload.p_email}) already exists.`)) {
         this.toast.error('Error', `${payload.p_email} already exists`);
-      } else if (res.status != 200) {
+      } else if (!this.HTTP_SUCCESS_CODES.includes(res.status)) {
         this.toast.error('Error', 'Some error occured');
       }
       else {
@@ -200,9 +213,16 @@ export class RegisterComponent {
       this.loader.show();
       const fullName = this.registerForm.get('fullName')?.value;
       const email = this.registerForm.get('email')?.value;
-      if (!email || this.registerForm.get('email')?.invalid || !fullName || this.registerForm.get('fullName')?.invalid) {
+      const gymmobile = this.registerForm.get('gymmobile')?.value;
+      if (!email
+        || this.registerForm.get('email')?.invalid
+        || !fullName
+        || this.registerForm.get('fullName')?.invalid
+        || !gymmobile
+        || this.registerForm.get('gymmobile')?.invalid) {
         this.registerForm.get('email')?.markAsTouched();
         this.registerForm.get('fullName')?.markAsTouched();
+        this.registerForm.get('gymmobile')?.markAsTouched();
         return;
       }
 
@@ -210,19 +230,16 @@ export class RegisterComponent {
       const message = otpEmailTemplate.message
         .replace(/{{name}}/g, fullName.trim()).toString();
 
-      let otpResult = await this.supabaseService.sendOtp(email, otpEmailTemplate.title, message);
+      let otpResult = await this.supabaseService.sendOtp(email, otpEmailTemplate.title, message, Number(gymmobile));
 
-      if (otpResult) {
+      if (otpResult.valid) {
         this.registerForm.get('emailOtp')?.enable();
         this.otpSent = true;
       }
       else {
+        this.toast.error('Error', otpResult.message);
         this.otpSent = false;
       }
-    }
-    catch (error) {
-      alert('send otp error:' + error);
-      throw error;
     }
     finally {
       this.loader.hide();
@@ -243,23 +260,20 @@ export class RegisterComponent {
 
         let otpResult = await this.supabaseService.validateOtp(email, emailOtp);
 
-        if (otpResult) {
+        if (otpResult.valid) {
           this.otpValidated = true;
           this.registerForm.get('otpExists')?.disable();
           this.registerForm.get('emailOtp')?.disable();
           this.registerForm.get('email')?.disable();
         }
         else {
+          this.toast.error('Error', otpResult.message);
           this.otpValidated = false;
           this.registerForm.get('otpExists')?.enable();
           this.registerForm.get('emailOtp')?.enable();
           this.registerForm.get('email')?.enable();
         }
       }
-    }
-    catch (error) {
-      alert('validate otp error:' + error);
-      throw error;
     }
     finally {
       this.loader.hide();

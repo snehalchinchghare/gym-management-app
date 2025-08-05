@@ -25,3 +25,87 @@
     transform: rotate(360deg);
   }
 }
+
+/* toast */
+/* Wrapper */
+::ng-deep .custom-contrast-toast .p-toast {
+  width: 100%;
+  max-width: 90vw;
+  bottom: 1rem;
+  font-family: 'Poppins', sans-serif;
+  z-index: 9999;
+}
+
+/* Toast Message Box */
+::ng-deep .custom-contrast-toast .p-toast-message {
+  background-color: #157347 !important;
+  color: #ffffff !important;
+  border-radius: 10px !important;
+  padding: 1rem 1.25rem !important;
+  display: flex;
+  align-items: flex-start;
+  border-left: 5px solid #000 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  margin-bottom: 1rem;
+  animation: contrast-toast-fade-up 0.3s ease-in-out;
+}
+
+/* Remove background overlays */
+::ng-deep .custom-contrast-toast .p-toast-message::before,
+::ng-deep .custom-contrast-toast .p-toast-message::after {
+  display: none !important;
+}
+
+/* Content layout */
+::ng-deep .custom-contrast-toast .p-toast-message-content {
+  display: flex !important;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding-left: 0.5rem;
+  flex: 1;
+}
+
+/* Title */
+::ng-deep .custom-contrast-toast .p-toast-summary {
+  font-weight: 700 !important;
+  font-size: 1rem !important;
+  color: #ffadad !important;
+}
+
+/* Detail message */
+::ng-deep .custom-contrast-toast .p-toast-detail {
+  font-size: 0.9rem !important;
+  color: #ffffff !important;
+  line-height: 1.4;
+}
+
+/* Close icon */
+::ng-deep .custom-contrast-toast .p-toast-icon-close {
+  color: #666 !important;
+  font-size: 1.2rem;
+  margin-left: auto;
+  margin-top: -0.25rem;
+  margin-right: -0.5rem;
+  cursor: pointer;
+}
+
+::ng-deep .custom-contrast-toast .p-toast-icon-close:hover {
+  color: #000 !important;
+}
+
+/* Hide default severity icon */
+::ng-deep .custom-contrast-toast .p-toast-message-icon {
+  display: none !important;
+}
+
+/* Slide-up animation */
+@keyframes contrast-toast-fade-up {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

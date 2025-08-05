@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SupabaseService } from '../../supabase/common.supabase.service';
 import { LoaderService } from '../../services/loader.service';
 import dayjs from 'dayjs';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-candidate-edit',
@@ -40,28 +41,30 @@ export class CandidateEditComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private supabaseService: SupabaseService,
-    private loader: LoaderService) { }
+    private loader: LoaderService,
+    private toast: ToastService) { }
 
-  async ngOnInit() {    
-    const stored = localStorage.getItem(this.ADMIN_KEY);
-    this.userDetails = stored ? JSON.parse(stored) : null;
+  async ngOnInit() {
+    this.loader.show();
+    try {
+      const stored = localStorage.getItem(this.ADMIN_KEY);
+      this.userDetails = stored ? JSON.parse(stored) : null;
 
-    this.registerForm = this.fb.group({
-      fullName: ['abcd', Validators.required],
-      email: ['', [Validators.email]],
-      mobile: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-      dob: ['', Validators.required]
-    });
+      this.registerForm = this.fb.group({
+        fullName: ['abcd', Validators.required],
+        email: ['', [Validators.email]],
+        mobile: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+        dob: ['', Validators.required]
+      });
 
-    this.route.queryParams.subscribe(async params => {
-      const encoded = params['data'];
-      if (encoded) {
-        const decoded = JSON.parse(atob(encoded));
-        this.candidateId = decoded.candidateId;
-  
-        try {
+      this.route.queryParams.subscribe(async params => {
+        const encoded = params['data'];
+        if (encoded) {
+          const decoded = JSON.parse(atob(encoded));
+          this.candidateId = decoded.candidateId;
+
           const result = await this.supabaseService.getCandidateWithRegistrations(this.candidateId);
-  
+
           // Patch candidate form
           if (result?.candidate) {
             this.registerForm.patchValue({
@@ -72,7 +75,7 @@ export class CandidateEditComponent implements OnInit {
             });
             this.candidatePhotoUrl = result.candidate.photo;
           }
-  
+
           // Transform registrations
           if (result?.registrations) {
             this.registrations = result.registrations.map((r: any) => ({
@@ -86,40 +89,52 @@ export class CandidateEditComponent implements OnInit {
               receiptUrl: r.receiptlink,
               receipttype: r.receipttype,
             }))
-            .sort((a: any, b: any) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime());
-            
+              .sort((a: any, b: any) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime());
+
             this.filteredRegistrations = [...this.registrations];
             this.updatePaginatedData();
           }
-        } catch (err) {
-          console.error('Error fetching candidate data:', err);
-          throw err;
         }
-      }
-    });
-    this.messageTemplates = await this.supabaseService.getAllTemplates();
+      });
+      this.messageTemplates = await this.supabaseService.getAllTemplates();
+    } finally {
+      this.toast.info('Info', 'Membership data loaded successfully');
+      this.loader.hide();
+    }
   }
 
-  async onRegister() {
-    if (this.registerForm.invalid) return;
-
-    const formData = this.registerForm.getRawValue();
-    const candidateData = {
-      candidateId: this.candidateId,
-      userid: this.userDetails.userId,
-      fullName: formData.fullName,
-      email: formData.email,
-      mobile: formData.mobile,
-      dob: formData.dob,
-      photo: this.candidatePhotoUrl
+  async onUpdate() {
+    if (this.registerForm.invalid) {
+      this.registerForm.markAllAsTouched();
+      this.toast.error('Error', 'Form is invalid');
+      return;
     }
-    
-    let result = await this.supabaseService.updateCandidate(candidateData);
 
-    if (result) {
-      this.router.navigate(['/dashboard']);
-    } else {
-      alert("Failed to update candidate.");
+    try {
+      this.loader.show();
+
+      const formData = this.registerForm.getRawValue();
+      const candidateData = {
+        candidateId: this.candidateId,
+        userid: this.userDetails.userId,
+        fullName: formData.fullName,
+        email: formData.email,
+        mobile: formData.mobile,
+        dob: formData.dob,
+        photo: this.candidatePhotoUrl
+      }
+
+      let result = await this.supabaseService.updateCandidate(candidateData);
+
+      if (result) {
+        this.toast.success('Success', 'Details updated successfuly');
+        this.router.navigate(['/dashboard']);
+      } else {
+        this.toast.error('Error', 'Failed to update details');
+      }
+    }
+    finally {
+      this.loader.hide();
     }
   }
 

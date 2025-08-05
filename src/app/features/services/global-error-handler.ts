@@ -6,6 +6,7 @@ import { SupabaseService } from '../supabase/common.supabase.service';
 export class GlobalErrorHandler implements ErrorHandler {
   private loader = inject(LoaderService);
   private supabase = inject(SupabaseService);
+  private readonly ADMIN_KEY = 'adminUser';
 
   handleError(error: any): void {
     if (
@@ -13,12 +14,17 @@ export class GlobalErrorHandler implements ErrorHandler {
     ) {
       return;
     }
+
+    const stored = localStorage.getItem(this.ADMIN_KEY);
+    let userDetails = stored ? JSON.parse(stored) : null;
+    alert('Something went wrong, please contact administrator.');
     this.supabase.logError(
         error.message || error.toString(),
         error.stack || '',
         {
           url: window.location.href,
-          userAgent: navigator.userAgent
+          userAgent: navigator.userAgent,
+          userid: userDetails?.userId || 0,
         }
       );
     this.loader.hide();

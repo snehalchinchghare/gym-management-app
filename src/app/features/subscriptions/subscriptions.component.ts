@@ -26,11 +26,6 @@ export class SubscriptionsComponent {
   constructor(
     // private cashfreeService: CashfreeService,
     private supabaseService: SupabaseService,) {
-    this.supabaseService.getPackageTypes().then(data => {
-      this.packageList = data;
-      this.selectedPackageType = this.packageList.find(pkg => pkg.duration_months === 1);
-      this.onPackageTypeChange();
-    });
 
     this.supabaseService.getPlans().then(data =>{
       this.plans = data;
@@ -41,28 +36,15 @@ export class SubscriptionsComponent {
     });
     }
 
-  ngOnInit(){
+  async ngOnInit(){
+    let data = await this.supabaseService.getPackageTypes();
+    this.packageList = data;
+    this.selectedPackageType = this.packageList.find(pkg => pkg.duration_months === 1);
+    this.onPackageTypeChange();
   }
 
   buyPlan(planType: string, duration: number) {
-    const userId = this.getLoggedInUserId(); // Replace with actual user ID logic
-    //const planDetails = this.getPlanDetails(planType, duration, userId);
-
-    // if (!planDetails) {
-    //   alert('Please select a valid plan');
-    //   return;
-    // }
-
-    // this.cashfreeService.createOrder(planDetails).subscribe({
-    //   next: (res: any) => {
-    //     if (res?.paymentLink) {
-    //       window.location.href = res.paymentLink;
-    //     } else {
-    //       alert('Failed to generate payment link');
-    //     }
-    //   },
-    //   error: () => alert('Something went wrong. Try again.')
-    // });
+    const userId = this.getLoggedInUserId(); 
   }
 
   getPlanDetails(planid: number): any {

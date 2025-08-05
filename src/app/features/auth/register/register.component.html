@@ -36,7 +36,19 @@
           ">
             Valid email is required.
           </div>
+        </div>
 
+        <!-- Mobile -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold text-muted ms-2">Mobile *</label>
+          <input type="number" class="form-control rounded-pill px-4 py-2" formControlName="gymmobile"
+            placeholder="mobile" />
+          <div class="text-danger small mt-1" *ngIf="
+            registerForm.get('gymmobile')?.touched &&
+            registerForm.get('gymmobile')?.invalid
+          ">
+            Valid mobile number is required.
+          </div>
         </div>
 
         <!-- Enter OTP + Get OTP/Verify Button (Same row) -->
@@ -66,20 +78,6 @@
           <!-- Success message -->
           <div class="text-success small mt-1 ms-1" *ngIf="otpValidated">
             OTP validation successful.
-          </div>
-        </div>
-
-
-        <!-- Mobile -->
-        <div class="mb-3">
-          <label class="form-label fw-semibold text-muted ms-2">Mobile *</label>
-          <input type="number" class="form-control rounded-pill px-4 py-2" formControlName="gymmobile"
-            placeholder="mobile" />
-          <div class="text-danger small mt-1" *ngIf="
-            registerForm.get('gymmobile')?.touched &&
-            registerForm.get('gymmobile')?.invalid
-          ">
-            Valid mobile number is required.
           </div>
         </div>
 
@@ -220,12 +218,11 @@
           <label class="form-label fw-semibold text-muted ms-2">Password *</label>
           <div class="input-group">
             <input [type]="showPassword ? 'text' : 'password'" class="form-control px-4 py-2"
-            style="border-top-left-radius: 50rem; border-bottom-left-radius: 50rem;"
-              formControlName="password" placeholder="******" (input)="onPasswordInput()" />
+              style="border-top-left-radius: 50rem; border-bottom-left-radius: 50rem;" formControlName="password"
+              placeholder="******" (input)="onPasswordInput()" />
             <button type="button" class="btn btn-success px-4 py-2"
               style="border-top-right-radius: 50rem; border-bottom-right-radius: 50rem;">
-              <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"
-                (click)="togglePasswordVisibility()"
+              <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'" (click)="togglePasswordVisibility()"
                 style="position: absolute; top: 50%; right: 16px; transform: translateY(-50%); cursor: pointer;"></i>
             </button>
           </div>

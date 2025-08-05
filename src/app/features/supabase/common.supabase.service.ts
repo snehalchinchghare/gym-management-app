@@ -391,52 +391,32 @@ export class SupabaseService {
     return { fromDateStr, toDateStr };
   }
 
-  async sendOtp(to: string, subject: string, htmlContent: string): Promise<boolean> {
-    try {
-      const { data, error } = await this.supabase.functions.invoke('send-and-validate-otp-ts', {
-        body: {
-          email: to,
-          type: 'send',
-          template: htmlContent || `<html><body>Sample html {{OTP}}</body></html>`,
-          subject: subject
-        }
-      });
-      let response = JSON.parse(data);
-  
-      if (!response.valid) {
-        alert(response.message);
-        return response.valid;
+  async sendOtp(to: string, subject: string, htmlContent: string, mobile: number): Promise<any> {
+    const { data, error } = await this.supabase.functions.invoke('send-and-validate-otp-ts', {
+      body: {
+        email: to,
+        type: 'send',
+        template: htmlContent || `<html><body>You otp for GymSynq registration: {{OTP}}</body></html>`,
+        subject: subject,
+        mobile: mobile,
       }
-  
-      return response.valid;
-    } catch (err) {
-      alert('Unexpected error while sending OTP.');
-      return false;
-    }
+    });
+
+    let response = JSON.parse(data);
+    return response;
   }
 
-  async validateOtp(to: string, otp: string): Promise<boolean> {
-    try {
-      const { data, error } = await this.supabase.functions.invoke('send-and-validate-otp-ts', {
-        body: {
-          email: to,
-          otp: otp,
-          type: 'validate'
-        }
-      });
-
-      let response = JSON.parse(data);
-  
-      if (!response.valid) {
-        alert(response.message);
-        return response.valid;
+  async validateOtp(to: string, otp: string): Promise<any> {
+    const { data, error } = await this.supabase.functions.invoke('send-and-validate-otp-ts', {
+      body: {
+        email: to,
+        otp: otp,
+        type: 'validate'
       }
-  
-      return response.valid;
-    } catch (err) {
-      alert('Unexpected error while sending OTP.');
-      return false;
-    }
+    });
+
+    let response = JSON.parse(data);
+    return response;
   }
-  
+
 }
