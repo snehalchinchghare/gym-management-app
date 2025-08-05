@@ -42,7 +42,7 @@
         <div class="mb-3">
           <label class="form-label fw-semibold text-muted ms-2">Mobile *</label>
           <input type="number" class="form-control rounded-pill px-4 py-2" formControlName="gymmobile"
-            placeholder="mobile" />
+            placeholder="mobile" inputmode="numeric" pattern="[0-9]*" maxlength="10"/>
           <div class="text-danger small mt-1" *ngIf="
             registerForm.get('gymmobile')?.touched &&
             registerForm.get('gymmobile')?.invalid

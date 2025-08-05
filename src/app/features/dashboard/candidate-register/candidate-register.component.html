@@ -43,7 +43,7 @@
         <div class="mb-3" [style.display]="isRenew || isBalancePayment ? 'none' : 'block'">
           <label class="form-label fw-semibold text-muted ms-2">Mobile *</label>
           <input type="text" class="form-control rounded-pill px-4 py-2" formControlName="mobile"
-            placeholder="Enter mobile number" />
+            placeholder="Enter mobile number" inputmode="numeric" pattern="[0-9]*" maxlength="10"/>
         </div>
 
         <!-- Date of Birth -->
