@@ -23,11 +23,9 @@ export class VersionUpdateService {
     this.swUpdate.versionUpdates.subscribe(event => {
       if (event.type === 'VERSION_READY') {
         this.isUpdating$.next(true);
-
-        // Simulate progress (since Angular does not expose actual progress)
         let percent = 0;
-        const progressInterval = interval(300).subscribe(() => {
-          percent += 5;
+        const progressInterval = interval(80).subscribe(() => {
+          percent += 1.1;
           this.progress$.next(percent);
 
           if (percent >= 100) {

@@ -4,12 +4,29 @@
 <p-toast position="bottom-center" styleClass="custom-contrast-toast"></p-toast>
 <p-confirmDialog></p-confirmDialog>
 
-<div *ngIf="updateService.isUpdating$ | async" class="update-banner">
+<!-- <div *ngIf="updateService.isUpdating$ | async" class="update-banner">
     <span>Installing updates... ({{ updateService.progress$ | async }}%)</span>
     <div class="progress-container">
       <div class="progress-bar" [style.width.%]="updateService.progress$ | async"></div>
     </div>
+  </div> -->
+
+  <!-- Test button to test updates installing UI -->
+<!-- <button (click)="startFakeUpdate()" class="btn btn-primary">Test Installing UI</button> -->
+
+<!-- Version Update Modal -->
+<div class="update-overlay" *ngIf="showUpdateModal">
+  <div class="update-modal">
+    <h6>Installing performance gains...</h6>
+    <img [src]="selectedGif" alt="Gym Progress" class="gif-animation" width="30%"/>
+
+    <div class="progress-bar-container">
+      <div class="progress-bar" [style.width.%]="progress$ | async"></div>
+    </div>
+    <p>{{ progress$ | async }}%</p>
   </div>
+</div>
+
   
 
 <router-outlet></router-outlet>
