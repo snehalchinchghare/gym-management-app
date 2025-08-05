@@ -26,7 +26,7 @@ export class VersionUpdateService {
 
         // Simulate progress (since Angular does not expose actual progress)
         let percent = 0;
-        const progressInterval = interval(100).subscribe(() => {
+        const progressInterval = interval(300).subscribe(() => {
           percent += 5;
           this.progress$.next(percent);
 
