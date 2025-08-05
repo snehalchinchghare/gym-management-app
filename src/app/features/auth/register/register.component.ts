@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import Toast from 'bootstrap/js/dist/toast';
 import { SupabaseService } from '../../supabase/common.supabase.service';
 import { LoaderService } from '../../services/loader.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-register',
@@ -38,7 +39,8 @@ export class RegisterComponent {
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
     private supabaseService: SupabaseService,
-    private loader: LoaderService) { }
+    private loader: LoaderService,
+    private toast: ToastService) { }
 
   async ngOnInit() {
     this.route.queryParams.subscribe(params => {
@@ -112,7 +114,7 @@ export class RegisterComponent {
         pt_yearly,
         password,
         confirmPassword,
-      } = this.registerForm.value;
+      } = this.registerForm.getRawValue();
 
       if (password !== confirmPassword) {
         alert('Password mismatch');
@@ -158,15 +160,17 @@ export class RegisterComponent {
       };
 
       const payload = await this.mapAdminToInsertPayload(admin);
-      await this.supabaseService.insertAdminUser(payload);
+      let res = await this.supabaseService.insertAdminUser(payload);
 
-      const toastEl = document.getElementById('registerSuccessToast');
-      if (toastEl) {
-        const toast = new Toast(toastEl);
-        toast.show();
+      if (res.error?.details.includes(`Key (email)=(${payload.p_email}) already exists.`)) {
+        this.toast.error('Error', `${payload.p_email} already exists`);
+      } else if (res.status != 200) {
+        this.toast.error('Error', 'Some error occured');
       }
-
-      this.router.navigate(['/login']);
+      else {
+        this.toast.success('Success', 'Registered successfully');
+        this.router.navigate(['/login']);
+      }
     } catch (error) {
       alert('Registration error:' + error);
       throw error;
@@ -265,7 +269,7 @@ export class RegisterComponent {
   onPasswordInput() {
     const passwordControl = this.registerForm.get('password');
     const password = passwordControl?.value || '';
-  
+
     // Check rules
     const isValid =
       password.length >= 8 &&
@@ -273,7 +277,7 @@ export class RegisterComponent {
       /[a-z]/.test(password) &&
       /[0-9]/.test(password) &&
       /[!@#$%^&*(),.?":{}|<>]/.test(password);
-  
+
     // Store rule status for UI
     this.passwordRules = {
       length: password.length >= 8,
@@ -282,14 +286,14 @@ export class RegisterComponent {
       number: /[0-9]/.test(password),
       special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
     };
-  
+
     // Set or clear error
     if (!isValid) {
       passwordControl?.setErrors({ passwordInvalid: true });
     } else {
       passwordControl?.setErrors(null);
     }
-  }  
+  }
 
   togglemembershipTable() {
     this.isMembershipTableCollapsed = !this.isMembershipTableCollapsed;
@@ -388,12 +392,12 @@ export class RegisterComponent {
   matchPassword() {
     const passwordControl = this.registerForm.get('password');
     const confirmPasswordControl = this.registerForm.get('confirmPassword');
-  
+
     if (!passwordControl || !confirmPasswordControl) return;
-  
+
     const password = passwordControl.value;
     const confirmPassword = confirmPasswordControl.value;
-  
+
     if (password !== confirmPassword) {
       confirmPasswordControl.setErrors({ mismatch: true });
       confirmPasswordControl.markAsTouched();
@@ -406,11 +410,11 @@ export class RegisterComponent {
       }
     }
   }
-  
+
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
   }
-  
+
   toggleConfirmPasswordVisibility(): void {
     this.showConfirmPassword = !this.showConfirmPassword;
   }

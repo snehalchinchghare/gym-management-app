@@ -64,7 +64,6 @@ export class CandidateEditComponent implements OnInit {
   
           // Patch candidate form
           if (result?.candidate) {
-            console.log(result);
             this.registerForm.patchValue({
               fullName: result.candidate.full_name,
               email: result.candidate.email,

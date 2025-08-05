@@ -3,11 +3,12 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { LoaderService } from './features/services/loader.service';
 import { InactivityService } from './features/services/inactivity.service';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule],
+  imports: [RouterOutlet, CommonModule, ToastModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

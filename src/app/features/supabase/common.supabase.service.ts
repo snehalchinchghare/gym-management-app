@@ -434,7 +434,6 @@ export class SupabaseService {
   
       return response.valid;
     } catch (err) {
-      console.log(err);
       alert('Unexpected error while sending OTP.');
       return false;
     }

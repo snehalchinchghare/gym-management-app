@@ -286,7 +286,7 @@
           </div>
         </div>
 
-        <button class="btn btn-success rounded-pill w-100 py-2" [disabled]="registerForm.invalid">
+        <button class="btn btn-success rounded-pill w-100 py-2" [disabled]="registerForm.invalid || !otpValidated">
           Register
         </button>
 
