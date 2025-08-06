@@ -70,7 +70,8 @@ export class CandidateRegisterComponent implements OnInit {
                 startDate: [today, Validators.required],
                 endDate: [{ value: '', disabled: true }, Validators.required],
                 isManual: [false],
-                photo: []
+                photo: [],
+                gender: ['', Validators.required]
             });
 
             this.packageList = await this.supabaseService.getPackageTypes();
@@ -103,7 +104,8 @@ export class CandidateRegisterComponent implements OnInit {
                                     balanceAmt: result.balance_amount,
                                     admissionDate: result.admission_date,
                                     startDate: this.isBalancePayment ? result.start_date : newStartDate,
-                                    endDate: this.isBalancePayment ? result.end_date : newEndDate
+                                    endDate: this.isBalancePayment ? result.end_date : newEndDate,
+                                    gender: result.gender,
                                 });
                                 this.initialBalanceAmt = result.balance_amount;
                                 this.initialTotalAmt = result.total_amount;
@@ -204,6 +206,7 @@ export class CandidateRegisterComponent implements OnInit {
             fullName: formData.fullName,
             email: formData.email,
             mobile: formData.mobile,
+            gender: formData.gender,
             dob: formData.dob,
             userId: this.userDetails.userId,
             createdBy: this.userDetails.userId,

@@ -19,6 +19,18 @@
             placeholder="Enter full name" />
         </div>
 
+        <!-- Gender -->
+        <div class="mb-3" [style.display]="isRenew || isBalancePayment ? 'none' : 'block'">
+          <label class="form-label fw-semibold text-muted ms-2">Gender *</label>
+          <select class="form-select rounded-pill px-4 py-2" formControlName="gender">
+            <option value="">-- Select Gender --</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Others">Others</option>
+          </select>
+        </div>
+
+
         <!-- Candidate Photo -->
         <div class="mb-3" [style.display]="isRenew || isBalancePayment ? 'none' : 'block'">
           <label class="form-label fw-semibold text-muted ms-2">Photo</label>
@@ -43,13 +55,13 @@
         <div class="mb-3" [style.display]="isRenew || isBalancePayment ? 'none' : 'block'">
           <label class="form-label fw-semibold text-muted ms-2">Mobile *</label>
           <input type="text" class="form-control rounded-pill px-4 py-2" formControlName="mobile"
-            placeholder="Enter mobile number" inputmode="numeric" pattern="[0-9]*" maxlength="10"/>
+            placeholder="Enter mobile number" inputmode="numeric" pattern="[0-9]*" maxlength="10" />
         </div>
 
         <!-- Date of Birth -->
         <div class="mb-3" [style.display]="isRenew || isBalancePayment ? 'none' : 'block'">
           <label class="form-label fw-semibold text-muted ms-2">Date of Birth *</label>
-          <input type="date" class="form-control rounded-pill px-4 py-2" formControlName="dob" [max]="maxDobAllowed"/>
+          <input type="date" class="form-control rounded-pill px-4 py-2" formControlName="dob" [max]="maxDobAllowed" />
         </div>
 
         <!-- Service Type -->
@@ -78,7 +90,7 @@
         <div class="mb-3" [style.display]="isRenew || isBalancePayment ? 'none' : 'block'">
           <label class="form-label fw-semibold text-muted ms-2">Admission Fee *</label>
           <input type="number" class="form-control rounded-pill px-4 py-2" formControlName="admissionFee"
-            placeholder="Enter admission fee" inputmode="numeric" pattern="[0-9]*"/>
+            placeholder="Enter admission fee" inputmode="numeric" pattern="[0-9]*" />
         </div>
 
         <!-- Total Amount -->
@@ -96,20 +108,22 @@
             </div>
           </div>
 
-          <input type="number" class="form-control rounded-pill px-4 py-2" formControlName="totalAmt" inputmode="numeric" pattern="[0-9]*"/>
+          <input type="number" class="form-control rounded-pill px-4 py-2" formControlName="totalAmt"
+            inputmode="numeric" pattern="[0-9]*" />
         </div>
 
         <!-- Paid Amount -->
         <div class="mb-3">
           <label class="form-label fw-semibold text-muted ms-2">Paid Amount *</label>
           <input type="number" class="form-control rounded-pill px-4 py-2" formControlName="paidAmt"
-            placeholder="Enter paid amount" inputmode="numeric" pattern="[0-9]*"/>
+            placeholder="Enter paid amount" inputmode="numeric" pattern="[0-9]*" />
         </div>
 
         <!-- Balance Amount -->
         <div class="mb-3">
           <label class="form-label fw-semibold text-muted ms-2">Balance Amount *</label>
-          <input type="number" class="form-control rounded-pill px-4 py-2" formControlName="balanceAmt" readonly inputmode="numeric" pattern="[0-9]*"/>
+          <input type="number" class="form-control rounded-pill px-4 py-2" formControlName="balanceAmt" readonly
+            inputmode="numeric" pattern="[0-9]*" />
         </div>
 
         <!-- Admission Date -->

@@ -3,9 +3,13 @@
 
     <!-- Brand + Logo -->
     <a class="navbar-brand d-flex align-items-center fw-bold gap-2" routerLink="/dashboard">
-      <img [src]="gymLogo" alt="Gym Logo" height="45" class="rounded-circle border border-light shadow-sm" />
+      <img [src]="gymLogo"
+           alt="Gym Logo"
+           style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;"
+           class="border border-light shadow-sm" />
       <span class="gym-name-gradient fs-4">{{ gymName }}</span>
     </a>
+    
     
     <button class="navbar-toggler btn border-0 rounded-circle p-2" type="button"
       style="backdrop-filter: blur(10px); background: rgba(255,255,255,0.2);" [attr.aria-expanded]="isNavbarCollapsed" (click)="toggleNavbar()"

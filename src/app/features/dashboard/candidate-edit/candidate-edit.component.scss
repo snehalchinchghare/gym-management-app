@@ -1,3 +1,10 @@
+@media (max-width: 576px) {
+  table td,
+  table th {
+    font-size: 0.85rem;
+  }
+}
+
 .container {
     padding-bottom: 100px; // ensures no overlap with footer
   }

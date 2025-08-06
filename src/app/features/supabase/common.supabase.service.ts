@@ -68,7 +68,8 @@ export class SupabaseService {
     email: string,
     mobile: string,
     dob: string,
-    photo: string | ArrayBuffer | null
+    photo: string | ArrayBuffer | null,
+    gender: string
   }) {
     const { error } = await this.supabase.rpc('update_candidate_details', {
       p_candidate_id: data.candidateId,
@@ -77,7 +78,8 @@ export class SupabaseService {
       p_email: data.email,
       p_mobile: data.mobile,
       p_dob: data.dob,
-      p_photo: data.photo
+      p_photo: data.photo,
+      p_gender: data.gender
     });
 
     if (error) {
@@ -108,7 +110,8 @@ export class SupabaseService {
         p_end_date: candidate.endDate,
         p_dob: candidate.dob,
         p_receipttype: 'New',
-        p_photo: candidate.photo
+        p_photo: candidate.photo,
+        p_gender: candidate.gender,
       });
 
       if (error) {

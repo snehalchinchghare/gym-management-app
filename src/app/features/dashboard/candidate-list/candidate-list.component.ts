@@ -311,4 +311,26 @@ export class CandidateListComponent implements OnInit {
       }
     }
   }
+
+  getProfileImage(candidate: any): string {
+    let photoContent = '';
+    if (candidate.photo) {
+        photoContent = candidate.photo;
+    }
+  
+    switch ((candidate.gender || '').toLowerCase()) {
+      case 'male':
+        photoContent = 'assets/profile/male.jpg';
+        break;
+      case 'female':
+        photoContent = 'assets/profile/female.jpg';
+        break;
+      case 'others':
+        photoContent = 'assets/profile/others.jpg';
+        break;
+    }
+
+    return photoContent;
+  }
+  
 }

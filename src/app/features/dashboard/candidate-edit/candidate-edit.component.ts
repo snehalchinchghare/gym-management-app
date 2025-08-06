@@ -56,13 +56,14 @@ export class CandidateEditComponent implements OnInit {
                 email: ['', [Validators.email]],
                 mobile: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
                 dob: ['', Validators.required],
-                photo: ['']
+                photo: [''],
+                gender: ['', Validators.required]
             });
 
             this.route.queryParams.subscribe(params => {
                 const encoded = params['data'];
                 if (encoded) {
-                    this.loadCandidateData(encoded); // move logic out
+                    this.loadCandidateData(encoded);
                 }
             });
 
@@ -86,6 +87,7 @@ export class CandidateEditComponent implements OnInit {
                 email: result.candidate.email,
                 mobile: result.candidate.mobile,
                 dob: result.candidate.dateofbirth,
+                gender: result.candidate.gender
             });
             this.candidatePhotoUrl = result.candidate.photo;
         }
@@ -127,7 +129,8 @@ export class CandidateEditComponent implements OnInit {
                 email: formData.email,
                 mobile: formData.mobile,
                 dob: formData.dob,
-                photo: this.candidatePhotoUrl
+                photo: this.candidatePhotoUrl,
+                gender: formData.gender
             }
 
             let result = await this.supabaseService.updateCandidate(candidateData);
