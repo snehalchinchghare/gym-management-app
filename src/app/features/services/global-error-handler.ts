@@ -1,11 +1,13 @@
 import { ErrorHandler, Injectable, inject } from '@angular/core';
 import { LoaderService } from './loader.service';
 import { SupabaseService } from '../supabase/common.supabase.service';
+import { ToastService } from './toast.service';
 
 @Injectable()
 export class GlobalErrorHandler implements ErrorHandler {
   private loader = inject(LoaderService);
   private supabase = inject(SupabaseService);
+  private toast = inject(ToastService);
   private readonly ADMIN_KEY = 'adminUser';
 
   handleError(error: any): void {
@@ -17,10 +19,7 @@ export class GlobalErrorHandler implements ErrorHandler {
 
     const stored = localStorage.getItem(this.ADMIN_KEY);
     let userDetails = stored ? JSON.parse(stored) : null;
-
-    console.log(error);
-
-    alert('Something went wrong, please contact administrator.');
+    this.toast.error('Error', 'Something went wrong, please contact administrator');
     this.supabase.logError(
         error.message || error.toString(),
         error.stack || '',
