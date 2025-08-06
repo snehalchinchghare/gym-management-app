@@ -108,6 +108,7 @@ export class LoginComponent implements OnInit {
 
         this.updateService.checkAndUpdateApp();
         this.toast.success('Success', 'Login successful');
+        sessionStorage.removeItem('alreadyReloaded');
         this.router.navigate(['/dashboard/candidate-list']);
       } else {
         this.toast.error('Error', 'Invalid email or password!');

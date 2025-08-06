@@ -18,7 +18,7 @@ import { BehaviorSubject, interval } from 'rxjs';
 export class AppComponent implements OnInit {
   title = 'gym-management';
   showUpdateModal = false;
-  progress$ = new BehaviorSubject<number>(0);
+  progress$ = this.updateService.progress$;
   gifList: string[] = [
     'assets/gym/chest.gif',
     'assets/gym/deadlift.gif',
@@ -28,10 +28,13 @@ export class AppComponent implements OnInit {
   ];
   selectedGif: string = '';
 
-  constructor(public loaderService: LoaderService, private inactivityService: InactivityService, public updateService: VersionUpdateService) {
+  constructor(public loaderService: LoaderService, private inactivityService: InactivityService, private updateService: VersionUpdateService) {
   }
 
   ngOnInit(): void {
+    this.updateService.isUpdating$.subscribe(isUpdating => {
+        this.showUpdateModal = isUpdating;
+      });
   }
 
   ngAfterViewInit(){
