@@ -35,7 +35,7 @@ export class VersionUpdateService {
   
         const progressInterval = interval(100).subscribe(() => {
           percent += 1.1;
-          this.progress$.next(percent);
+          this.progress$.next(Math.round(percent));
   
           if (percent >= 100) {
             progressInterval.unsubscribe();
