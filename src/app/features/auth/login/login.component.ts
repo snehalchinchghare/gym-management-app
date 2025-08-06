@@ -106,8 +106,8 @@ export class LoginComponent implements OnInit {
         const token = btoa(`${email}:${new Date().getTime()}`);
         localStorage.setItem(this.TOKEN_KEY, token);
 
+        this.updateService.checkAndUpdateApp();
         this.toast.success('Success', 'Login successful');
-        await this.updateService.checkAndUpdateApp();
         this.router.navigate(['/dashboard/candidate-list']);
       } else {
         this.toast.error('Error', 'Invalid email or password!');
