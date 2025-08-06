@@ -30,7 +30,7 @@ export class VersionUpdateService {
       if (event.type === 'VERSION_READY') {
         this.isUpdating$.next(true);
         let percent = 0;
-        const progressInterval = interval(80).subscribe(() => {
+        const progressInterval = interval(100).subscribe(() => {
           percent += 1.1;
           this.progress$.next(percent);
   
