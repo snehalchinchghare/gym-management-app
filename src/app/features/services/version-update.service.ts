@@ -9,17 +9,23 @@ export class VersionUpdateService {
 
   constructor(private swUpdate: SwUpdate) {}
 
-  checkAndUpdateApp(): void {
-    if (this.swUpdate.isEnabled) {
-      this.swUpdate.checkForUpdate().then((hasUpdate) => {
-        if (hasUpdate) {
-          this.listenForUpdate();
-        }
-      });
-    }
+  checkAndUpdateApp(): Promise<void> {
+    return new Promise((resolve) => {
+      if (this.swUpdate.isEnabled) {
+        this.swUpdate.checkForUpdate().then((hasUpdate) => {
+          if (hasUpdate) {
+            this.listenForUpdate(resolve); // Pass resolve to call when update is done
+          } else {
+            resolve(); // No update, continue
+          }
+        });
+      } else {
+        resolve(); // Not enabled, continue
+      }
+    });
   }
 
-  private listenForUpdate(): void {
+  private listenForUpdate(resolve: () => void): void {
     this.swUpdate.versionUpdates.subscribe(event => {
       if (event.type === 'VERSION_READY') {
         this.isUpdating$.next(true);
@@ -27,15 +33,17 @@ export class VersionUpdateService {
         const progressInterval = interval(80).subscribe(() => {
           percent += 1.1;
           this.progress$.next(percent);
-
+  
           if (percent >= 100) {
             progressInterval.unsubscribe();
             this.swUpdate.activateUpdate().then(() => {
-              location.reload();
+              location.reload(); // This reloads the updated app
             });
+            resolve(); // In case you want to continue flow without reload (optional)
           }
         });
       }
     });
   }
+  
 }

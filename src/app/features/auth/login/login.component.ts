@@ -107,7 +107,7 @@ export class LoginComponent implements OnInit {
         localStorage.setItem(this.TOKEN_KEY, token);
 
         this.toast.success('Success', 'Login successful');
-        this.updateService.checkAndUpdateApp();
+        await this.updateService.checkAndUpdateApp();
         this.router.navigate(['/dashboard/candidate-list']);
       } else {
         this.toast.error('Error', 'Invalid email or password!');
