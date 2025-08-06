@@ -59,6 +59,7 @@ bootstrapApplication(AppComponent, {
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
     ...(appConfig.providers || []),
     provideServiceWorker('ngsw-worker.js', {
+        enabled: !isDevMode(),
         registrationStrategy: 'registerWhenStable:30000'
     }),
     ConfirmationService

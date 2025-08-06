@@ -17,6 +17,9 @@ export class GlobalErrorHandler implements ErrorHandler {
 
     const stored = localStorage.getItem(this.ADMIN_KEY);
     let userDetails = stored ? JSON.parse(stored) : null;
+
+    console.log(error);
+
     alert('Something went wrong, please contact administrator.');
     this.supabase.logError(
         error.message || error.toString(),
